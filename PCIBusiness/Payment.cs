@@ -194,6 +194,8 @@ namespace PCIBusiness
 
 		private int ProcessPayU()
 		{
+			Tools.LogInfo("Payment.ProcessPayU","Merchant Reference = " + merchantReference,100);
+
 			TransactionPayU transaction = new TransactionPayU();
 			int             ret         = transaction.Process(this);
 

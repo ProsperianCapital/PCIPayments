@@ -46,6 +46,8 @@ namespace PCIBusiness
 			int    ret     = 10;
 			payRef         = "";
 
+			Tools.LogInfo("TransactionPayU.Process/10","Started ... " + payment.MerchantReference,100);
+
 			try
 			{
 				soapXML = "<ns1:doTransaction>"
@@ -60,8 +62,8 @@ namespace PCIBusiness
 				        + "<AdditionalInformation>"
 				        +   "<storePaymentMethod>true</storePaymentMethod>"
 				        +   "<secure3d>false</secure3d>"
-			           +	"<merchantReference>" + payment.MerchantReference + "</merchantReference>"
-			           + "</AdditionalInformation>"
+			            +	"<merchantReference>" + payment.MerchantReference + "</merchantReference>"
+			            + "</AdditionalInformation>"
 				        + "<Customer>"
 				        +   "<merchantUserId>" + payment.MerchantUserId + "</merchantUserId>"
 				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
@@ -71,14 +73,14 @@ namespace PCIBusiness
 				        +   "<mobile>" + payment.PhoneCell + "</mobile>"
 				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
 				        + "</Customer>"
-			           + "<Basket>"
-			           +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-			           +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
-			           +	"<description>" + payment.PaymentDescription + "</description>"
-			           + "</Basket>"
-			           + "<Creditcard>"
-			           +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
-			           +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>";
+			            + "<Basket>"
+			            +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+			            +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+			            +	"<description>" + payment.PaymentDescription + "</description>"
+			            + "</Basket>"
+			            + "<Creditcard>"
+			            +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
+			            +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>";
 				if ( payment.PaymentToken.Length > 1 ) // Card is tokenized
 					soapXML = soapXML
 						     + "<pmId>" + payment.PaymentToken + "</pmId>";
@@ -88,8 +90,10 @@ namespace PCIBusiness
 			              + "<cardExpiry>" + payment.CardExpiry + "</cardExpiry>"
 			              + "<cvv>" + payment.CardCVV + "</cvv>";
 				soapXML = soapXML
-			           + "</Creditcard>"
+			            + "</Creditcard>"
 				        + "</ns1:doTransaction>";
+
+				Tools.LogInfo("TransactionPayU.Process/20","XML = " + soapXML,100);
 
 			// Construct soap object
 				ret = 20;
@@ -129,6 +133,8 @@ namespace PCIBusiness
 						soapResult = rd.ReadToEnd();
 					}
 
+				Tools.LogInfo("TransactionPayU.Process/30","soapResult = " + soapResult,100);
+
 			// Create an empty soap result object
 				ret = 70;
 				XmlDocument soapResultXml = new XmlDocument();
@@ -146,8 +152,11 @@ namespace PCIBusiness
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("TransactionPayU.Process","Ret="+ret.ToString()+" / "+soapXML,ex);
+				Tools.LogInfo("TransactionPayU.Process/500","Ret="+ret.ToString()+" / "+soapXML,100);
+				Tools.LogException("TransactionPayU.Process/510","Ret="+ret.ToString()+" / "+soapXML,ex);
 			}
+
+			Tools.LogInfo("TransactionPayU.Process/520","Ret="+ret.ToString(),100);
 			return ret;
 		}
 
