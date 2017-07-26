@@ -79,7 +79,7 @@ namespace PCIBusiness
 				{
 					connName = Tools.ConfigValue("DBConnection");
 					if ( connName == null || connName.Trim().Length == 0 )
-						connName = "Prosperian (Live)";
+						connName = "LiveDB";
 
 					ConnectionStringSettings db = ConfigurationManager.ConnectionStrings[connName];
 					connString = db.ConnectionString;

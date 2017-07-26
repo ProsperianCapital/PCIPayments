@@ -29,5 +29,26 @@ namespace PCIWeb
 				PCIBusiness.Tools.LogException("RTR.btnProcess_Click/15","",ex);
             }
 		}
+
+		protected void btnConfig_Click(Object sender, EventArgs e)
+		{
+			try
+			{
+                string folder  = "<hr />Server.MapPath = " + Server.MapPath("") + "<br />"
+                               + "Request.Url.AbsoluteUri = " + Request.Url.AbsoluteUri + "<br />"
+                               + "Request.Url.AbsolutePath = " + Request.Url.AbsolutePath + "<br />"
+                               + "Request.Url.LocalPath = " + Request.Url.LocalPath + "<br />"
+                               + "Request.Url.PathAndQuery = " + Request.Url.PathAndQuery + "<br />"
+                               + "Request.RawUrl = " + Request.RawUrl + "<br />"
+                               + "Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<br />";
+                System.Configuration.ConnectionStringSettings db = System.Configuration.ConfigurationManager.ConnectionStrings["TestDB"];
+                folder         = folder + "DB Connection = " + db.ConnectionString + "<br />";
+                lblConfig.Text = folder;
+            }
+            catch (Exception ex)
+            {
+				PCIBusiness.Tools.LogException("RTR.btnProcess_Click/15","",ex);
+            }
+		}
 	}
 }

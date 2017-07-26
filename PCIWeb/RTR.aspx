@@ -21,7 +21,10 @@
 		<asp:ListItem Value="034" Text="Transact24"></asp:ListItem>
 	</asp:DropDownList>
 	<br /><br />
-	<asp:Button runat="server" ID="btnProcess" Text="Process Payment(s)" CssClass="Button" onclick="btnProcess_Click" />
+	<asp:Button runat="server" ID="btnProcess" Text="Process Payment(s)" CssClass="Button" onclick="btnProcess_Click" />&nbsp;
+	<asp:Button runat="server" ID="btnTest" Text="Show Config" CssClass="Button" onclick="btnConfig_Click" />
+    <p>
+    <asp:Literal runat="server" ID="lblConfig"></asp:Literal>
 	</p>
 	<hr />
 	<p class="Footer">
