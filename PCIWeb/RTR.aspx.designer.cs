@@ -31,13 +31,22 @@ namespace PCIWeb {
         protected global::System.Web.UI.WebControls.DropDownList lstProvider;
         
         /// <summary>
-        /// btnProcess control.
+        /// btnProcess2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnProcess;
+        protected global::System.Web.UI.WebControls.Button btnProcess2;
+        
+        /// <summary>
+        /// btnProcess3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnProcess3;
         
         /// <summary>
         /// btnTest control.
@@ -56,5 +65,14 @@ namespace PCIWeb {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal lblConfig;
+        
+        /// <summary>
+        /// lblError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblError;
     }
 }

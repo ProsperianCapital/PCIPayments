@@ -8,25 +8,42 @@ namespace PCIWeb
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            lblConfig.Text = "";
+            lblError.Text  = "";
 		}
 
-		protected void btnProcess_Click(Object sender, EventArgs e)
+		protected void btnProcess1_Click(Object sender, EventArgs e)
+		{
+            Process(1);
+        }
+
+		protected void btnProcess2_Click(Object sender, EventArgs e)
+		{
+            Process(2);
+        }
+
+		protected void btnProcess3_Click(Object sender, EventArgs e)
+		{
+            Process(3);
+        }
+		private void Process(byte mode)
 		{
 			try
 			{
                 string provider = lstProvider.SelectedValue;
-				PCIBusiness.Tools.LogInfo("RTR.btnProcess_Click/5","Started, provider '" + provider + "'");
+				PCIBusiness.Tools.LogInfo("Proces/5","Started, provider '" + provider + "'");
 
 				using (PCIBusiness.PaymentSchedule paymentSchedule = new PCIBusiness.PaymentSchedule())
 				{
-					paymentSchedule.ProcessCards (provider);
-					paymentSchedule.ProcessTokens(provider);
+					paymentSchedule.ProcessCards (provider,mode);
+                    lblError.Text = (paymentSchedule.CountSucceeded+paymentSchedule.CountFailed).ToString() + " payment(s) completed : " + paymentSchedule.CountSucceeded.ToString() + " succeeded, " + paymentSchedule.CountFailed.ToString() + " failed";
+				//	paymentSchedule.ProcessTokens(provider,mode);
 				}
-				PCIBusiness.Tools.LogInfo("RTR.btnProcess_Click/10","Finished");
+				PCIBusiness.Tools.LogInfo("Process/10","Finished");
             }
             catch (Exception ex)
             {
-				PCIBusiness.Tools.LogException("RTR.btnProcess_Click/15","",ex);
+				PCIBusiness.Tools.LogException("Process/15","",ex);
             }
 		}
 
@@ -41,8 +58,10 @@ namespace PCIWeb
                                + "Request.Url.PathAndQuery = " + Request.Url.PathAndQuery + "<br />"
                                + "Request.RawUrl = " + Request.RawUrl + "<br />"
                                + "Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<br />";
-                System.Configuration.ConnectionStringSettings db = System.Configuration.ConfigurationManager.ConnectionStrings["TestDB"];
-                folder         = folder + "DB Connection = " + db.ConnectionString + "<br />";
+                System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["TestDB"];
+                folder         = folder + "DB Connection [TestDB] = " + db.ConnectionString + "<br />";
+                db             = System.Configuration.ConfigurationManager.ConnectionStrings["LiveDB"];
+                folder         = folder + "DB Connection [LiveDB] = " + db.ConnectionString + "<br />";
                 lblConfig.Text = folder;
             }
             catch (Exception ex)

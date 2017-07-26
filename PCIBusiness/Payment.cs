@@ -168,7 +168,7 @@ namespace PCIBusiness
 //				ExecuteSQLUpdate();
 //			}
 
-			Tools.LogInfo("Payment.Process/3","End processing PaymentCode=" + merchantReference + ", Ret=" + ret.ToString(),10);
+			Tools.LogInfo("Payment.Process/3","End processing Merchant Reference=" + merchantReference + ", Ret=" + ret.ToString(),10);
 			return ret;
 		}
 

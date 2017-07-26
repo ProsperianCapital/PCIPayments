@@ -25,6 +25,11 @@ body
 {
 	color: red;
 }
+.Error
+{
+	color: red;
+    font-weight: bold;
+}
 .Button
 {
 	padding: 5px;

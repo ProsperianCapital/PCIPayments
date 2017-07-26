@@ -61,6 +61,15 @@ namespace PCIBusiness
 		return theValue.Trim();
 	}
 
+	public static string CompressedString(string theValue)
+	{
+		if ( string.IsNullOrWhiteSpace(theValue) ) return "";
+        theValue = theValue.Trim();
+        while ( theValue.Contains("  ") )
+            theValue = theValue.Replace("  "," ");
+		return theValue;
+	}
+
 	public static int StringToInt(string theValue)
 	{
 		try

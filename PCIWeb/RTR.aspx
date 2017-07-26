@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="Payment.css" type="text/css" />
 </head>
 <body>
-<a href="http://prosperian.mu" target="P"><img src="Images/LogoProsperian.png" title="Prosperian Capital" /></a>
+<a href="http://prosperian.mu" target="P"><img src="LogoProsperian.png" title="Prosperian Capital" /></a>
 <form runat="server" id="frmRTR">
 	<p class="Header">
 	Prosperian Capital : RTR Payments
@@ -21,10 +21,12 @@
 		<asp:ListItem Value="034" Text="Transact24"></asp:ListItem>
 	</asp:DropDownList>
 	<br /><br />
-	<asp:Button runat="server" ID="btnProcess" Text="Process Payment(s)" CssClass="Button" onclick="btnProcess_Click" />&nbsp;
+	<asp:Button runat="server" ID="btnProcess2" Text="Payments (Test SQL)" CssClass="Button" onclick="btnProcess2_Click" />&nbsp;
+	<asp:Button runat="server" ID="btnProcess3" Text="Payments (S/Proc SQL)" CssClass="Button" onclick="btnProcess3_Click" />&nbsp;
 	<asp:Button runat="server" ID="btnTest" Text="Show Config" CssClass="Button" onclick="btnConfig_Click" />
     <p>
     <asp:Literal runat="server" ID="lblConfig"></asp:Literal>
+    <asp:Label runat="server" ID="lblError" CssClass="Error"></asp:Label>
 	</p>
 	<hr />
 	<p class="Footer">

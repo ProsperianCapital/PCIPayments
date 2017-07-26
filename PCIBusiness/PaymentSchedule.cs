@@ -6,34 +6,49 @@ namespace PCIBusiness
 	public class PaymentSchedule : BaseList
 	{
 		private string bureauCode;
+        private int    success;
+        private int    fail;
 
 		public override BaseData NewItem()
 		{
 			return (BaseData)(new Object());
 		}
 
-		public int ProcessCards(string bureau)
+        public int CountSucceeded
+        {
+            get { return success; }
+        }
+
+        public int CountFailed
+        {
+            get { return fail; }
+        }
+
+		public int ProcessCards(string bureau,byte mode=0)
 		{
 			bureauCode = Tools.NullToString(bureau);
 			Tools.LogInfo("PaymentSchedule.ProcessCards","BureauCode="+bureauCode,100);
-//			sql        = "exec sp_Get_CardToToken " + Tools.DBString(bureauCode);
-
-			sql = "select '{542595FF-78EC-4A42-996D-18F8790393E5}' as Safekey,"
-			    +        "'1351079862'          as MerchantUserId,"
-			    +        "'27'                  as CountryCode,"
-			    +        "'PeteSmith@yahoo.com' as email,"
-			    +        "'Pete'                as firstName,"
-			    +        "'Smith'               as lastName,"
-			    +        "'084 333 7777'        as mobile,"
-			    +        "'2345679111'          as regionalId,"
-			    +        "'3451'                as merchantReference,"
-			    +        "10599                 as amountInCents,"
-			    +        "'ZAR'                 as currencyCode,"
-			    +        "'RTR 3451'            as description,"
-			    +        "'Pete Smith'          as nameOnCard,"
-			    +        "'4901222233334444'    as cardNumber,"
-			    +        "'082020'              as cardExpiry,"
-			    +        "'123'                 as cvv";
+            if ( mode == 1 )
+    			sql = "";
+            else if ( mode == 2 )
+    			sql = "select '{542595FF-78EC-4A42-996D-18F8790393E5}' as Safekey,"
+    			    +        "'1351079862'          as MerchantUserId,"
+    			    +        "'27'                  as CountryCode,"
+    			    +        "'PeteSmith@yahoo.com' as email,"
+    			    +        "'Pete'                as firstName,"
+    			    +        "'Smith'               as lastName,"
+    			    +        "'084 333 7777'        as mobile,"
+    			    +        "'2345679111'          as regionalId,"
+    			    +        "'3451'                as merchantReference,"
+    			    +        "10599                 as amountInCents,"
+    			    +        "'ZAR'                 as currencyCode,"
+    			    +        "'RTR 3451'            as description,"
+    			    +        "'Pete Smith'          as nameOnCard,"
+    			    +        "'4901222233334444'    as cardNumber,"
+    			    +        "'082020'              as cardExpiry,"
+    			    +        "'123'                 as cvv";
+            else
+    			sql = "exec sp_Get_CardToToken " + Tools.DBString(bureauCode);
 			return ProcessPayments();
 		}
 
@@ -47,9 +62,11 @@ namespace PCIBusiness
 
 		private int ProcessPayments()
 		{
-			int k = 0;
+			int k   = 0;
+            success = 0;
+            fail    = 0;
 
-			Tools.LogInfo("PaymentSchedule.ProcessPayments/5","Started ... " + Tools.NullToString(sql),100);
+			Tools.LogInfo("PaymentSchedule.ProcessPayments/5","Started ... " + Tools.CompressedString(sql).Replace("  "," "),100);
 
 			try
 			{
@@ -65,6 +82,10 @@ namespace PCIBusiness
 							payment.LoadData(dbConn);
 							err = payment.Process();
 							dbConn.NextRow();
+                            if ( err == 0 )
+                                success++;
+                            else
+                                fail++;
 						}
 //						sql = "exec PaymentScheduleEnd " + payment.PaymentAuditCode.ToString() + ",0,0";
 //						Tools.LogInfo("PaymentSchedule.ProcessPayments/15","Ended (" + sql +")",100);
