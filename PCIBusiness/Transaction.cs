@@ -12,6 +12,8 @@ namespace PCIBusiness
 		protected string payToken;
 		protected string resultCode;
 		protected string resultMsg;
+		protected string xmlSent;
+		protected string xmlReceived;
 
 		public  string  PaymentReference
 		{
@@ -29,16 +31,26 @@ namespace PCIBusiness
 		{
 			get { return Tools.NullToString(resultMsg); }
 		}
+		public  string  XMLSent
+		{
+			get { return Tools.NullToString(xmlSent); }
+		}
+		public  string  XMLReceived
+		{
+			get { return Tools.NullToString(xmlReceived); }
+		}
 
       public override void Close()
 		{ }
 
 		public Transaction()
 		{
-			payRef     = "";
-			payToken   = "";
-			resultCode = "";
-			resultMsg  = "";
+			payRef      = "";
+			payToken    = "";
+			resultCode  = "";
+			resultMsg   = "";
+			xmlSent     = "";
+			xmlReceived = "";
 		}
 	}
 }

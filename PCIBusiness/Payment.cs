@@ -150,7 +150,7 @@ namespace PCIBusiness
 //			}
 
 			int ret = 64020;
-			sql = "";
+			sql     = "";
 			Tools.LogInfo("Payment.Process/2","Start processing MerchantReference=" + merchantReference,10);
 
 			if ( System.Convert.ToInt32(bureauCode) == (int)Constants.PaymentProvider.PayU )
@@ -160,15 +160,20 @@ namespace PCIBusiness
 			else if ( System.Convert.ToInt32(bureauCode) == (int)Constants.PaymentProvider.T24 )
 				ret = ProcessT24();
 
-//			if ( sql.Length > 3 )
-//			{
+			if ( sql.Length > 3 )
+			{
 //				sql = "exec PaymentUpdate " + paymentAuditCode.ToString()
 //			                         + "," + paymentCode.ToString()
 //											 + "," + sql;
-//				ExecuteSQLUpdate();
-//			}
+				sql = "exec sp_Upd_CardTokenVault @MerchantReference = " + Tools.DBString(merchantReference) // nvarchar(20),
+					                           + ",@PaymentBureauCode = " + Tools.DBString(bureauCode)        // char(3),
+			                                 + ",@CardTokenisationStatusCode = '" + ( ret == 0 ? "007'" : "001'" )
+			                                 + sql;
+				int k = ExecuteSQLUpdate();
+				Tools.LogInfo("Payment.Process/3","SQL : " + sql + " (Return code " + k.ToString() + ")",10);
+			}
 
-			Tools.LogInfo("Payment.Process/3","End processing Merchant Reference=" + merchantReference + ", Ret=" + ret.ToString(),10);
+			Tools.LogInfo("Payment.Process/4","End processing Merchant Reference=" + merchantReference + ", Ret=" + ret.ToString(),10);
 			return ret;
 		}
 
@@ -199,16 +204,12 @@ namespace PCIBusiness
 			TransactionPayU transaction = new TransactionPayU();
 			int             ret         = transaction.Process(this);
 
-
-//			sp_Upd_CardTokenVault
-	
-
 		//	These are SQL parameters that will be used in stored proc "sp_Upd_CardTokenVault"
-			sql = (byte)( transaction.Successful ? Constants.PaymentStatus.Successful : Constants.PaymentStatus.FailedTryAgain )
-			    + "," + Tools.DBString(transaction.PaymentReference)
-			    + "," + Tools.DBString(transaction.PaymentToken)
-			    + "," + Tools.DBString(transaction.ResultCode)
-			    + "," + Tools.DBString(transaction.ResultMessage);
+
+			sql = ",@PaymentBureauToken = " + Tools.DBString(transaction.PaymentToken)
+			    + ",@BureauSubmissionSoap = " + Tools.DBString(transaction.XMLSent)
+			    + ",@BureauResultSoap = " + Tools.DBString(transaction.XMLReceived);
+
 			transaction = null;
 			return ret;
 		}

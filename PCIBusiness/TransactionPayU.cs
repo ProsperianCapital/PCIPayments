@@ -42,15 +42,16 @@ namespace PCIBusiness
 
 		public int Process(Payment payment)
 		{
-			string soapXML = "";
-			int    ret     = 10;
-			payRef         = "";
+			int ret     = 10;
+			xmlSent     = "";
+			xmlReceived = "";
+			payRef      = "";
 
 			Tools.LogInfo("TransactionPayU.Process/10","Started ... " + payment.MerchantReference,100);
 
 			try
 			{
-				soapXML = "<ns1:doTransaction>"
+				xmlSent = "<ns1:doTransaction>"
 				        + "<Safekey>" + payment.SafeKey + "</Safekey>"
 				        + "<Api>ONE_ZERO</Api>"
 				        + "<TransactionType>PAYMENT</TransactionType>"
@@ -82,22 +83,22 @@ namespace PCIBusiness
 			            +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
 			            +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>";
 				if ( payment.PaymentToken.Length > 1 ) // Card is tokenized
-					soapXML = soapXML
+					xmlSent = xmlSent
 						     + "<pmId>" + payment.PaymentToken + "</pmId>";
 				else
-					soapXML = soapXML
+					xmlSent = xmlSent
 			              + "<cardNumber>" + payment.CardNumber + "</cardNumber>"
 			              + "<cardExpiry>" + payment.CardExpiry + "</cardExpiry>"
 			              + "<cvv>" + payment.CardCVV + "</cvv>";
-				soapXML = soapXML
+				xmlSent = xmlSent
 			            + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-				Tools.LogInfo("TransactionPayU.Process/20","XML = " + soapXML,100);
+				Tools.LogInfo("TransactionPayU.Process/20","XML = " + xmlSent,100);
 
 			// Construct soap object
 				ret = 20;
-				XmlDocument soapEnvelopeXml = CreateSoapEnvelope(soapXML);
+				XmlDocument soapEnvelopeXml = CreateSoapEnvelope(xmlSent);
 
 			// Create username and password namespace
 				ret = 30;
@@ -125,20 +126,19 @@ namespace PCIBusiness
 
 			// Get the PayU reference number from the completed web request.
 				ret = 60;
-				string soapResult;
 
 				using (WebResponse webResponse = webRequest.GetResponse())
 					using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
 					{
-						soapResult = rd.ReadToEnd();
+						xmlReceived = rd.ReadToEnd();
 					}
 
-				Tools.LogInfo("TransactionPayU.Process/30","soapResult = " + soapResult,100);
+				Tools.LogInfo("TransactionPayU.Process/30","XML Received = " + xmlReceived,100);
 
 			// Create an empty soap result object
 				ret = 70;
 				XmlDocument soapResultXml = new XmlDocument();
-				soapResultXml.LoadXml(soapResult.ToString());
+				soapResultXml.LoadXml(xmlReceived.ToString());
 
 			//	Get data from result XML
 				ret              = 80;
@@ -147,13 +147,14 @@ namespace PCIBusiness
 				resultMsg        = Tools.XMLNode(soapResultXml,"resultMessage");
 				payRef           = Tools.XMLNode(soapResultXml,"payUReference");
 				payToken         = Tools.XMLNode(soapResultXml,"pmId");
+
 				if ( Successful && payRef.Length > 0 )
 					ret = 0;
 			}
 			catch (Exception ex)
 			{
-				Tools.LogInfo("TransactionPayU.Process/500","Ret="+ret.ToString()+" / "+soapXML,100);
-				Tools.LogException("TransactionPayU.Process/510","Ret="+ret.ToString()+" / "+soapXML,ex);
+				Tools.LogInfo("TransactionPayU.Process/500","Ret="+ret.ToString()+" / "+xmlSent,100);
+				Tools.LogException("TransactionPayU.Process/510","Ret="+ret.ToString()+" / "+xmlSent,ex);
 			}
 
 			Tools.LogInfo("TransactionPayU.Process/520","Ret="+ret.ToString(),100);

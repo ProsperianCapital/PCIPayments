@@ -30,21 +30,21 @@ namespace PCIWeb
 		{
 			try
 			{
-                string provider = lstProvider.SelectedValue;
+				string provider = lstProvider.SelectedValue;
 				PCIBusiness.Tools.LogInfo("Proces/5","Started, provider '" + provider + "'");
 
 				using (PCIBusiness.PaymentSchedule paymentSchedule = new PCIBusiness.PaymentSchedule())
 				{
-					paymentSchedule.ProcessCards (provider,mode);
-                    lblError.Text = (paymentSchedule.CountSucceeded+paymentSchedule.CountFailed).ToString() + " payment(s) completed : " + paymentSchedule.CountSucceeded.ToString() + " succeeded, " + paymentSchedule.CountFailed.ToString() + " failed";
+					int k         = paymentSchedule.ProcessCards(provider,mode);
+					lblError.Text = k.ToString() + " payment(s) completed : " + paymentSchedule.CountSucceeded.ToString() + " succeeded, " + paymentSchedule.CountFailed.ToString() + " failed";
 				//	paymentSchedule.ProcessTokens(provider,mode);
 				}
 				PCIBusiness.Tools.LogInfo("Process/10","Finished");
-            }
-            catch (Exception ex)
-            {
+			}
+			catch (Exception ex)
+			{
 				PCIBusiness.Tools.LogException("Process/15","",ex);
-            }
+			}
 		}
 
 		protected void btnConfig_Click(Object sender, EventArgs e)

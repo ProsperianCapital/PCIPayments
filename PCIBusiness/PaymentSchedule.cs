@@ -28,9 +28,9 @@ namespace PCIBusiness
 		{
 			bureauCode = Tools.NullToString(bureau);
 			Tools.LogInfo("PaymentSchedule.ProcessCards","BureauCode="+bureauCode,100);
-            if ( mode == 1 )
+			if ( mode == 1 )
     			sql = "";
-            else if ( mode == 2 )
+			else if ( mode == 2 )
     			sql = "select '{542595FF-78EC-4A42-996D-18F8790393E5}' as Safekey,"
     			    +        "'1351079862'          as MerchantUserId,"
     			    +        "'27'                  as CountryCode,"
@@ -47,7 +47,7 @@ namespace PCIBusiness
     			    +        "'4901222233334444'    as cardNumber,"
     			    +        "'082020'              as cardExpiry,"
     			    +        "'123'                 as cvv";
-            else
+			else
     			sql = "exec sp_Get_CardToToken " + Tools.DBString(bureauCode);
 			return ProcessPayments();
 		}
@@ -62,9 +62,8 @@ namespace PCIBusiness
 
 		private int ProcessPayments()
 		{
-			int k   = 0;
-            success = 0;
-            fail    = 0;
+			success = 0;
+			fail    = 0;
 
 			Tools.LogInfo("PaymentSchedule.ProcessPayments/5","Started ... " + Tools.CompressedString(sql).Replace("  "," "),100);
 
@@ -78,14 +77,13 @@ namespace PCIBusiness
 					{
 						while ( ! dbConn.EOF )
 						{
-							k++;
 							payment.LoadData(dbConn);
 							err = payment.Process();
 							dbConn.NextRow();
-                            if ( err == 0 )
-                                success++;
-                            else
-                                fail++;
+							if ( err == 0 )
+								success++;
+							else
+								fail++;
 						}
 //						sql = "exec PaymentScheduleEnd " + payment.PaymentAuditCode.ToString() + ",0,0";
 //						Tools.LogInfo("PaymentSchedule.ProcessPayments/15","Ended (" + sql +")",100);
@@ -96,14 +94,14 @@ namespace PCIBusiness
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("PaymentSchedule.ProcessPayments/25","Payment " + k.ToString(),ex);
+				Tools.LogException("PaymentSchedule.ProcessPayments/25","Payment " + (success+fail).ToString(),ex);
 			}
 			finally
 			{
 				Tools.CloseDB(ref dbConn);
-				Tools.LogInfo("PaymentSchedule.ProcessPayments/30","Finished (" + k.ToString() + " payment(s) processed)",100);
+				Tools.LogInfo("PaymentSchedule.ProcessPayments/30","Finished (" + (success+fail).ToString() + " payment(s) processed)",100);
 			}
-			return k;
+			return success + fail;
 		}
 	}
 }

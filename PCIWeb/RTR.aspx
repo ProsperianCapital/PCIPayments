@@ -16,7 +16,7 @@
 	<p class="Detail">
 	Choose a payment provider :&nbsp;
 	<asp:DropDownList runat="server" id="lstProvider">
-		<asp:ListItem Value="012" Text="PayU" Selected="True"></asp:ListItem>
+		<asp:ListItem Value="016" Text="PayU" Selected="True"></asp:ListItem>
 		<asp:ListItem Value="203" Text="Ikajo"></asp:ListItem>
 		<asp:ListItem Value="034" Text="Transact24"></asp:ListItem>
 	</asp:DropDownList>
