@@ -8,8 +8,9 @@ namespace PCIWeb
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
-            lblConfig.Text = "";
-            lblError.Text  = "";
+			lblConfig.Text  = "";
+			lblError.Text   = "";
+			lblVersion.Text = "Version " + PCIBusiness.SystemDetails.AppVersion;
 		}
 
 		protected void btnProcess1_Click(Object sender, EventArgs e)

@@ -31,6 +31,7 @@
 	<hr />
 	<p class="Footer">
 	&nbsp;Phone +230 404 8000&nbsp; | &nbsp;Email <a href="mailto:info@prosperian.mu">Info@prosperian.mu</a>
+	<span style="float:right;margin-right:3px"><asp:Literal runat="server" ID="lblVersion"></asp:Literal></span>
 	</p>
 </form>
 </body>

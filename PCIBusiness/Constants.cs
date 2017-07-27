@@ -42,7 +42,7 @@ namespace PCIBusiness
 
 		public enum PaymentProvider : int
 		{
-			PayU  =  12,
+			PayU  =  16,
 			Ikajo = 203,
 			T24   =  34
 		}
