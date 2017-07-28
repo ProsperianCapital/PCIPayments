@@ -72,16 +72,16 @@ namespace PCIBusiness
 
 			if ( dbConn == null )
 			{
-				string connName   = "";
+//				string connName   = "";
 				string connString = "";
 
 				try
 				{
-					connName = Tools.ConfigValue("DBConnection");
-					if ( connName == null || connName.Trim().Length == 0 )
-						connName = "LiveDB";
+//					connName = Tools.ConfigValue("DBConnection");
+//					if ( connName == null || connName.Trim().Length == 0 )
+//						connName = "LiveDB";
 
-					ConnectionStringSettings db = ConfigurationManager.ConnectionStrings[connName];
+					ConnectionStringSettings db = ConfigurationManager.ConnectionStrings["DBConn"];
 					connString = db.ConnectionString;
 					if ( connString == null || connString.Length < 5 )
 						return false;
@@ -90,7 +90,7 @@ namespace PCIBusiness
 				}
 				catch (Exception ex)
 				{
-					Tools.LogException ( ModuleName("DBConn.Open"), "connName=" + connName + ", connString=" + connString, ex );
+					Tools.LogException ( ModuleName("DBConn.Open"), "DB Connection String=" + Tools.NullToString(connString), ex );
 					return false;
 				}
 			}

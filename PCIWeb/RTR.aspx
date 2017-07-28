@@ -13,25 +13,33 @@
 	<p class="Header">
 	Prosperian Capital : RTR Payments
 	</p>
+	<div class="BoxRight">
+		<asp:Literal runat="server" ID="lblProvider"></asp:Literal>
+	</div>
+	<p class="Detail">
+	SQL Server : <b><i><asp:Literal runat="server" ID="lblSQLServer"></asp:Literal></i></b><br />
+	SQL Database : <b><i><asp:Literal runat="server" ID="lblSQLDB"></asp:Literal></i></b><br />
+	SQL User : <b><i><asp:Literal runat="server" ID="lblSQLUser"></asp:Literal></i></b><br />
+	SQL Status : <b><i><asp:Literal runat="server" ID="lblSQLStatus"></asp:Literal></i></b>
+	</p>
 	<p class="Detail">
 	Choose a payment provider :&nbsp;
-	<asp:DropDownList runat="server" id="lstProvider">
+	<asp:DropDownList runat="server" id="lstProvider" AutoPostBack="true">
 		<asp:ListItem Value="016" Text="PayU" Selected="True"></asp:ListItem>
 		<asp:ListItem Value="203" Text="Ikajo"></asp:ListItem>
 		<asp:ListItem Value="034" Text="Transact24"></asp:ListItem>
 	</asp:DropDownList>
 	<br /><br />
-	<asp:Button runat="server" ID="btnProcess2" Text="Payments (Test SQL)" CssClass="Button" onclick="btnProcess2_Click" />&nbsp;
-	<asp:Button runat="server" ID="btnProcess3" Text="Payments (S/Proc SQL)" CssClass="Button" onclick="btnProcess3_Click" />&nbsp;
-	<asp:Button runat="server" ID="btnTest" Text="Show Config" CssClass="Button" onclick="btnConfig_Click" />
-    <p>
-    <asp:Literal runat="server" ID="lblConfig"></asp:Literal>
-    <asp:Label runat="server" ID="lblError" CssClass="Error"></asp:Label>
+	<asp:Button runat="server" ID="btnProcess1" CssClass="Button" onclick="btnProcess1_Click" Text="Get Tokens" />&nbsp;
+	<asp:Button runat="server" ID="btnProcess2" CssClass="Button" onclick="btnProcess2_Click" Text="Process Payments" />&nbsp;
+	<asp:Button runat="server" ID="btnTest"     CssClass="Button" onclick="btnConfig_Click"   Text="Show Config" Visible="false" />
+	<p>
+	<asp:Literal runat="server" ID="lblConfig"></asp:Literal>
+	<asp:Label runat="server" ID="lblError" CssClass="Error"></asp:Label>
 	</p>
-	<hr />
 	<p class="Footer">
 	&nbsp;Phone +230 404 8000&nbsp; | &nbsp;Email <a href="mailto:info@prosperian.mu">Info@prosperian.mu</a>
-	<span style="float:right;margin-right:3px"><asp:Literal runat="server" ID="lblVersion"></asp:Literal></span>
+	<span style="float:right;margin-right:5px"><asp:Literal runat="server" ID="lblVersion"></asp:Literal></span>
 	</p>
 </form>
 </body>

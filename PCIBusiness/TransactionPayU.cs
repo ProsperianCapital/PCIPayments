@@ -35,6 +35,30 @@ namespace PCIBusiness
 
 		private string resultSuccessful;
 
+		public override string ConnectionDetails(byte mode,string separator="")
+		{
+			if ( mode == 1 ) // HTML
+				return "<table>"
+					  + "<tr><td>Payment Provider</td><td style='color:red'> : PayU</td></tr>"
+					  + "<tr><td>Status</td><td style='color:red'> : Ready for testing</td></tr>"
+					  + "<tr><td colspan='2'><hr /></td></tr>"
+					  + "<tr><td>Bureau Code</td><td> : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) + "</td></tr>"
+					  + "<tr><td>URL</td><td> : " + url + "</td></tr>"
+					  + "<tr><td>User ID</td><td> : " + userID + "</td></tr>"
+					  + "<tr><td>Password</td><td> : " + password + "</td></tr>"
+					  + "</table>";
+
+			if ( Tools.NullToString(separator).Length < 1 )
+				separator = Environment.NewLine;
+
+			return "Payment Provider : PayU" + separator
+			     + "Bureau Code : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) + separator
+			     + "URL : " + url + separator
+			     + "User ID : " + userID + separator
+			     + "Password : " + password;
+		}
+
+
 		public  bool   Successful
 		{
 			get { return Tools.NullToString(resultSuccessful).ToUpper() == "TRUE"; }
@@ -63,8 +87,8 @@ namespace PCIBusiness
 				        + "<AdditionalInformation>"
 				        +   "<storePaymentMethod>true</storePaymentMethod>"
 				        +   "<secure3d>false</secure3d>"
-			            +	"<merchantReference>" + payment.MerchantReference + "</merchantReference>"
-			            + "</AdditionalInformation>"
+				        +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
+				        + "</AdditionalInformation>"
 				        + "<Customer>"
 				        +   "<merchantUserId>" + payment.MerchantUserId + "</merchantUserId>"
 				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
@@ -74,14 +98,14 @@ namespace PCIBusiness
 				        +   "<mobile>" + payment.PhoneCell + "</mobile>"
 				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
 				        + "</Customer>"
-			            + "<Basket>"
-			            +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-			            +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
-			            +	"<description>" + payment.PaymentDescription + "</description>"
-			            + "</Basket>"
-			            + "<Creditcard>"
-			            +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
-			            +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>";
+				        + "<Basket>"
+				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+				        +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+				        +	"<description>" + payment.PaymentDescription + "</description>"
+				        + "</Basket>"
+				        + "<Creditcard>"
+				        +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
+				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>";
 				if ( payment.PaymentToken.Length > 1 ) // Card is tokenized
 					xmlSent = xmlSent
 						     + "<pmId>" + payment.PaymentToken + "</pmId>";

@@ -153,11 +153,11 @@ namespace PCIBusiness
 			sql     = "";
 			Tools.LogInfo("Payment.Process/2","Start processing MerchantReference=" + merchantReference,10);
 
-			if ( System.Convert.ToInt32(bureauCode) == (int)Constants.PaymentProvider.PayU )
+			if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
 				ret = ProcessPayU();
-			else if ( System.Convert.ToInt32(bureauCode) == (int)Constants.PaymentProvider.Ikajo )
+			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
 				ret = ProcessIkajo();
-			else if ( System.Convert.ToInt32(bureauCode) == (int)Constants.PaymentProvider.T24 )
+			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
 				ret = ProcessT24();
 
 			if ( sql.Length > 3 )
@@ -207,8 +207,8 @@ namespace PCIBusiness
 		//	These are SQL parameters that will be used in stored proc "sp_Upd_CardTokenVault"
 
 			sql = ",@PaymentBureauToken = " + Tools.DBString(transaction.PaymentToken)
-			    + ",@BureauSubmissionSoap = " + Tools.DBString(transaction.XMLSent)
-			    + ",@BureauResultSoap = " + Tools.DBString(transaction.XMLReceived);
+			    + ",@BureauSubmissionSoap = " + Tools.DBString(transaction.XMLSent,3)
+			    + ",@BureauResultSoap = " + Tools.DBString(transaction.XMLReceived,3);
 
 			transaction = null;
 			return ret;

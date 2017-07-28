@@ -40,6 +40,8 @@ namespace PCIBusiness
 			get { return Tools.NullToString(xmlReceived); }
 		}
 
+      public abstract string ConnectionDetails(byte mode,string separator="");
+
       public override void Close()
 		{ }
 

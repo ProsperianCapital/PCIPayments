@@ -27,10 +27,14 @@ namespace PCIBusiness
 		public int ProcessCards(string bureau,byte mode=0)
 		{
 			bureauCode = Tools.NullToString(bureau);
-			Tools.LogInfo("PaymentSchedule.ProcessCards","BureauCode="+bureauCode,100);
+			Tools.LogInfo("PaymentSchedule.ProcessCards","Mode="+mode.ToString()+", BureauCode="+bureauCode,100);
 			if ( mode == 1 )
-    			sql = "";
+    			sql = "exec sp_Get_CardToToken " + Tools.DBString(bureauCode);
 			else if ( mode == 2 )
+			{
+			//	sql = "exec sp_Get_CardToToken " + Tools.DBString(bureauCode);
+			}
+			else if ( mode == 3 )
     			sql = "select '{542595FF-78EC-4A42-996D-18F8790393E5}' as Safekey,"
     			    +        "'1351079862'          as MerchantUserId,"
     			    +        "'27'                  as CountryCode,"
@@ -47,8 +51,6 @@ namespace PCIBusiness
     			    +        "'4901222233334444'    as cardNumber,"
     			    +        "'082020'              as cardExpiry,"
     			    +        "'123'                 as cvv";
-			else
-    			sql = "exec sp_Get_CardToToken " + Tools.DBString(bureauCode);
 			return ProcessPayments();
 		}
 

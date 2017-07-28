@@ -31,6 +31,12 @@ namespace PCIBusiness
 		return System.Math.Round(theValue,decimalPlaces).ToString();
 	}
 
+
+	public static string BureauCode(Constants.PaymentProvider providerCode)
+	{
+		return ((short)providerCode).ToString().PadLeft(3,'0');
+	}
+
 	public static string IntToDecimal(int theValue,byte theFormat)
 	{
 		string tmp = theValue.ToString().Trim();
@@ -299,7 +305,7 @@ namespace PCIBusiness
          return str ;
 		}
 
-		public static string DBString(string str,int maxLength=0)
+		public static string DBString(string str,int maxLength=0,byte mode=0)
 		{
       // Converts a string for use in an SQL statement:
       // (1) Removes leading and trailing spaces
@@ -313,7 +319,8 @@ namespace PCIBusiness
 			str = str.Trim();
 			if ( str.ToUpper() == "NULL" ) // Leave 'NULL' unchanged, no quotes
 				return "NULL";
-			str = str.Replace("<","").Replace(">","");
+			if ( mode == 0 )
+				str = str.Replace("<","").Replace(">","");
 
 			if ( maxLength > 0 && maxLength < str.Length )
 				str = str.Substring(0,maxLength);

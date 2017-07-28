@@ -34,6 +34,31 @@ namespace PCIBusiness
 			  </form>
 			  </body></html>";
 
+		public override string ConnectionDetails(byte mode,string separator="")
+		{
+			if ( mode == 1 ) // HTML
+				return "<table>"
+					  + "<tr><td>Payment Provider</td><td style='color:red'> : Transact24</td></tr>"
+					  + "<tr><td>Status</td><td style='color:red'> : In development</td></tr>"
+					  + "<tr><td colspan='2'><hr /></td></tr>"
+					  + "<tr><td>Bureau Code</td><td> : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) + "</td></tr>"
+					  + "<tr><td>Go to URL</td><td> : " + merchantURL + "</td></tr>"
+					  + "<tr><td>Return URL</td><td> : " + returnURL + "</td></tr>"
+					  + "<tr><td>Partner Control</td><td> : " + partnerControl + "</td></tr>"
+					  + "<tr><td>Merchant Account</td><td> : " + merchantAccount + "</td></tr>"
+					  + "</table>";
+
+			if ( Tools.NullToString(separator).Length < 1 )
+				separator = Environment.NewLine;
+
+			return "Payment Provider : Transact24" + separator
+			     + "Bureau Code : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) + separator
+				  + "Go to URL : " + merchantURL + separator
+				  + "Return URL : " + returnURL + separator
+				  + "Partner Control : " + partnerControl + separator
+				  + "Merchant Account : " + merchantAccount;
+		}
+
 		public int Process(Payment payment)
 		{
 			int ret = 10;
