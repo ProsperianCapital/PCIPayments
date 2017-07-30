@@ -12,9 +12,13 @@ namespace PCIBusiness
 //		static string userID   = "Staging Enterprise Integration Store 1";
 //		static string password = "j3w8swi5";
 
-		static string url      = "https://staging.payu.co.za";
-		static string userID   = "200239";
-		static string password = "5AlTRPoD";
+//		static string url      = "https://staging.payu.co.za";
+//		static string userID   = "200239";
+//		static string password = "5AlTRPoD";
+
+		private string url;
+		private string userID;
+		private string password;
 
 		static string soapEnvelope =
 			@"<SOAP-ENV:Envelope
@@ -39,10 +43,10 @@ namespace PCIBusiness
 		{
 			if ( mode == 1 ) // HTML
 				return "<table>"
-					  + "<tr><td>Payment Provider</td><td style='color:red'> : PayU</td></tr>"
-					  + "<tr><td>Status</td><td style='color:red'> : Ready for testing</td></tr>"
+					  + "<tr><td>Payment Provider</td><td class='Red'> : PayU</td></tr>"
+					  + "<tr><td>Status</td><td class='Red'> : Ready for testing</td></tr>"
 					  + "<tr><td colspan='2'><hr /></td></tr>"
-					  + "<tr><td>Bureau Code</td><td> : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) + "</td></tr>"
+					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
 					  + "<tr><td>URL</td><td> : " + url + "</td></tr>"
 					  + "<tr><td>User ID</td><td> : " + userID + "</td></tr>"
 					  + "<tr><td>Password</td><td> : " + password + "</td></tr>"
@@ -52,7 +56,7 @@ namespace PCIBusiness
 				separator = Environment.NewLine;
 
 			return "Payment Provider : PayU" + separator
-			     + "Bureau Code : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) + separator
+			     + "Bureau Code : " + bureauCode + separator
 			     + "URL : " + url + separator
 			     + "User ID : " + userID + separator
 			     + "Password : " + password;
@@ -266,6 +270,14 @@ namespace PCIBusiness
 			XmlDocument soapEnvelopeXml = new XmlDocument();
 			soapEnvelopeXml.LoadXml(str.ToString());
 			return soapEnvelopeXml;
+		}
+
+		public TransactionPayU() : base()
+		{
+			bureauCode = Tools.BureauCode(Constants.PaymentProvider.PayU);
+			url        = Tools.ConfigValue(bureauCode+"/URL");
+			userID     = Tools.ConfigValue(bureauCode+"/UserID");
+			password   = Tools.ConfigValue(bureauCode+"/Password");
 		}
 	}
 }

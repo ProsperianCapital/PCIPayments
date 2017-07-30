@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Globalization;
+using System.Text;
 
 namespace PCIBusiness
 {
@@ -305,7 +306,7 @@ namespace PCIBusiness
          return str ;
 		}
 
-		public static string DBString(string str,int maxLength=0,byte mode=0)
+		public static string DBString(string str,byte mode=0,int maxLength=0)
 		{
       // Converts a string for use in an SQL statement:
       // (1) Removes leading and trailing spaces
@@ -321,7 +322,6 @@ namespace PCIBusiness
 				return "NULL";
 			if ( mode == 0 )
 				str = str.Replace("<","").Replace(">","");
-
 			if ( maxLength > 0 && maxLength < str.Length )
 				str = str.Substring(0,maxLength);
 
@@ -686,6 +686,64 @@ namespace PCIBusiness
 				str = str.Substring(k+1).Trim();
 			}
 			return ret + str;
+		}
+
+		public static string SQLDebug(string sql)
+		{
+			string str;
+			sql = Tools.NullToString(sql);
+			if ( sql.Length < 3 )
+			{
+				str = "Invalid SQL (" + sql + ")";
+				Tools.LogInfo("Tools.SQLDebug/1",str);
+				return str;
+			}
+
+			DBConn        conn = null;
+			StringBuilder ret  = new StringBuilder();
+
+			try
+			{
+				str = "SQL = " + sql;
+				Tools.LogInfo("Tools.SQLDebug/2",str);
+				ret.Append(str+Constants.C_HTMLBREAK());
+
+				Tools.OpenDB(ref conn);
+
+				if ( conn.Execute(sql) )
+				{
+					str = "Execution successful, column count = " + conn.ColumnCount.ToString() + ( conn.EOF ? " (NO rows)" : " (At least one row)" );
+					Tools.LogInfo("Tools.SQLDebug/3",str);
+					ret.Append(str+Constants.C_HTMLBREAK());
+
+					for ( int k = 0 ; k < conn.ColumnCount ; k++ )
+					{
+						str = "(Col " + k.ToString()
+						    + ") Name = " + conn.ColName(k)
+						    + ", Type = " + conn.ColDataType("",k)
+						    + ", Value = " + conn.ColValue(k);
+						Tools.LogInfo("Tools.SQLDebug/4",str);
+						ret.Append(str+Constants.C_HTMLBREAK());
+					}
+				}
+				else
+				{
+					str = "Execution failed";
+					Tools.LogInfo("Tools.SQLDebug/5",str);
+					ret.Append(str+Constants.C_HTMLBREAK());
+				}
+			}
+			catch (Exception ex)
+			{
+				str = "Error : " + ex.Message;
+				Tools.LogInfo("Tools.SQLDebug/6",str);
+				ret.Append(str+Constants.C_HTMLBREAK());
+			}
+			finally
+			{
+				Tools.CloseDB(ref conn);
+			}
+			return ret.ToString();
 		}
 	}
 }

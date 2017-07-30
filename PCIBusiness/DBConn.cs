@@ -254,11 +254,14 @@ namespace PCIBusiness
       return Constants.DBColumnStatus.EOF; // 2
    }
 
-   public string ColDataType(string colName)
+   public string ColDataType(string colName,int colNumber=999999)
    {
       try
       {
-         colNo = dataReader.GetOrdinal(colName);
+			if ( colName.Length < 1 && colNumber >= 0 && colNumber <= 99999 )
+				colNo = colNumber;
+			else
+				colNo = dataReader.GetOrdinal(colName);
          return dataReader.GetDataTypeName(colNo);
       }
       catch (Exception ex)

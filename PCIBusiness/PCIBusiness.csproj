@@ -8,8 +8,8 @@
     <ProjectGuid>{24BE56C3-FD48-4D4F-ABB5-9D78B3AFF620}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TOMBusiness</RootNamespace>
-    <AssemblyName>TOMBusiness</AssemblyName>
+    <RootNamespace>PCIBusiness</RootNamespace>
+    <AssemblyName>PCIBusiness</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -63,6 +63,8 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Payment.cs" />
     <Compile Include="PaymentSchedule.cs" />
+    <Compile Include="Provider.cs" />
+    <Compile Include="Providers.cs" />
     <Compile Include="StdDisposable.cs" />
     <Compile Include="SystemDetails.cs" />
     <Compile Include="Tools.cs" />

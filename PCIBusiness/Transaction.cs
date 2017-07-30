@@ -14,6 +14,7 @@ namespace PCIBusiness
 		protected string resultMsg;
 		protected string xmlSent;
 		protected string xmlReceived;
+		protected string bureauCode;
 
 		public  string  PaymentReference
 		{
@@ -39,6 +40,10 @@ namespace PCIBusiness
 		{
 			get { return Tools.NullToString(xmlReceived); }
 		}
+		public  string  BureauCode
+		{
+			get { return Tools.NullToString(bureauCode); }
+		}
 
       public abstract string ConnectionDetails(byte mode,string separator="");
 
@@ -53,6 +58,7 @@ namespace PCIBusiness
 			resultMsg   = "";
 			xmlSent     = "";
 			xmlReceived = "";
+			bureauCode  = "";
 		}
 	}
 }

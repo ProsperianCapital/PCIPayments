@@ -16,10 +16,10 @@ namespace PCIBusiness
 		{
 			if ( mode == 1 ) // HTML
 				return "<table>"
-					  + "<tr><td>Payment Provider</td><td style='color:red'> : Ikajo</td></tr>"
-					  + "<tr><td>Status</td><td style='color:red'> : In development</td></tr>"
+					  + "<tr><td>Payment Provider</td><td class='Red'> : Ikajo</td></tr>"
+					  + "<tr><td>Status</td><td class='Red'> : In development</td></tr>"
 					  + "<tr><td colspan='2'><hr /></td></tr>"
-					  + "<tr><td>Bureau Code</td><td> : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.Ikajo) + "</td></tr>"
+					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
 					  + "<tr><td>URL</td><td> : " + url + "</td></tr>"
 					  + "<tr><td>User ID</td><td> : " + userID + "</td></tr>"
 					  + "<tr><td>Password</td><td> : " + password + "</td></tr>"
@@ -29,7 +29,7 @@ namespace PCIBusiness
 				separator = Environment.NewLine;
 
 			return "Payment Provider : Ikajo" + separator
-			     + "Bureau Code : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.Ikajo) + separator
+			     + "Bureau Code : " + bureauCode + separator
 			     + "URL : " + url + separator
 			     + "User ID : " + userID + separator
 			     + "Password : " + password;
@@ -39,6 +39,11 @@ namespace PCIBusiness
 		public int Process(Payment payment)
 		{
 			return 0;
+		}
+
+		public TransactionIkajo() : base()
+		{
+			bureauCode = Tools.BureauCode(Constants.PaymentProvider.Ikajo);
 		}
 	}
 }

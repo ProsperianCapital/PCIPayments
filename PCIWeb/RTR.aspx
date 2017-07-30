@@ -30,13 +30,15 @@
 		<asp:ListItem Value="034" Text="Transact24"></asp:ListItem>
 	</asp:DropDownList>
 	<br /><br />
-	<asp:Button runat="server" ID="btnProcess1" CssClass="Button" onclick="btnProcess1_Click" Text="Get Tokens" />&nbsp;
-	<asp:Button runat="server" ID="btnProcess2" CssClass="Button" onclick="btnProcess2_Click" Text="Process Payments" />&nbsp;
-	<asp:Button runat="server" ID="btnTest"     CssClass="Button" onclick="btnConfig_Click"   Text="Show Config" Visible="false" />
-	<p>
-	<asp:Literal runat="server" ID="lblConfig"></asp:Literal>
-	<asp:Label runat="server" ID="lblError" CssClass="Error"></asp:Label>
+	<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" onclick="btnProcess1_Click" Text="Get Tokens" />&nbsp;
+	<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" onclick="btnProcess2_Click" Text="Process Payments" />&nbsp;
+	<asp:Button  runat="server" ID="btnTest1"    CssClass="Button" onclick="btnConfig_Click"   Text="Show Config" Visible="false" />
+	<asp:Button  runat="server" ID="btnTest2"    CssClass="Button" onclick="btnSQL_Click"      Text="Test SQL ..." />
+	<asp:TextBox runat="server" ID="txtTest" Width="560px"></asp:TextBox>
 	</p>
+	<hr />
+	<asp:Literal runat="server" ID="lblTest"></asp:Literal>
+	<asp:Label runat="server" ID="lblError" CssClass="Error"></asp:Label>
 	<p class="Footer">
 	&nbsp;Phone +230 404 8000&nbsp; | &nbsp;Email <a href="mailto:info@prosperian.mu">Info@prosperian.mu</a>
 	<span style="float:right;margin-right:5px"><asp:Literal runat="server" ID="lblVersion"></asp:Literal></span>

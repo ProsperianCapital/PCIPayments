@@ -35,6 +35,23 @@ namespace PCIBusiness
 
 		public abstract void LoadData(DBConn dbConn);
 
+//		protected void ExecuteSQLDebug()
+//		{
+//			Tools.LogInfo("SQLDebug/1","SQL = "+sql);
+//			if ( ExecuteSQL(null,false) == 0 )
+//			{
+//				Tools.LogInfo("SQLDebug/2","Execution successful, column count = " + dbConn.ColumnCount.ToString());
+//				for ( int k = 0 ; k < dbConn.ColumnCount ; k++ )
+//					Tools.LogInfo("SQLDebug/3","(Col " + k.ToString()
+//						                     + ") Name = " + dbConn.ColName(k)
+//						                     + ", Type = " + dbConn.ColDataType(dbConn.ColName(k))
+//						                     + ", Value = " + dbConn.ColValue(k));
+//			}
+//			else
+//				Tools.LogInfo("SQLDebug/4","Execution failed, return code = " + returnCode.ToString());
+//			Tools.CloseDB(ref dbConn);
+//		}
+
 		protected int ExecuteSQLUpdate(bool closeConnection=true,bool getReturnCodes=true)
 		{
 			if ( ExecuteSQL(null) == 0 && getReturnCodes )

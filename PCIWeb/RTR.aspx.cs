@@ -2,6 +2,7 @@ using System;
 using System.Configuration;
 using System.Text;
 using System.Web.UI.WebControls;
+using PCIBusiness;
 
 namespace PCIWeb
 {
@@ -9,7 +10,7 @@ namespace PCIWeb
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			lblConfig.Text  = "";
+			lblTest.Text    = "";
 			lblError.Text   = "";
 			ProviderDetails();
 
@@ -31,42 +32,39 @@ namespace PCIWeb
 				{
 					k = x.ToUpper().IndexOf("SERVER=");
 					if ( k >= 0 )
-						lblSQLServer.Text = x.Substring(k+7);
-					else
 					{
-						k = x.ToUpper().IndexOf("DATABASE=");
-						if ( k >= 0 )
-							lblSQLDB.Text = x.Substring(k+9);
-						else
-						{
-							k = x.ToUpper().IndexOf("UID=");
-							if ( k >= 0 )
-								lblSQLUser.Text = x.Substring(k+4);
-						}
+						lblSQLServer.Text = x.Substring(k+7);
+						continue;
 					}
+					k = x.ToUpper().IndexOf("DATABASE=");
+					if ( k >= 0 )
+					{
+						lblSQLDB.Text = x.Substring(k+9);
+						continue;
+					}
+					k = x.ToUpper().IndexOf("UID=");
+					if ( k >= 0 )
+						lblSQLUser.Text = x.Substring(k+4);
 				}
 				if ( PCIBusiness.Tools.OpenDB(ref conn) )
 					lblSQLStatus.Text = "Connected";
 				else
-					lblSQLStatus.Text = "<span style='color:red'>Cannot connect</span>";
+					lblSQLStatus.Text = "<span class='Red'>Cannot connect</span>";
 				PCIBusiness.Tools.CloseDB(ref conn);
+				conn = null;
 			}			
 		}
 
 		private void ProviderDetails()
 		{
-			PCIBusiness.Transaction H = null;
 			if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) )
-				H = new PCIBusiness.TransactionPayU();
+				lblProvider.Text = (new PCIBusiness.TransactionPayU()).ConnectionDetails(1);
 			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) )
-				H = new PCIBusiness.TransactionT24();
+				lblProvider.Text = (new PCIBusiness.TransactionT24()).ConnectionDetails(1);
 			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.Ikajo) )
-				H = new PCIBusiness.TransactionIkajo();
-			if ( H == null )
-				lblProvider.Text = "";
+				lblProvider.Text = (new PCIBusiness.TransactionIkajo()).ConnectionDetails(1);
 			else
-				lblProvider.Text = H.ConnectionDetails(1);
-			H = null;
+				lblProvider.Text = "";
 		}
 
 		protected void btnProcess1_Click(Object sender, EventArgs e)
@@ -100,6 +98,11 @@ namespace PCIWeb
 			}
 		}
 
+		protected void btnSQL_Click(Object sender, EventArgs e)
+		{
+			lblTest.Text = Tools.SQLDebug(txtTest.Text);
+		}
+
 		protected void btnConfig_Click(Object sender, EventArgs e)
 		{
 			try
@@ -116,7 +119,7 @@ namespace PCIWeb
 				               + "Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />";
 				System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["TestDB"];
 				folder         = folder + "DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<br />";
-				lblConfig.Text = folder;
+				lblTest.Text   = folder;
 			}
 			catch (Exception ex)
 			{

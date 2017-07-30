@@ -6,23 +6,23 @@ namespace PCIBusiness
 	public class PaymentSchedule : BaseList
 	{
 		private string bureauCode;
-        private int    success;
-        private int    fail;
+		private int    success;
+		private int    fail;
 
 		public override BaseData NewItem()
 		{
 			return (BaseData)(new Object());
 		}
 
-        public int CountSucceeded
-        {
-            get { return success; }
-        }
+		public int CountSucceeded
+		{
+			 get { return success; }
+		}
 
-        public int CountFailed
-        {
-            get { return fail; }
-        }
+		public int CountFailed
+		{
+			get { return fail; }
+		}
 
 		public int ProcessCards(string bureau,byte mode=0)
 		{

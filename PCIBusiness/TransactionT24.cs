@@ -38,10 +38,10 @@ namespace PCIBusiness
 		{
 			if ( mode == 1 ) // HTML
 				return "<table>"
-					  + "<tr><td>Payment Provider</td><td style='color:red'> : Transact24</td></tr>"
-					  + "<tr><td>Status</td><td style='color:red'> : In development</td></tr>"
+					  + "<tr><td>Payment Provider</td><td class='Red'> : Transact24</td></tr>"
+					  + "<tr><td>Status</td><td class='Red'> : In development</td></tr>"
 					  + "<tr><td colspan='2'><hr /></td></tr>"
-					  + "<tr><td>Bureau Code</td><td> : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) + "</td></tr>"
+					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
 					  + "<tr><td>Go to URL</td><td> : " + merchantURL + "</td></tr>"
 					  + "<tr><td>Return URL</td><td> : " + returnURL + "</td></tr>"
 					  + "<tr><td>Partner Control</td><td> : " + partnerControl + "</td></tr>"
@@ -52,7 +52,7 @@ namespace PCIBusiness
 				separator = Environment.NewLine;
 
 			return "Payment Provider : Transact24" + separator
-			     + "Bureau Code : " + PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) + separator
+			     + "Bureau Code : " + bureauCode + separator
 				  + "Go to URL : " + merchantURL + separator
 				  + "Return URL : " + returnURL + separator
 				  + "Partner Control : " + partnerControl + separator
@@ -153,5 +153,11 @@ namespace PCIBusiness
 				hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(x));
 			return System.Text.Encoding.UTF8.GetString(hash);
 		}
+
+		public TransactionT24() : base()
+		{
+			bureauCode = Tools.BureauCode(Constants.PaymentProvider.T24);
+		}
+
 	}
 }

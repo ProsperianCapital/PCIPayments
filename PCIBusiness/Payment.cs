@@ -5,107 +5,108 @@ namespace PCIBusiness
 {
 	public class Payment : BaseData
 	{
-//		private int     paymentCode;
-//		private int     paymentAuditCode;
-		private string  merchantReference;
-		private string  safeKey;
-		private string  merchantUserId;
-		private string  countryCode;
-		private string  email;
-		private string  firstName;
-		private string  lastName;
-		private string  phoneCell;
-		private string  regionalId;
-		private int     paymentAmount;
-		private byte    paymentStatus;
-		private string  paymentToken;
-		private string  paymentDescription;
-		private string  currencyCode;
-		private string  ccNumber;
-		private byte    ccType;
-		private string  ccExpiry;
-		private string  ccName;
-		private string  ccCVV;
-		private string  bureauCode;
-//		private int     providerCode;
+//		private int      paymentCode;
+//		private int      paymentAuditCode;
+		private string   merchantReference;
+		private string   safeKey;
+		private string   merchantUserId;
+		private string   countryCode;
+		private string   email;
+		private string   firstName;
+		private string   lastName;
+		private string   phoneCell;
+		private string   regionalId;
+		private int      paymentAmount;
+		private byte     paymentStatus;
+		private string   paymentToken;
+		private string   paymentDescription;
+		private string   currencyCode;
+		private string   ccNumber;
+		private byte     ccType;
+		private string   ccExpiry;
+		private string   ccName;
+		private string   ccCVV;
+		private string   bureauCode;
 
-//		public  int     PaymentCode
+		private Provider provider;
+
+//		public  int      PaymentCode
 //		{
-//			get { return paymentCode; }
+//			get { return  paymentCode; }
 //		}
-//		public  int     PaymentAuditCode
+//		public  int      PaymentAuditCode
 //		{
-//			get { return paymentAuditCode; }
+//			get { return  paymentAuditCode; }
 //		}
-		public string   MerchantReference
+		public string    MerchantReference
 		{
-			get { return Tools.NullToString(merchantReference); }
+			get { return  Tools.NullToString(merchantReference); }
 		}
-		public string   MerchantUserId
+		public string    MerchantUserId
 		{
-			get { return Tools.NullToString(merchantUserId); }
+			get { return  Tools.NullToString(merchantUserId); }
 		}
-		public string   CountryCode
+		public string    CountryCode
 		{
-			get { return Tools.NullToString(countryCode); }
+			get { return  Tools.NullToString(countryCode); }
 		}
-		public string   CurrencyCode
+		public string    CurrencyCode
 		{
-			get { return Tools.NullToString(currencyCode); }
+			get { return  Tools.NullToString(currencyCode); }
 		}
-		public string   PaymentDescription
+		public string    PaymentDescription
 		{
-			get { return Tools.NullToString(paymentDescription); }
+			get { return  Tools.NullToString(paymentDescription); }
 		}
-		public string   SafeKey
+		public string    SafeKey
 		{
-			get { return Tools.NullToString(safeKey); }
+			get { return  Tools.NullToString(safeKey); }
 		}
-		public string   FirstName
+		public string    FirstName
 		{
-			get { return Tools.NullToString(firstName); }
+			get { return  Tools.NullToString(firstName); }
 		}
-		public string   LastName
+		public string    LastName
 		{
-			get { return Tools.NullToString(lastName); }
+			get { return  Tools.NullToString(lastName); }
 		}
-		public string   EMail
+		public string    EMail
 		{
-			get { return Tools.NullToString(email); }
+			get { return  Tools.NullToString(email); }
 		}
-		public string   PhoneCell
+		public string    PhoneCell
 		{
-			get { return Tools.NullToString(phoneCell); }
+			get { return  Tools.NullToString(phoneCell); }
 		}
-		public string   RegionalId
+		public string    RegionalId
 		{
-			get { return Tools.NullToString(regionalId); }
+			get { return  Tools.NullToString(regionalId); }
 		}
-		public  int     PaymentAmount
+		public  int      PaymentAmount
 		{
-			get { return paymentAmount; }
+			get { return  paymentAmount; }
 		}
-		public  byte    PaymentStatus
+		public  byte     PaymentStatus
 		{
-			get { return paymentStatus; }
+			get { return  paymentStatus; }
 		}
-		public  string  PaymentToken
+		public  string   PaymentToken
 		{
-			get { return Tools.NullToString(paymentToken); }
+			get { return  Tools.NullToString(paymentToken); }
 		}
-		public  byte    CardType
+		public  byte     CardType
 		{
-			get { return ccType; }
+			get { return  ccType; }
 		}
-		public  string  CardNumber
+		public  string   CardNumber
 		{
-			get { return Tools.NullToString(ccNumber); }
+			get { return  Tools.NullToString(ccNumber); }
 		}
-		public  string  CardExpiry
+		public  string   CardExpiry
 		{
-			get { return Tools.NullToString(ccExpiry); }
+			get { return  Tools.NullToString(ccExpiry); }
 		}
-		public  string  CardExpiryMonth
+		public  string   CardExpiryMonth
 		{
 			get
 			{
@@ -114,7 +115,7 @@ namespace PCIBusiness
 				return "";
 			}
 		}
-		public  string  CardExpiryYYYY // 4 digits
+		public  string   CardExpiryYYYY // 4 digits
 		{
 			get
 			{
@@ -123,7 +124,7 @@ namespace PCIBusiness
 				return "";
 			}
 		}
-		public  string  CardExpiryYY // 2 digits
+		public  string   CardExpiryYY // 2 digits
 		{
 			get
 			{
@@ -132,23 +133,21 @@ namespace PCIBusiness
 				return "";
 			}
 		}
-		public  string  CardName
+		public  string   CardName
 		{
-			get { return Tools.NullToString(ccName); }
+			get { return  Tools.NullToString(ccName); }
 		}
-		public  string  CardCVV
+		public  string   CardCVV
 		{
-			get { return Tools.NullToString(ccCVV); }
+			get { return  Tools.NullToString(ccCVV); }
+		}
+		public Provider  Provider
+		{
+			get { return  provider; }
 		}
 
 		public int Process()
 		{
-//			if ( paymentAuditCode < 1 || paymentCode < 1 )
-//			{
-//				Tools.LogException("Payment.Process/1","Invalid payment code and/or audit code");
-//				return 64010;
-//			}
-
 			int ret = 64020;
 			sql     = "";
 			Tools.LogInfo("Payment.Process/2","Start processing MerchantReference=" + merchantReference,10);
@@ -206,9 +205,9 @@ namespace PCIBusiness
 
 		//	These are SQL parameters that will be used in stored proc "sp_Upd_CardTokenVault"
 
-			sql = ",@PaymentBureauToken = " + Tools.DBString(transaction.PaymentToken)
+			sql = ",@PaymentBureauToken = "   + Tools.DBString(transaction.PaymentToken)
 			    + ",@BureauSubmissionSoap = " + Tools.DBString(transaction.XMLSent,3)
-			    + ",@BureauResultSoap = " + Tools.DBString(transaction.XMLReceived,3);
+			    + ",@BureauResultSoap = "     + Tools.DBString(transaction.XMLReceived,3);
 
 			transaction = null;
 			return ret;
@@ -251,9 +250,17 @@ namespace PCIBusiness
 			ccCVV              = dbConn.ColString("cvv");
 		}
 
+		public override void CleanUp()
+		{
+			provider = null;
+		}
+
 		public Payment(string bureau)
 		{
 			bureauCode = Tools.NullToString(bureau);
+		//	Load provider info here ... it will be passed to the Transaction
+		//	if ( bureauCode.Length > 0 )
+		//		provider = (new Providers()).LoadOne(bureauCode);
 		}
 	}
 }
