@@ -16,9 +16,9 @@ namespace PCIBusiness
 //		static string userID   = "200239";
 //		static string password = "5AlTRPoD";
 
-		private string url;
-		private string userID;
-		private string password;
+//		private string url;
+//		private string userID;
+//		private string password;
 
 		static string soapEnvelope =
 			@"<SOAP-ENV:Envelope
@@ -47,19 +47,19 @@ namespace PCIBusiness
 					  + "<tr><td>Status</td><td class='Red'> : Ready for testing</td></tr>"
 					  + "<tr><td colspan='2'><hr /></td></tr>"
 					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
-					  + "<tr><td>URL</td><td> : " + url + "</td></tr>"
-					  + "<tr><td>User ID</td><td> : " + userID + "</td></tr>"
-					  + "<tr><td>Password</td><td> : " + password + "</td></tr>"
+//					  + "<tr><td>URL</td><td> : " + url + "</td></tr>"
+//					  + "<tr><td>User ID</td><td> : " + userID + "</td></tr>"
+//					  + "<tr><td>Password</td><td> : " + password + "</td></tr>"
 					  + "</table>";
 
 			if ( Tools.NullToString(separator).Length < 1 )
 				separator = Environment.NewLine;
 
 			return "Payment Provider : PayU" + separator
-			     + "Bureau Code : " + bureauCode + separator
-			     + "URL : " + url + separator
-			     + "User ID : " + userID + separator
-			     + "Password : " + password;
+			     + "Bureau Code : " + bureauCode;
+//			     + "URL : " + url + separator
+//			     + "User ID : " + userID + separator
+//			     + "Password : " + password;
 		}
 
 
@@ -119,7 +119,7 @@ namespace PCIBusiness
 			              + "<cardExpiry>" + payment.CardExpiry + "</cardExpiry>"
 			              + "<cvv>" + payment.CardCVV + "</cvv>";
 				xmlSent = xmlSent
-			            + "</Creditcard>"
+				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
 				Tools.LogInfo("TransactionPayU.Process/20","XML = " + xmlSent,100);
@@ -133,13 +133,16 @@ namespace PCIBusiness
 				XmlNamespaceManager mgr = new XmlNamespaceManager(soapEnvelopeXml.NameTable);
 				mgr.AddNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
 				XmlNode userName        = soapEnvelopeXml.SelectSingleNode("//wsse:Username",mgr);
-				userName.InnerText      = userID;
+				userName.InnerText      = payment.UserID;
 				XmlNode userPassword    = soapEnvelopeXml.SelectSingleNode("//wsse:Password",mgr);
-				userPassword.InnerText  = password;
+				userPassword.InnerText  = payment.Password;
 
 			// Construct web request object
+				Tools.LogInfo("TransactionPayU.Process/25","URL = " + payment.URL+"/service/PayUAPI?wsdl"
+					                                    + ", UserID = "+payment.UserID
+					                                    + ", Password = "+payment.Password,100);
 				ret = 40;
-				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url+"/service/PayUAPI?wsdl");
+				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(payment.URL+"/service/PayUAPI?wsdl");
 				webRequest.Headers.Add(@"SOAP:Action");
 				webRequest.ContentType = "text/xml;charset=\"utf-8\"";
 				webRequest.Accept      = "text/xml";
@@ -181,11 +184,11 @@ namespace PCIBusiness
 			}
 			catch (Exception ex)
 			{
-				Tools.LogInfo("TransactionPayU.Process/500","Ret="+ret.ToString()+" / "+xmlSent,100);
-				Tools.LogException("TransactionPayU.Process/510","Ret="+ret.ToString()+" / "+xmlSent,ex);
+				Tools.LogInfo("TransactionPayU.Process/85","Ret="+ret.ToString()+" / "+xmlSent,100);
+				Tools.LogException("TransactionPayU.Process/90","Ret="+ret.ToString()+" / "+xmlSent,ex);
 			}
 
-			Tools.LogInfo("TransactionPayU.Process/520","Ret="+ret.ToString(),100);
+			Tools.LogInfo("TransactionPayU.Process/95","Ret="+ret.ToString(),100);
 			return ret;
 		}
 
@@ -275,9 +278,9 @@ namespace PCIBusiness
 		public TransactionPayU() : base()
 		{
 			bureauCode = Tools.BureauCode(Constants.PaymentProvider.PayU);
-			url        = Tools.ConfigValue(bureauCode+"/URL");
-			userID     = Tools.ConfigValue(bureauCode+"/UserID");
-			password   = Tools.ConfigValue(bureauCode+"/Password");
+//			url        = Tools.ConfigValue(bureauCode+"/URL");
+//			userID     = Tools.ConfigValue(bureauCode+"/UserID");
+//			password   = Tools.ConfigValue(bureauCode+"/Password");
 		}
 	}
 }

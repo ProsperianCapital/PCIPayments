@@ -8,7 +8,6 @@ namespace PCIBusiness
 //		private int      paymentCode;
 //		private int      paymentAuditCode;
 		private string   merchantReference;
-		private string   safeKey;
 		private string   merchantUserId;
 		private string   countryCode;
 		private string   email;
@@ -28,16 +27,42 @@ namespace PCIBusiness
 		private string   ccCVV;
 		private string   bureauCode;
 
+		private string   safeKey;
+		private string   userID;
+		private string   password;
+		private string   url;
+
 		private Provider provider;
 
-//		public  int      PaymentCode
-//		{
-//			get { return  paymentCode; }
-//		}
-//		public  int      PaymentAuditCode
-//		{
-//			get { return  paymentAuditCode; }
-//		}
+//		Payment Provider stuff
+		public string    SafeKey
+		{
+			get { return  Tools.NullToString(safeKey); }
+		}
+		public string    UserID
+		{
+			get { return  Tools.NullToString(userID); }
+		}
+		public string    Password
+		{
+			get { return  Tools.NullToString(password); }
+		}
+		public string    URL
+		{
+		//	get { return  Tools.NullToString(url); }
+			get
+			{
+				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
+					return "https://www.payu.co.za";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
+					return "";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
+					return "";
+				return "";
+			}
+		}
+
+//		Payment/Customer stuff
 		public string    MerchantReference
 		{
 			get { return  Tools.NullToString(merchantReference); }
@@ -57,10 +82,6 @@ namespace PCIBusiness
 		public string    PaymentDescription
 		{
 			get { return  Tools.NullToString(paymentDescription); }
-		}
-		public string    SafeKey
-		{
-			get { return  Tools.NullToString(safeKey); }
 		}
 		public string    FirstName
 		{
@@ -230,8 +251,13 @@ namespace PCIBusiness
 		//	ccCVV             = dbConn.ColString("CreditCardCVV");
 		//	providerCode      = dbConn.ColLong  ("ProviderCode");
 
-		//	Prosperian
+		//	Payment Provider
 			safeKey            = dbConn.ColString("Safekey");
+			userID             = dbConn.ColString("MerchantUserId");
+			password           = dbConn.ColString("MerchantUserPassword");
+		//	url                = dbConn.ColString("URL");
+
+		//	Payment/Customer
 			merchantUserId     = dbConn.ColString("MerchantUserId");
 			countryCode        = dbConn.ColString("CountryCode");
 			email              = dbConn.ColString("email");
