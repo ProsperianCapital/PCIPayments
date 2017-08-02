@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml;
+
 
 namespace PCIBusiness
 {
@@ -13,8 +11,9 @@ namespace PCIBusiness
 		protected string resultCode;
 		protected string resultMsg;
 		protected string xmlSent;
-		protected string xmlReceived;
+//		protected string xmlReceived;
 		protected string bureauCode;
+		protected XmlDocument xmlResult;
 
 		public  string  PaymentReference
 		{
@@ -32,23 +31,25 @@ namespace PCIBusiness
 		{
 			get { return Tools.NullToString(resultMsg); }
 		}
-		public  string  XMLSent
+		public  string      XMLSent
 		{
-			get { return Tools.NullToString(xmlSent); }
+			get { return     Tools.NullToString(xmlSent); }
 		}
-		public  string  XMLReceived
+		public  XmlDocument XMLResult
 		{
-			get { return Tools.NullToString(xmlReceived); }
+			get { return     xmlResult; }
 		}
-		public  string  BureauCode
+		public  string      BureauCode
 		{
-			get { return Tools.NullToString(bureauCode); }
+			get { return     Tools.NullToString(bureauCode); }
 		}
 
       public abstract string ConnectionDetails(byte mode,string separator="");
 
       public override void Close()
-		{ }
+		{
+			xmlResult = null;
+		}
 
 		public Transaction()
 		{
@@ -57,7 +58,6 @@ namespace PCIBusiness
 			resultCode  = "";
 			resultMsg   = "";
 			xmlSent     = "";
-			xmlReceived = "";
 			bureauCode  = "";
 		}
 	}

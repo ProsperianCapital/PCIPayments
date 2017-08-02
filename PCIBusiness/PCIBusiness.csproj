@@ -62,7 +62,7 @@
     <Compile Include="BaseList.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Payment.cs" />
-    <Compile Include="PaymentSchedule.cs" />
+    <Compile Include="Payments.cs" />
     <Compile Include="Provider.cs" />
     <Compile Include="Providers.cs" />
     <Compile Include="StdDisposable.cs" />

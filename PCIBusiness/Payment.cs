@@ -167,14 +167,19 @@ namespace PCIBusiness
 			get { return  provider; }
 		}
 
-		public int Process()
+		public int ProcessPayment()
+		{
+			return 0;
+		}
+
+		public int GetToken()
 		{
 			int ret = 64020;
 			sql     = "";
-			Tools.LogInfo("Payment.Process/2","Start processing MerchantReference=" + merchantReference,10);
+			Tools.LogInfo("Payment.GetToken/10","Start, Merchant Reference=" + merchantReference,10);
 
 			if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-				ret = ProcessPayU();
+				ret = GetTokenPayU();
 			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
 				ret = ProcessIkajo();
 			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
@@ -182,18 +187,15 @@ namespace PCIBusiness
 
 			if ( sql.Length > 3 )
 			{
-//				sql = "exec PaymentUpdate " + paymentAuditCode.ToString()
-//			                         + "," + paymentCode.ToString()
-//											 + "," + sql;
 				sql = "exec sp_Upd_CardTokenVault @MerchantReference = " + Tools.DBString(merchantReference) // nvarchar(20),
 					                           + ",@PaymentBureauCode = " + Tools.DBString(bureauCode)        // char(3),
 			                                 + ",@CardTokenisationStatusCode = '" + ( ret == 0 ? "007'" : "001'" )
 			                                 + sql;
 				int k = ExecuteSQLUpdate();
-				Tools.LogInfo("Payment.Process/3","SQL : " + sql + " (Return code " + k.ToString() + ")",10);
+				Tools.LogInfo("Payment.GetToken/20","SQL : " + sql + " (Return code " + k.ToString() + ")",10);
 			}
 
-			Tools.LogInfo("Payment.Process/4","End processing Merchant Reference=" + merchantReference + ", Ret=" + ret.ToString(),10);
+			Tools.LogInfo("Payment.GetToken/30","End, Merchant Reference=" + merchantReference + ", Ret=" + ret.ToString(),10);
 			return ret;
 		}
 
@@ -217,18 +219,18 @@ namespace PCIBusiness
 			return 0;
 		}
 
-		private int ProcessPayU()
+		private int GetTokenPayU()
 		{
-			Tools.LogInfo("Payment.ProcessPayU","Merchant Reference = " + merchantReference,100);
+			Tools.LogInfo("Payment.GetTokenPayU","Merchant Reference = " + merchantReference,100);
 
 			TransactionPayU transaction = new TransactionPayU();
-			int             ret         = transaction.Process(this);
+			int             ret         = transaction.GetToken(this);
 
 		//	These are SQL parameters that will be used in stored proc "sp_Upd_CardTokenVault"
 
 			sql = ",@PaymentBureauToken = "   + Tools.DBString(transaction.PaymentToken)
 			    + ",@BureauSubmissionSoap = " + Tools.DBString(transaction.XMLSent,3)
-			    + ",@BureauResultSoap = "     + Tools.DBString(transaction.XMLReceived,3);
+			    + ",@BureauResultSoap = "     + Tools.DBString(transaction.XMLResult.ToString(),3);
 
 			transaction = null;
 			return ret;

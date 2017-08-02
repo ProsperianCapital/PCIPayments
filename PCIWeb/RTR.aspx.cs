@@ -84,10 +84,10 @@ namespace PCIWeb
 				string provider = lstProvider.SelectedValue;
 				PCIBusiness.Tools.LogInfo("RTR.Process/5","Started, provider '" + provider + "'");
 
-				using (PCIBusiness.PaymentSchedule paymentSchedule = new PCIBusiness.PaymentSchedule())
+				using (PCIBusiness.Payments payments = new PCIBusiness.Payments())
 				{
-					int k         = paymentSchedule.ProcessCards(provider,mode);
-					lblError.Text = k.ToString() + " payment(s) completed : " + paymentSchedule.CountSucceeded.ToString() + " succeeded, " + paymentSchedule.CountFailed.ToString() + " failed";
+					int k         = payments.ProcessCards(provider,mode);
+					lblError.Text = k.ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed";
 				//	paymentSchedule.ProcessTokens(provider,mode);
 				}
 				PCIBusiness.Tools.LogInfo("RTR.Process/10","Finished");

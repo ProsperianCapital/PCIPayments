@@ -67,15 +67,172 @@ namespace PCIBusiness
 		{
 			get { return Tools.NullToString(resultSuccessful).ToUpper() == "TRUE"; }
 		}
-
-		public int Process(Payment payment)
+				
+		private int SendXML(string url,string userID,string password)
 		{
-			int ret     = 10;
-			xmlSent     = "";
-			xmlReceived = "";
-			payRef      = "";
+			int    ret         = 10;
+			string xmlReceived = "";
+			payRef             = "";
 
-			Tools.LogInfo("TransactionPayU.Process/10","Started ... " + payment.MerchantReference,100);
+			try
+			{
+				Tools.LogInfo("TransactionPayU.SendXML/10","XML = " + xmlSent,100);
+
+			// Construct soap object
+				ret = 20;
+				XmlDocument soapEnvelopeXml = CreateSoapEnvelope(xmlSent);
+
+			// Create username and password namespace
+				ret = 30;
+				XmlNamespaceManager mgr = new XmlNamespaceManager(soapEnvelopeXml.NameTable);
+				mgr.AddNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
+				XmlNode userName        = soapEnvelopeXml.SelectSingleNode("//wsse:Username",mgr);
+				userName.InnerText      = userID;
+				XmlNode userPassword    = soapEnvelopeXml.SelectSingleNode("//wsse:Password",mgr);
+				userPassword.InnerText  = password;
+
+			// Construct web request object
+				Tools.LogInfo("TransactionPayU.SendXML/30","URL = " + url + "/service/PayUAPI?wsdl"
+					                                    + ", UserID = " + userID
+					                                    + ", Password = " + password,100);
+				ret = 40;
+				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url+"/service/PayUAPI?wsdl");
+				webRequest.Headers.Add(@"SOAP:Action");
+				webRequest.ContentType = "text/xml;charset=\"utf-8\"";
+				webRequest.Accept      = "text/xml";
+				webRequest.Method      = "POST";
+
+			// Insert soap envelope into web request
+				ret = 50;
+				using (Stream stream = webRequest.GetRequestStream())
+					soapEnvelopeXml.Save(stream);
+
+			// Get the PayU reference number from the completed web request.
+				ret = 60;
+
+				using (WebResponse webResponse = webRequest.GetResponse())
+					using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
+					{
+						xmlReceived = rd.ReadToEnd();
+					}
+
+				Tools.LogInfo("TransactionPayU.SendXML/40","XML Received = " + xmlReceived,100);
+
+			// Create an empty soap result object
+				ret       = 70;
+				xmlResult = new XmlDocument();
+				xmlResult.LoadXml(xmlReceived.ToString());
+
+//			//	Get data from result XML
+				ret              = 80;
+				resultSuccessful = Tools.XMLNode(xmlResult,"successful");
+				resultCode       = Tools.XMLNode(xmlResult,"resultCode");
+				resultMsg        = Tools.XMLNode(xmlResult,"resultMessage");
+//				payRef           = Tools.XMLNode(xmlResult,"payUReference");
+//				payToken         = Tools.XMLNode(xmlResult,"pmId");
+
+				if ( Successful )
+					return 0;
+			}
+			catch (Exception ex)
+			{
+				Tools.LogInfo("TransactionPayU.SendXML/85","Ret="+ret.ToString()+" / "+xmlSent,100);
+				Tools.LogException("TransactionPayU.SendXML/90","Ret="+ret.ToString()+" / "+xmlSent,ex);
+			}
+
+			Tools.LogInfo("TransactionPayU.SendXML/95","Ret="+ret.ToString(),100);
+			return ret;
+		}
+
+		public int GetToken(Payment payment)
+		{
+			int ret = 300;
+			xmlSent = "";
+
+			Tools.LogInfo("TransactionPayU.GetToken/10","Started ... " + payment.MerchantReference,100);
+
+			try
+			{
+				xmlSent = "<ns1:doTransaction>"
+				        + "<Safekey>" + payment.SafeKey + "</Safekey>"
+				        + "<Api>ONE_ZERO</Api>"
+				        + "<TransactionType>RESERVE</TransactionType>"
+				        + "<AuthenticationType>NA</AuthenticationType>"
+				        + "<Customfield>"
+				        +   "<key>processingType</key>"
+				        +   "<value>REAL_TIME_RECURRING</value>"
+				        + "</Customfield>"
+				        + "<AdditionalInformation>"
+				        +   "<storePaymentMethod>true</storePaymentMethod>"
+				        +   "<secure3d>false</secure3d>"
+				        +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
+				        + "</AdditionalInformation>"
+				        + "<Customer>"
+				        +   "<merchantUserId>" + payment.MerchantUserId + "</merchantUserId>"
+				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
+				        +   "<email>" + payment.EMail + "</email>"
+				        +   "<firstName>" + payment.FirstName + "</firstName>"
+				        +   "<lastName>" + payment.LastName + "</lastName>"
+				        +   "<mobile>" + payment.PhoneCell + "</mobile>"
+				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
+				        + "</Customer>"
+				        + "<Basket>"
+				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+				        +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+				        +	"<description>" + payment.PaymentDescription + "</description>"
+				        + "</Basket>"
+				        + "<Creditcard>"
+				        +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
+				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+			           +    "<cardNumber>" + payment.CardNumber + "</cardNumber>"
+			           +    "<cardExpiry>" + payment.CardExpiry + "</cardExpiry>"
+			           +    "<cvv>" + payment.CardCVV + "</cvv>"
+				        + "</Creditcard>"
+				        + "</ns1:doTransaction>";
+
+				ret = SendXML(payment.URL,payment.UserID,payment.Password);
+				if ( ret > 0 )
+					return ret;
+
+				payRef   = Tools.XMLNode(xmlResult,"PayUReference");
+				payToken = Tools.XMLNode(xmlResult,"pmId");
+
+				Tools.LogInfo("TransactionPayU.GetToken/20","PayURef=" + payRef + ", pmId=" + payToken,100);
+
+				xmlSent  = "<ns1:doTransaction>"
+				         + "<Safekey>" + payment.SafeKey + "</Safekey>"
+				         + "<Api>ONE_ZERO</Api>"
+				         + "<TransactionType>RESERVE_CANCEL</TransactionType>"
+				         + "<AdditionalInformation>"
+				         +   "<secure3d>false</secure3d>"
+				         +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
+				         +   "<PayUReference>" + payRef + "</PayUReference>"
+				         + "</AdditionalInformation>"
+				         + "<Basket>"
+				         +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+				         +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+				         + "</Basket>"
+				         + "</ns1:doTransaction>";
+
+				return SendXML(payment.URL,payment.UserID,payment.Password);
+			}
+			catch (Exception ex)
+			{
+				Tools.LogInfo("TransactionPayU.GetToken/85","Ret="+ret.ToString()+" / "+xmlSent,100);
+				Tools.LogException("TransactionPayU.GetToken/90","Ret="+ret.ToString()+" / "+xmlSent,ex);
+			}
+
+			Tools.LogInfo("TransactionPayU.GetToken/95","Ret="+ret.ToString(),100);
+			return ret;
+		}
+
+
+		public int ProcessPayment(Payment payment)
+		{
+			int ret = 600;
+			xmlSent = "";
+
+			Tools.LogInfo("TransactionPayU.ProcessPayment/10","Started ... " + payment.MerchantReference,100);
 
 			try
 			{
@@ -109,86 +266,23 @@ namespace PCIBusiness
 				        + "</Basket>"
 				        + "<Creditcard>"
 				        +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
-				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>";
-				if ( payment.PaymentToken.Length > 1 ) // Card is tokenized
-					xmlSent = xmlSent
-						     + "<pmId>" + payment.PaymentToken + "</pmId>";
-				else
-					xmlSent = xmlSent
-			              + "<cardNumber>" + payment.CardNumber + "</cardNumber>"
-			              + "<cardExpiry>" + payment.CardExpiry + "</cardExpiry>"
-			              + "<cvv>" + payment.CardCVV + "</cvv>";
-				xmlSent = xmlSent
+				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+						  +   "<pmId>" + payment.PaymentToken + "</pmId>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-				Tools.LogInfo("TransactionPayU.Process/20","XML = " + xmlSent,100);
+				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML = " + xmlSent,100);
 
-			// Construct soap object
-				ret = 20;
-				XmlDocument soapEnvelopeXml = CreateSoapEnvelope(xmlSent);
-
-			// Create username and password namespace
-				ret = 30;
-				XmlNamespaceManager mgr = new XmlNamespaceManager(soapEnvelopeXml.NameTable);
-				mgr.AddNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
-				XmlNode userName        = soapEnvelopeXml.SelectSingleNode("//wsse:Username",mgr);
-				userName.InnerText      = payment.UserID;
-				XmlNode userPassword    = soapEnvelopeXml.SelectSingleNode("//wsse:Password",mgr);
-				userPassword.InnerText  = payment.Password;
-
-			// Construct web request object
-				Tools.LogInfo("TransactionPayU.Process/25","URL = " + payment.URL+"/service/PayUAPI?wsdl"
-					                                    + ", UserID = "+payment.UserID
-					                                    + ", Password = "+payment.Password,100);
-				ret = 40;
-				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(payment.URL+"/service/PayUAPI?wsdl");
-				webRequest.Headers.Add(@"SOAP:Action");
-				webRequest.ContentType = "text/xml;charset=\"utf-8\"";
-				webRequest.Accept      = "text/xml";
-				webRequest.Method      = "POST";
-
-			// Insert soap envelope into web request
-				ret = 50;
-				using (Stream stream = webRequest.GetRequestStream())
-				{
-					soapEnvelopeXml.Save(stream);
-				}
-
-			// Get the PayU reference number from the completed web request.
-				ret = 60;
-
-				using (WebResponse webResponse = webRequest.GetResponse())
-					using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
-					{
-						xmlReceived = rd.ReadToEnd();
-					}
-
-				Tools.LogInfo("TransactionPayU.Process/30","XML Received = " + xmlReceived,100);
-
-			// Create an empty soap result object
-				ret = 70;
-				XmlDocument soapResultXml = new XmlDocument();
-				soapResultXml.LoadXml(xmlReceived.ToString());
-
-			//	Get data from result XML
-				ret              = 80;
-				resultSuccessful = Tools.XMLNode(soapResultXml,"successful");
-				resultCode       = Tools.XMLNode(soapResultXml,"resultCode");
-				resultMsg        = Tools.XMLNode(soapResultXml,"resultMessage");
-				payRef           = Tools.XMLNode(soapResultXml,"payUReference");
-				payToken         = Tools.XMLNode(soapResultXml,"pmId");
-
-				if ( Successful && payRef.Length > 0 )
-					ret = 0;
+				ret    = SendXML(payment.URL,payment.UserID,payment.Password);
+				payRef = Tools.XMLNode(xmlResult,"payUReference");
 			}
 			catch (Exception ex)
 			{
-				Tools.LogInfo("TransactionPayU.Process/85","Ret="+ret.ToString()+" / "+xmlSent,100);
-				Tools.LogException("TransactionPayU.Process/90","Ret="+ret.ToString()+" / "+xmlSent,ex);
+				Tools.LogInfo("TransactionPayU.ProcessPayment/85","Ret="+ret.ToString()+" / "+xmlSent,100);
+				Tools.LogException("TransactionPayU.ProcessPayment/90","Ret="+ret.ToString()+" / "+xmlSent,ex);
 			}
 
-			Tools.LogInfo("TransactionPayU.Process/95","Ret="+ret.ToString(),100);
+			Tools.LogInfo("TransactionPayU.ProcessPayment/95","Ret="+ret.ToString(),100);
 			return ret;
 		}
 
