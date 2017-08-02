@@ -151,13 +151,14 @@ namespace PCIBusiness
 
 			Tools.LogInfo("TransactionPayU.GetToken/10","Started ... " + payment.MerchantReference,100);
 
+//        + "<AuthenticationType>NA</AuthenticationType>"
+
 			try
 			{
 				xmlSent = "<ns1:doTransaction>"
 				        + "<Safekey>" + payment.SafeKey + "</Safekey>"
 				        + "<Api>ONE_ZERO</Api>"
 				        + "<TransactionType>RESERVE</TransactionType>"
-				        + "<AuthenticationType>NA</AuthenticationType>"
 				        + "<Customfield>"
 				        +   "<key>processingType</key>"
 				        +   "<value>REAL_TIME_RECURRING</value>"
