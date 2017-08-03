@@ -30,7 +30,7 @@ namespace PCIBusiness
 			success    = 0;
 			fail       = 0;
 
-			Tools.LogInfo("PaymentSchedule.ProcessCards/10","Mode="+mode.ToString()+", BureauCode="+bureauCode,100);
+			Tools.LogInfo("Payments.ProcessCards/10","Mode="+mode.ToString()+", BureauCode="+bureauCode,100);
 
 			if ( bureauCode.Length < 1 )
 				return 10;
@@ -45,7 +45,7 @@ namespace PCIBusiness
 			{
 				int err = ExecuteSQL(null,false,false);
 				if ( err > 0 )
-					Tools.LogException("PaymentSchedule.ProcessCards/20",sql + " failed, return code " + err.ToString());
+					Tools.LogException("Payments.ProcessCards/20",sql + " failed, return code " + err.ToString());
 				else
 					using (PCIBusiness.Payment payment = new PCIBusiness.Payment(bureauCode))
 					{
@@ -67,12 +67,12 @@ namespace PCIBusiness
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("PaymentSchedule.ProcessCards/30","Payment " + (success+fail).ToString(),ex);
+				Tools.LogException("Payments.ProcessCards/30","Payment " + (success+fail).ToString(),ex);
 			}
 			finally
 			{
 				Tools.CloseDB(ref dbConn);
-				Tools.LogInfo("PaymentSchedule.ProcessCards/90","Finished (" + (success+fail).ToString() + " cards/tokens processed)",100);
+				Tools.LogInfo("Payments.ProcessCards/90","Finished (" + (success+fail).ToString() + " cards/tokens processed)",100);
 			}
 			return 90;
 		}

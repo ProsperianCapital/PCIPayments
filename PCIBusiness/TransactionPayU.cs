@@ -195,7 +195,7 @@ namespace PCIBusiness
 				if ( ret > 0 )
 					return ret;
 
-				payRef   = Tools.XMLNode(xmlResult,"PayUReference");
+				payRef   = Tools.XMLNode(xmlResult,"payUReference");
 				payToken = Tools.XMLNode(xmlResult,"pmId");
 
 				Tools.LogInfo("TransactionPayU.GetToken/20","PayURef=" + payRef + ", pmId=" + payToken,100);
