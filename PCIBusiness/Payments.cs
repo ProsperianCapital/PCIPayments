@@ -37,7 +37,7 @@ namespace PCIBusiness
 			else if ( mode == 1 )
     			sql = "exec sp_Get_CardToToken " + Tools.DBString(bureauCode);
 			else if ( mode == 2 )
-    			sql = "exec sp_Get_TokenToPay "  + Tools.DBString(bureauCode);
+    			sql = "exec sp_Get_CardPayment "  + Tools.DBString(bureauCode);
 			else
 				return 20;
 

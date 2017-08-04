@@ -44,6 +44,16 @@ namespace PCIBusiness
 			get { return     Tools.NullToString(bureauCode); }
 		}
 
+		public virtual int GetToken(Payment payment)
+		{
+			return 0;
+		}
+
+		public virtual int ProcessPayment(Payment payment)
+		{
+			return 0;
+		}
+
       public abstract string ConnectionDetails(byte mode,string separator="");
 
       public override void Close()

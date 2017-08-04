@@ -107,14 +107,18 @@ namespace PCIBusiness
 				using (Stream stream = webRequest.GetRequestStream())
 					soapEnvelopeXml.Save(stream);
 
-			// Get the PayU reference number from the completed web request.
+			// Get the completed web request XML
 				ret = 60;
 
 				using (WebResponse webResponse = webRequest.GetResponse())
+				{
+					ret = 63;
 					using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
 					{
+						ret         = 66;
 						xmlReceived = rd.ReadToEnd();
 					}
+				}
 
 				Tools.LogInfo("TransactionPayU.SendXML/40","XML Received = " + xmlReceived,100);
 
@@ -144,7 +148,7 @@ namespace PCIBusiness
 			return ret;
 		}
 
-		public int GetToken(Payment payment)
+		public override int GetToken(Payment payment)
 		{
 			int ret = 300;
 			xmlSent = "";
@@ -169,7 +173,7 @@ namespace PCIBusiness
 				        +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
 				        + "</AdditionalInformation>"
 				        + "<Customer>"
-				        +   "<merchantUserId>" + payment.MerchantUserId + "</merchantUserId>"
+				        +   "<merchantUserId>" + payment.UserID + "</merchantUserId>"
 				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
 				        +   "<email>" + payment.EMail + "</email>"
 				        +   "<firstName>" + payment.FirstName + "</firstName>"
@@ -205,7 +209,6 @@ namespace PCIBusiness
 				         + "<Api>ONE_ZERO</Api>"
 				         + "<TransactionType>RESERVE_CANCEL</TransactionType>"
 				         + "<AdditionalInformation>"
-				         +   "<secure3d>false</secure3d>"
 				         +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
 				         +   "<PayUReference>" + payRef + "</PayUReference>"
 				         + "</AdditionalInformation>"
@@ -228,7 +231,7 @@ namespace PCIBusiness
 		}
 
 
-		public int ProcessPayment(Payment payment)
+		public override int ProcessPayment(Payment payment)
 		{
 			int ret = 600;
 			xmlSent = "";
@@ -252,7 +255,7 @@ namespace PCIBusiness
 				        +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
 				        + "</AdditionalInformation>"
 				        + "<Customer>"
-				        +   "<merchantUserId>" + payment.MerchantUserId + "</merchantUserId>"
+				        +   "<merchantUserId>" + payment.UserID + "</merchantUserId>"
 				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
 				        +   "<email>" + payment.EMail + "</email>"
 				        +   "<firstName>" + payment.FirstName + "</firstName>"
@@ -266,9 +269,8 @@ namespace PCIBusiness
 				        +	"<description>" + payment.PaymentDescription + "</description>"
 				        + "</Basket>"
 				        + "<Creditcard>"
-				        +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
 				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-						  +   "<pmId>" + payment.PaymentToken + "</pmId>"
+						  +   "<pmId>" + payment.CardToken + "</pmId>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 

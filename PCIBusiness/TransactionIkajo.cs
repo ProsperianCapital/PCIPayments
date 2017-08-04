@@ -35,8 +35,12 @@ namespace PCIBusiness
 			     + "Password : " + password;
 		}
 
+		public int ProcessPayment(Payment payment)
+		{
+			return 0;
+		}
 
-		public int Process(Payment payment)
+		public int GetToken(Payment payment)
 		{
 			return 0;
 		}

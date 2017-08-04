@@ -59,7 +59,7 @@ namespace PCIBusiness
 				  + "Merchant Account : " + merchantAccount;
 		}
 
-		public int Process(Payment payment)
+		public int ProcessPayment(Payment payment)
 		{
 			int ret = 10;
 
@@ -144,6 +144,11 @@ namespace PCIBusiness
 				Tools.LogException("TransactionT24.Process","Ret="+ret.ToString()+" / "+postHTML,ex);
 			}
 			return ret;
+		}
+
+		public int GetToken(Payment payment)
+		{
+			return 0;
 		}
 
 		private string HashSHA1(string x)
