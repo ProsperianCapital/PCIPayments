@@ -155,8 +155,6 @@ namespace PCIBusiness
 
 			Tools.LogInfo("TransactionPayU.GetToken/10","Started ... " + payment.MerchantReference,100);
 
-//        + "<AuthenticationType>NA</AuthenticationType>"
-
 			try
 			{
 				xmlSent = "<ns1:doTransaction>"
@@ -195,30 +193,30 @@ namespace PCIBusiness
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-				ret = SendXML(payment.URL,payment.UserID,payment.Password);
-				if ( ret > 0 )
-					return ret;
-
+				ret      = SendXML(payment.URL,payment.UserID,payment.Password);
 				payRef   = Tools.XMLNode(xmlResult,"payUReference");
 				payToken = Tools.XMLNode(xmlResult,"pmId");
 
-				Tools.LogInfo("TransactionPayU.GetToken/20","PayURef=" + payRef + ", pmId=" + payToken,100);
+				Tools.LogInfo("TransactionPayU.GetToken/20","ResultCode="+ResultCode + ", payURef=" + payRef + ", pmId=" + payToken,100);
 
-				xmlSent  = "<ns1:doTransaction>"
-				         + "<Safekey>" + payment.SafeKey + "</Safekey>"
-				         + "<Api>ONE_ZERO</Api>"
-				         + "<TransactionType>RESERVE_CANCEL</TransactionType>"
-				         + "<AdditionalInformation>"
-				         +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
-				         +   "<payUReference>" + payRef + "</payUReference>"
-				         + "</AdditionalInformation>"
-				         + "<Basket>"
-				         +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-				         +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
-				         + "</Basket>"
-				         + "</ns1:doTransaction>";
-
-				return SendXML(payment.URL,payment.UserID,payment.Password);
+				if ( ret == 0 )
+				{
+					xmlSent = "<ns1:doTransaction>"
+				           + "<Safekey>" + payment.SafeKey + "</Safekey>"
+				           + "<Api>ONE_ZERO</Api>"
+				           + "<TransactionType>RESERVE_CANCEL</TransactionType>"
+				           + "<AdditionalInformation>"
+				           +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
+				           +   "<payUReference>" + payRef + "</payUReference>"
+				           + "</AdditionalInformation>"
+				           + "<Basket>"
+				           +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+				           +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+				           + "</Basket>"
+				           + "</ns1:doTransaction>";
+					ret = SendXML(payment.URL,payment.UserID,payment.Password);
+					Tools.LogInfo("TransactionPayU.GetToken/30","ResultCode="+ResultCode,100);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -238,6 +236,8 @@ namespace PCIBusiness
 
 			Tools.LogInfo("TransactionPayU.ProcessPayment/10","Started ... " + payment.MerchantReference,100);
 
+//		   +   "<secure3d>false</secure3d>"
+
 			try
 			{
 				xmlSent = "<ns1:doTransaction>"
@@ -251,7 +251,6 @@ namespace PCIBusiness
 				        + "</Customfield>"
 				        + "<AdditionalInformation>"
 				        +   "<storePaymentMethod>true</storePaymentMethod>"
-				        +   "<secure3d>false</secure3d>"
 				        +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
 				        + "</AdditionalInformation>"
 				        + "<Customer>"

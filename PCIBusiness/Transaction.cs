@@ -15,21 +15,25 @@ namespace PCIBusiness
 		protected string bureauCode;
 		protected XmlDocument xmlResult;
 
-		public  string  PaymentReference
+		public  string      PaymentReference
 		{
-			get { return Tools.NullToString(payRef); }
+			get { return     Tools.NullToString(payRef); }
 		}
-		public  string  PaymentToken
+		public  string      BureauCode
 		{
-			get { return Tools.NullToString(payToken); }
+			get { return     Tools.NullToString(bureauCode); }
 		}
-		public  string  ResultCode
+		public  string      PaymentToken
 		{
-			get { return Tools.NullToString(resultCode); }
+			get { return     Tools.NullToString(payToken); }
 		}
-		public  string  ResultMessage
+		public  string      ResultCode
 		{
-			get { return Tools.NullToString(resultMsg); }
+			get { return     Tools.NullToString(resultCode); }
+		}
+		public  string      ResultMessage
+		{
+			get { return     Tools.NullToString(resultMsg); }
 		}
 		public  string      XMLSent
 		{
@@ -38,10 +42,6 @@ namespace PCIBusiness
 		public  XmlDocument XMLResult
 		{
 			get { return     xmlResult; }
-		}
-		public  string      BureauCode
-		{
-			get { return     Tools.NullToString(bureauCode); }
 		}
 
 		public virtual int GetToken(Payment payment)

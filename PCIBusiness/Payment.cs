@@ -173,7 +173,7 @@ namespace PCIBusiness
 		{
 			int ret = 64020;
 			sql     = "";
-			Tools.LogInfo("Payment.GetToken/10","Start, Merchant Reference = " + merchantReference,10);
+			Tools.LogInfo("Payment.GetToken/10","Merchant Reference = " + merchantReference,10);
 
 			if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
 				transaction = new TransactionPayU();
@@ -191,8 +191,9 @@ namespace PCIBusiness
 			                              + ",@PaymentBureauToken = "          + Tools.DBString(transaction.PaymentToken)
 			                              + ",@BureauSubmissionSoap = "        + Tools.DBString(transaction.XMLSent,3)
 			                              + ",@BureauResultSoap = "            + Tools.DBString(transaction.XMLResult.InnerXml,3);
+			Tools.LogInfo("Payment.GetToken/20","SQL = " + sql,10);
 			int k = ExecuteSQLUpdate();
-			Tools.LogInfo("Payment.GetToken/20","End, SQL = " + sql + " (Return code " + k.ToString() + ")",10);
+			Tools.LogInfo("Payment.GetToken/90","Ret = " + ret.ToString() + ")",10);
 			return ret;
 		}
 
@@ -200,7 +201,7 @@ namespace PCIBusiness
 		{
 			int ret = 37020;
 			int k;
-			Tools.LogInfo("Payment.ProcessPayment/10","Start, Merchant Reference = " + merchantReference,10);
+			Tools.LogInfo("Payment.ProcessPayment/10","Merchant Reference = " + merchantReference,10);
 
 			if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
 				transaction = new TransactionPayU();
@@ -213,12 +214,14 @@ namespace PCIBusiness
 
 			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
 			                           + ",@TransactionStatusCode = '77'";
+			Tools.LogInfo("Payment.ProcessPayment/20","SQL 1 = " + sql,10);
 			k   = ExecuteSQLUpdate();
 			ret = transaction.ProcessPayment(this);
 			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
 			                           + ",@TransactionStatusCode = " + Tools.DBString(transaction.ResultCode);
+			Tools.LogInfo("Payment.ProcessPayment/30","SQL 2 = " + sql,10);
 			k   = ExecuteSQLUpdate();
-			Tools.LogInfo("Payment.ProcessPayment/20","End, SQL = " + sql + " (Return code " + k.ToString() + ")",10);
+			Tools.LogInfo("Payment.ProcessPayment/90","Ret = " + ret.ToString() + ")",10);
 			return ret;
 		}
 
