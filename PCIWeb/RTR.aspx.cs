@@ -88,7 +88,7 @@ namespace PCIWeb
 				{
 					int k         = payments.ProcessCards(provider,mode);
 					lblError.Text = k.ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed";
-				//	paymentSchedule.ProcessTokens(provider,mode);
+				//	payments.ProcessTokens(provider,mode);
 				}
 				PCIBusiness.Tools.LogInfo("RTR.Process/10","Finished");
 			}
