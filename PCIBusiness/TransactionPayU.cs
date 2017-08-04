@@ -210,7 +210,7 @@ namespace PCIBusiness
 				         + "<TransactionType>RESERVE_CANCEL</TransactionType>"
 				         + "<AdditionalInformation>"
 				         +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
-				         +   "<PayUReference>" + payRef + "</PayUReference>"
+				         +   "<payUReference>" + payRef + "</payUReference>"
 				         + "</AdditionalInformation>"
 				         + "<Basket>"
 				         +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
