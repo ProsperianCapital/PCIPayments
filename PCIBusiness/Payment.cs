@@ -190,7 +190,7 @@ namespace PCIBusiness
 		                                 + ",@CardTokenisationStatusCode = '" + ( ret == 0 ? "007'" : "001'" )
 			                              + ",@PaymentBureauToken = "          + Tools.DBString(transaction.PaymentToken)
 			                              + ",@BureauSubmissionSoap = "        + Tools.DBString(transaction.XMLSent,3)
-			                              + ",@BureauResultSoap = "            + Tools.DBString(transaction.XMLResult.ToString(),3);
+			                              + ",@BureauResultSoap = "            + Tools.DBString(transaction.XMLResult.InnerXml,3);
 			int k = ExecuteSQLUpdate();
 			Tools.LogInfo("Payment.GetToken/20","End, SQL = " + sql + " (Return code " + k.ToString() + ")",10);
 			return ret;
@@ -199,22 +199,25 @@ namespace PCIBusiness
 		public int ProcessPayment()
 		{
 			int ret = 37020;
-			sql     = "";
+			int k;
 			Tools.LogInfo("Payment.ProcessPayment/10","Start, Merchant Reference = " + merchantReference,10);
 
 			if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-				ret = (new TransactionPayU()).ProcessPayment(this);
+				transaction = new TransactionPayU();
 			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
-				ret = (new TransactionIkajo()).ProcessPayment(this);
+				transaction = new TransactionIkajo();
 			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
-				ret = (new TransactionT24()).ProcessPayment(this);
+				transaction = new TransactionT24();
 			else
 				return ret;
 
+			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
+			                           + ",@TransactionStatusCode = '77'";
+			k   = ExecuteSQLUpdate();
 			ret = transaction.ProcessPayment(this);
-			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference) // nvarchar(20),
-			                           + ",@TransactionStatusCode = '" + ( ret == 0 ? "007'" : "001'" );
-			int k = ExecuteSQLUpdate();
+			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
+			                           + ",@TransactionStatusCode = " + Tools.DBString(transaction.ResultCode);
+			k   = ExecuteSQLUpdate();
 			Tools.LogInfo("Payment.ProcessPayment/20","End, SQL = " + sql + " (Return code " + k.ToString() + ")",10);
 			return ret;
 		}
