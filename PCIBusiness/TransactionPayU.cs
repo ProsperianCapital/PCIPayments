@@ -250,7 +250,6 @@ namespace PCIBusiness
 				        +   "<value>REAL_TIME_RECURRING</value>"
 				        + "</Customfield>"
 				        + "<AdditionalInformation>"
-				        +   "<storePaymentMethod>true</storePaymentMethod>"
 				        +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
 				        + "</AdditionalInformation>"
 				        + "<Customer>"
@@ -272,6 +271,8 @@ namespace PCIBusiness
 						  +   "<pmId>" + payment.CardToken + "</pmId>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
+
+//				        +   "<storePaymentMethod>true</storePaymentMethod>"
 
 				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML = " + xmlSent,100);
 
