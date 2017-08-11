@@ -16,10 +16,6 @@ namespace PCIBusiness
 //		static string userID   = "200239";
 //		static string password = "5AlTRPoD";
 
-//		private string url;
-//		private string userID;
-//		private string password;
-
 		static string soapEnvelope =
 			@"<SOAP-ENV:Envelope
 				xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' 
@@ -38,6 +34,15 @@ namespace PCIBusiness
 			</SOAP-ENV:Envelope>";
 
 		private string resultSuccessful;
+
+		public  string  BureauStatus
+		{
+			get { return "Live"; }
+		}
+		public  string  URL
+		{
+			get { return "https://www.payu.co.za"; }
+		}
 
 		public override string ConnectionDetails(byte mode,string separator="")
 		{
@@ -193,7 +198,7 @@ namespace PCIBusiness
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-				ret      = SendXML(payment.URL,payment.UserID,payment.Password);
+				ret      = SendXML(URL,payment.UserID,payment.Password);
 				payRef   = Tools.XMLNode(xmlResult,"payUReference");
 				payToken = Tools.XMLNode(xmlResult,"pmId");
 
@@ -214,7 +219,7 @@ namespace PCIBusiness
 				           +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
 				           + "</Basket>"
 				           + "</ns1:doTransaction>";
-					ret = SendXML(payment.URL,payment.UserID,payment.Password);
+					ret = SendXML(URL,payment.UserID,payment.Password);
 					Tools.LogInfo("TransactionPayU.GetToken/30","ResultCode="+ResultCode,100);
 				}
 			}
@@ -237,6 +242,7 @@ namespace PCIBusiness
 			Tools.LogInfo("TransactionPayU.ProcessPayment/10","Started ... " + payment.MerchantReference,100);
 
 //		   +   "<secure3d>false</secure3d>"
+//       +   "<storePaymentMethod>true</storePaymentMethod>"
 
 			try
 			{
@@ -272,11 +278,9 @@ namespace PCIBusiness
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-//				        +   "<storePaymentMethod>true</storePaymentMethod>"
-
 				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML = " + xmlSent,100);
 
-				ret    = SendXML(payment.URL,payment.UserID,payment.Password);
+				ret    = SendXML(URL,payment.UserID,payment.Password);
 				payRef = Tools.XMLNode(xmlResult,"payUReference");
 			}
 			catch (Exception ex)

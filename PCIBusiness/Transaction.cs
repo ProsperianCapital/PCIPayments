@@ -43,6 +43,18 @@ namespace PCIBusiness
 		{
 			get { return     xmlResult; }
 		}
+//		public  Constants.BureauStatus ProviderStatus
+//		{
+//			get
+//			{
+//				try
+//				{
+//				if ( Tools.NullToString(bureauCode).Length < 1 )
+//					return Constants.BureauStatus.Unknown;
+//				string status = Tools.ConfigValue("BureauStatus/"+bureauCode);
+//				if ( status )
+//			}
+//		}
 
 		public virtual int GetToken(Payment payment)
 		{

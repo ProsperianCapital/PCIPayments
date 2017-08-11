@@ -62,5 +62,13 @@ namespace PCIBusiness
 			AllowScreenPaging = 209,
 			DoNotReadNextRow  = 244
 		}
+
+		public enum BureauStatus : byte
+		{
+			Unknown     = 0,
+			Development = 1,
+			Testing     = 2,
+			Live        = 3
+		}
 	}
 }

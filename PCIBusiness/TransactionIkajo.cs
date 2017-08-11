@@ -35,12 +35,21 @@ namespace PCIBusiness
 			     + "Password : " + password;
 		}
 
-		public int ProcessPayment(Payment payment)
+		public  string  BureauStatus
+		{
+			get { return "Development"; }
+		}
+		public  string  URL
+		{
+			get { return ""; }
+		}
+
+		public override int ProcessPayment(Payment payment)
 		{
 			return 0;
 		}
 
-		public int GetToken(Payment payment)
+		public override int GetToken(Payment payment)
 		{
 			return 0;
 		}

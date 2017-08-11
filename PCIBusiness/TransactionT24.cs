@@ -9,19 +9,28 @@ namespace PCIBusiness
 {
 	public class TransactionT24 : Transaction
 	{
-		static string merchantURL     = "https://payment.ccp.boarding.transact24.com/Recurring";
-		static string returnURL       = "http://www.paulkilfoil.co.za/Prosperian/PaymentSucceed.aspx";
+//		static string merchantURL     = "https://payment.ccp.boarding.transact24.com/Recurring";
+//		static string merchantURL     = "https://payment.ccp.boarding.transact24.com/PaymentCard";
+//		static string returnURL       = "http://pcipayments.azurewebsites.net/Succeed.aspx";
+//		static string returnURL       = "http://www.paulkilfoil.co.za/Prosperian/PaymentSucceed.aspx";
 		static string partnerControl  = "b0148b62531a9311f52560a2a88ba70f";
 		static string merchantAccount = "567654452";
 		static string postHTML = 
 			@"<html><head></head><body>
 			  <form>
 			  <input type='hidden' id='version'               value='2' />
-			  <input type='hidden' id='merchant_id'           value='merchant_id' />
 			  <input type='hidden' id='merchant_account'      value='merchant_account' />
 			  <input type='hidden' id='merchant_order'        value='merchant_order' />
 			  <input type='hidden' id='merchant_product_desc' value='merchant_product_desc' />
-			  <input type='hidden' id='email'                 value='x@y.com' />
+			  <input type='hidden' id='first_name'            value='first_name' />
+			  <input type='hidden' id='last_name'             value='last_name' />
+			  <input type='hidden' id='address1'              value='address1' />
+			  <input type='hidden' id='city'                  value='city' />
+			  <input type='hidden' id='state'                 value='state' />
+			  <input type='hidden' id='zip_code'              value='zip_code' />
+			  <input type='hidden' id='country'               value='country' />
+			  <input type='hidden' id='phone'                 value='phone' />
+			  <input type='hidden' id='email'                 value='email' />
 			  <input type='hidden' id='amount'                value='amount' />
 			  <input type='hidden' id='currency'              value='USD' />
 			  <input type='hidden' id='credit_card_type'      value='credit_card_type' />
@@ -29,10 +38,21 @@ namespace PCIBusiness
 			  <input type='hidden' id='expire_month'          value='expire_month' />
 			  <input type='hidden' id='expire_year'           value='expire_year' />
 			  <input type='hidden' id='cvv2'                  value='cvv2' />
-			  <input type='hidden' id='server_return_url'     value='server_return_url' />
 			  <input type='hidden' id='control'               value='control' />
 			  </form>
 			  </body></html>";
+
+//			  <input type='hidden' id='return_url'            value='return_url' />
+//			  <input type='hidden' id='server_return_url'     value='server_return_url' />
+
+		public  string  BureauStatus
+		{
+			get { return "Testing"; }
+		}
+		public  string  URL
+		{
+			get { return "https://payment.ccp.boarding.transact24.com/PaymentCard"; }
+		}
 
 		public override string ConnectionDetails(byte mode,string separator="")
 		{
@@ -42,8 +62,6 @@ namespace PCIBusiness
 					  + "<tr><td>Status</td><td class='Red'> : In development</td></tr>"
 					  + "<tr><td colspan='2'><hr /></td></tr>"
 					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
-					  + "<tr><td>Go to URL</td><td> : " + merchantURL + "</td></tr>"
-					  + "<tr><td>Return URL</td><td> : " + returnURL + "</td></tr>"
 					  + "<tr><td>Partner Control</td><td> : " + partnerControl + "</td></tr>"
 					  + "<tr><td>Merchant Account</td><td> : " + merchantAccount + "</td></tr>"
 					  + "</table>";
@@ -53,91 +71,151 @@ namespace PCIBusiness
 
 			return "Payment Provider : Transact24" + separator
 			     + "Bureau Code : " + bureauCode + separator
-				  + "Go to URL : " + merchantURL + separator
-				  + "Return URL : " + returnURL + separator
 				  + "Partner Control : " + partnerControl + separator
 				  + "Merchant Account : " + merchantAccount;
 		}
 
-		public int ProcessPayment(Payment payment)
+		public  bool   Successful
+		{
+			get
+			{
+				resultCode = Tools.NullToString(resultCode).ToUpper();
+				return ( resultCode.Length > 1 && resultCode.Substring(0,1) == "A" );
+			}
+		}
+
+		private int PostHTML(string url)
+		{
+			int    ret         = 10;
+			string xmlReceived = "";
+			payRef             = "";
+
+			try
+			{
+				Tools.LogInfo("TransactionT24.PostHTML/10","XML = " + xmlSent,100);
+
+			// Construct web request object
+				ret = 20;
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
+//				webRequest.Headers.Add(@"SOAP:Action");
+//				webRequest.ContentType    = "text/xml;charset=\"utf-8\"";
+//				webRequest.Accept         = "text/xml";
+				webRequest.ContentType    = "application/x-www-form-urlencoded;charset=\"utf-8\"";
+				webRequest.Method         = "POST";
+				webRequest.KeepAlive      = false;
+
+				ret = 30;
+				byte[] page = Encoding.ASCII.GetBytes(xmlSent);
+
+			// Insert encoded HTML into web request
+				ret = 40;
+				using (Stream stream = webRequest.GetRequestStream())
+				{
+					stream.Write(page, 0, page.Length);
+//					stream.Flush();
+					stream.Close();
+				}
+
+			// Get the XML response
+				ret = 50;
+
+				using (WebResponse webResponse = webRequest.GetResponse())
+				{
+					ret = 60;
+					using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
+					{
+						ret         = 70;
+						xmlReceived = rd.ReadToEnd();
+					}
+				}
+
+				ret       = 80;
+				xmlResult = new XmlDocument();
+				xmlResult.LoadXml(xmlReceived.ToString());
+
+//			//	Get data from result XML
+				ret        = 90;
+				payRef     = Tools.XMLNode(xmlResult,"transactionid");
+				resultCode = Tools.XMLNode(xmlResult,"status");
+				resultMsg  = Tools.XMLNode(xmlResult,"message");
+
+				if ( Successful )
+					return 0;
+			}
+			catch (Exception ex)
+			{
+				Tools.LogInfo("TransactionT24.PostHTML/85","Ret="+ret.ToString()+" / "+xmlSent,100);
+				Tools.LogException("TransactionT24.PostHTML/90","Ret="+ret.ToString()+" / "+xmlSent,ex);
+			}
+
+			Tools.LogInfo("TransactionT24.PostHTML/95","Ret="+ret.ToString(),100);
+			return ret;
+		}
+
+
+		public override int GetToken(Payment payment)
 		{
 			int ret = 10;
 
 			try
 			{
-				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-			// Construct web request object
-				ret = 20;
-				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(merchantURL);
-//				webRequest.Headers.Add(@"SOAP:Action");
-//				webRequest.ContentType    = "text/xml;charset=\"utf-8\"";
-//				webRequest.Accept         = "text/xml";
-				webRequest.KeepAlive      = false;
-				webRequest.Method         = "POST";
-				webRequest.ContentType    = "application/x-www-form-urlencoded;charset=\"utf-8\"";
-
-			//	Set up this payment's details
-				ret = 30;
-				postHTML = postHTML.Replace("value='merchant_account'"     ,"value='"+merchantAccount+"'")
-					                .Replace("value='merchant_id'"          ,"value='"+merchantAccount+"'")
-					                .Replace("value='server_return_url'"    ,"value='"+returnURL+"'")
-				                   .Replace("value='merchant_order'"       ,"value='"+payment.MerchantReference+"'")
-				                   .Replace("value='merchant_product_desc'","value='RTR Payment Code "+payment.MerchantReference+"'")
-				                   .Replace("value='amount'"               ,"value='"+payment.PaymentAmount.ToString()+"'")
-				                   .Replace("value='credit_card_type'"     ,"value='"+payment.CardType.ToString()+"'")
-				                   .Replace("value='credit_card_number'"   ,"value='"+payment.CardNumber+"'")
-				                   .Replace("value='expire_month'"         ,"value='"+payment.CardExpiryMonth+"'")
-				                   .Replace("value='expire_year'"          ,"value='"+payment.CardExpiryYY+"'")
-				                   .Replace("value='cvv2'"                 ,"value='"+payment.CardCVV+"'");
+				xmlSent = "version=2"
+				        + "&merchant_card_number="
+				        + "&ipaddress="
+				        + "&merchant_account="      + Tools.URLString(merchantAccount)
+				        + "&merchant_order="        + Tools.URLString(payment.MerchantReference)
+				        + "&merchant_product_desc=" + Tools.URLString(payment.MerchantReference)
+				        + "&first_name="            + Tools.URLString(payment.FirstName)
+				        + "&last_name="             + Tools.URLString(payment.LastName)
+				        + "&address1="              + Tools.URLString(payment.Address(1))
+				        + "&city="                  + Tools.URLString(payment.Address(255))
+				        + "&state="                 + Tools.URLString(payment.ProvinceCode)
+				        + "&zip_code="              + Tools.URLString(payment.PostalCode)
+				        + "&country="               + Tools.URLString(payment.CountryCode)
+				        + "&phone="                 + Tools.URLString(payment.PhoneCell)
+				        + "&email="                 + Tools.URLString(payment.EMail)
+				        + "&amount="                + Tools.URLString(payment.PaymentAmount.ToString())
+				        + "&currency="              + Tools.URLString(payment.CurrencyCode)
+				        + "&credit_card_type="      + Tools.URLString(payment.CardType)
+				        + "&credit_card_number="    + Tools.URLString(payment.CardNumber)
+				        + "&expire_month="          + Tools.URLString(payment.CardExpiryMonth)
+				        + "&expire_year="           + Tools.URLString(payment.CardExpiryYY)
+				        + "&cvv2="                  + Tools.URLString(payment.CardCVV);
 
 			//	Checksum (SHA1)
-				ret = 40;
+				ret = 20;
 				string chk = merchantAccount
 					        + payment.MerchantReference
-							  + "RTR Payment Code "+payment.MerchantReference
+					        + payment.MerchantReference
+							  + payment.FirstName
+							  + payment.LastName
+							  + payment.Address(1)
+							  + payment.Address(255)
+							  + payment.ProvinceCode
+							  + payment.PostalCode
+							  + payment.CountryCode
+							  + payment.PhoneCell
+							  + payment.EMail
 							  + payment.PaymentAmount.ToString()
-							  + "USD"
-							  + payment.CardType.ToString()
-							  + payment.CardNumber.ToString()
-							  + payment.CardExpiryMonth.ToString()
-							  + payment.CardExpiryYY.ToString()
-							  + payment.CardExpiryYY.ToString()
-							  + returnURL
-							  + partnerControl;
-				ret = 50;  
-				postHTML   = postHTML.Replace("value='control'","value='"+HashSHA1(chk)+"'");
+							  + payment.CurrencyCode
+							  + payment.CardType
+							  + payment.CardNumber
+							  + payment.CardExpiryMonth
+							  + payment.CardExpiryYY
+							  + payment.CardCVV;
 
-				ret = 60;
-				byte[] page = Encoding.ASCII.GetBytes(postHTML);
-
-			// Insert encoded HTML into web request
-				ret = 70;
-				using (Stream stream = webRequest.GetRequestStream())
+				ret        = 30;
+				xmlSent    = xmlSent + "&address2=";
+				if ( payment.Address(2).Length > 0 && payment.Address(2) != payment.Address(255) )
 				{
-					stream.Write(page, 0, page.Length);
-					stream.Flush();
-					stream.Close();
+					xmlSent = xmlSent + Tools.URLString(payment.Address(2));
+					chk     = chk + payment.Address(2);
 				}
-
-			// Get the XML response
-				ret = 80;
-				string xmlResult;
-
-				using (WebResponse webResponse = webRequest.GetResponse())
-					using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
-						xmlResult = rd.ReadToEnd();
-
-//				using (WebResponse response = webRequest.GetResponse())
-//				{
-//					if (response == null) Console.WriteLine("Response is null");
-//					using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-//					{
-//						Console.WriteLine(reader.ReadToEnd().Trim());
-//					}
-//				}
-
-				ret = 0;
+				chk        = chk + partnerControl;
+				ret        = 40;  
+				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
+				ret        = PostHTML(URL);
 			}
 			catch (Exception ex)
 			{
@@ -146,23 +224,92 @@ namespace PCIBusiness
 			return ret;
 		}
 
-		public int GetToken(Payment payment)
+
+		public int GetTokenOLD(Payment payment)
+		{
+			int ret = 10;
+
+			try
+			{
+				xmlSent = postHTML.Replace("value='merchant_account'"     ,"value='"+merchantAccount+"'")
+				                  .Replace("value='merchant_order'"       ,"value='"+payment.MerchantReference+"'")
+				                  .Replace("value='merchant_product_desc'","value='RTR Payment Code "+payment.MerchantReference+"'")
+				                  .Replace("value='first_name'"           ,"value='"+payment.FirstName+"'")
+				                  .Replace("value='last_name'"            ,"value='"+payment.LastName+"'")
+				                  .Replace("value='address1'"             ,"value='"+payment.Address(1)+"'")
+				                  .Replace("value='city'"                 ,"value='"+payment.Address(255)+"'")
+				                  .Replace("value='state'"                ,"value='"+payment.ProvinceCode+"'")
+				                  .Replace("value='zip_code'"             ,"value='"+payment.PostalCode+"'")
+				                  .Replace("value='country'"              ,"value='"+payment.CountryCode+"'")
+				                  .Replace("value='phone'"                ,"value='"+payment.PhoneCell+"'")
+				                  .Replace("value='email'"                ,"value='"+payment.EMail+"'")
+				                  .Replace("value='amount'"               ,"value='"+payment.PaymentAmount.ToString()+"'")
+				                  .Replace("value='credit_card_type'"     ,"value='"+payment.CardType+"'")
+				                  .Replace("value='credit_card_number'"   ,"value='"+payment.CardNumber+"'")
+				                  .Replace("value='expire_month'"         ,"value='"+payment.CardExpiryMonth+"'")
+				                  .Replace("value='expire_year'"          ,"value='"+payment.CardExpiryYY+"'")
+				                  .Replace("value='cvv2'"                 ,"value='"+payment.CardCVV+"'");
+			//	Checksum (SHA1)
+				ret = 20;
+				string chk = merchantAccount
+					        + payment.MerchantReference
+							  + "RTR Payment Code "+payment.MerchantReference
+							  + payment.FirstName
+							  + payment.LastName
+							  + payment.Address(1)
+							  + payment.Address(255)
+							  + payment.ProvinceCode
+							  + payment.PostalCode
+							  + payment.CountryCode
+							  + payment.PhoneCell
+							  + payment.EMail
+							  + payment.PaymentAmount.ToString()
+							  + "USD"
+							  + payment.CardType.ToString()
+							  + payment.CardNumber.ToString()
+							  + payment.CardExpiryMonth.ToString()
+							  + payment.CardExpiryYY.ToString()
+							  + payment.CardCVV.ToString();
+
+				ret = 30;
+				if ( payment.Address(1) == payment.Address(255) )
+					xmlSent = xmlSent.Replace("value='address2'","value=''");
+				else
+				{
+					xmlSent = xmlSent.Replace("value='address2'","value='"+payment.Address(2)+"'");
+					chk     = chk + payment.Address(2);
+				}
+				chk        = chk + partnerControl;
+				ret        = 40;  
+				xmlSent    = xmlSent.Replace("value='control'","value='"+HashSHA1(chk)+"'");
+				ret        = PostHTML(URL);
+			}
+			catch (Exception ex)
+			{
+				Tools.LogException("TransactionT24.Process","Ret="+ret.ToString()+" / "+postHTML,ex);
+			}
+			return ret;
+		}
+
+		public override int ProcessPayment(Payment payment)
 		{
 			return 0;
 		}
 
 		private string HashSHA1(string x)
 		{
-			byte[] hash;
+			StringBuilder hashStr = new StringBuilder();
+			byte[]        hashArr;
 			using (System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed())
-				hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(x));
-			return System.Text.Encoding.UTF8.GetString(hash);
+				hashArr = sha1.ComputeHash(Encoding.UTF8.GetBytes(x));
+			foreach (byte h in hashArr)
+				hashStr.Append(h.ToString("x2"));
+			return hashStr.ToString();
 		}
 
 		public TransactionT24() : base()
 		{
 			bureauCode = Tools.BureauCode(Constants.PaymentProvider.T24);
 		}
-
 	}
 }

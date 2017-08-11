@@ -301,9 +301,16 @@ namespace PCIBusiness
 			if ( string.IsNullOrWhiteSpace(str) )
 				return "''";
 			str = str.Trim();
-//       str = "'" + str.Replace("'","\'") + "'" ;
-         str = "'" + str.Replace("'","\"") + "'" ;
-         return str ;
+         str = "'" + str.Replace("'","\"") + "'";
+         return str;
+		}
+
+		public static string URLString(string str)
+		{
+			if ( string.IsNullOrWhiteSpace(str) )
+				return "";
+//			return System.Net.WebUtility.HtmlEncode(str.Trim());
+			return str.Trim();
 		}
 
 		public static string DBString(string str,byte mode=0,int maxLength=0)
@@ -326,7 +333,7 @@ namespace PCIBusiness
 				str = str.Substring(0,maxLength);
 
          str = "'" + str.Replace("'","''") + "'";
-         return str ;
+         return str;
 		}
 
 		public static int TimeDifference(string time1,string time2)

@@ -9,18 +9,21 @@ namespace PCIBusiness
 //		private int      paymentAuditCode;
 		private string   merchantReference;
 		private string   countryCode;
-		private string   email;
 		private string   firstName;
 		private string   lastName;
-		private string   phoneCell;
+		private string[] address;
+		private string   postalCode;
+		private string   provinceCode;
 		private string   regionalId;
+		private string   email;
+		private string   phoneCell;
 		private int      paymentAmount;
 		private byte     paymentStatus;
 		private string   ccToken;
 		private string   paymentDescription;
 		private string   currencyCode;
 		private string   ccNumber;
-		private byte     ccType;
+		private string   ccType;
 		private string   ccExpiry;
 		private string   ccName;
 		private string   ccCVV;
@@ -29,7 +32,7 @@ namespace PCIBusiness
 		private string   safeKey;
 		private string   userID;
 		private string   password;
-		private string   url;
+//		private string   url;
 
 		private Provider    provider;
 		private Transaction transaction;
@@ -48,20 +51,20 @@ namespace PCIBusiness
 		{
 			get { return  Tools.NullToString(password); }
 		}
-		public string    URL
-		{
-		//	get { return  Tools.NullToString(url); }
-			get
-			{
-				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-					return "https://www.payu.co.za";
-				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
-					return "";
-				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
-					return "";
-				return "";
-			}
-		}
+//		public string    URL
+//		{
+//		//	get { return  Tools.NullToString(url); }
+//			get
+//			{
+//				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
+//					return "https://www.payu.co.za";
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
+//					return "";
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
+//					return "https://payment.ccp.boarding.transact24.com/PaymentCard";
+//				return "";
+//			}
+//		}
 
 //		Payment/Customer stuff
 		public string    MerchantReference
@@ -73,6 +76,34 @@ namespace PCIBusiness
 //		{
 //			get { return  Tools.NullToString(merchantUserId); }
 //		}
+		public string    Address(byte line)
+		{
+			if ( address == null || line < 1 || ( line > address.Length && line < 255 ) )
+				return "";
+			if ( line == 255 ) // Last non-blank address
+			{
+				for ( int k = address.Length ; k > 0 ; k-- )
+					if ( address[k-1].Length > 0 )
+						return address[k-1];
+				return "";
+			}
+			return address[line-1];
+//			while ( line < address.Length )
+//			{
+//				if ( address[line].Length > 0 )
+//					return address[line];
+//				line++;
+//			}
+//			return "";
+		}
+		public string    PostalCode
+		{
+			get { return  Tools.NullToString(postalCode); }
+		}
+		public string    ProvinceCode
+		{
+			get { return  Tools.NullToString(provinceCode); }
+		}
 		public string    CountryCode
 		{
 			get { return  Tools.NullToString(countryCode); }
@@ -117,7 +148,7 @@ namespace PCIBusiness
 		{
 			get { return  Tools.NullToString(ccToken); }
 		}
-		public  byte     CardType
+		public  string   CardType
 		{
 			get { return  ccType; }
 		}
@@ -133,7 +164,7 @@ namespace PCIBusiness
 		{
 			get
 			{
-				if ( CardExpiry.Length == 6 )
+				if ( CardExpiry.Length >= 4 )
 					return ccExpiry.Substring(0,2);
 				return "";
 			}
@@ -153,6 +184,8 @@ namespace PCIBusiness
 			{
 				if ( CardExpiry.Length == 6 )
 					return ccExpiry.Substring(4,2);
+				if ( CardExpiry.Length == 4 )
+					return ccExpiry.Substring(2,2);
 				return "";
 			}
 		}
@@ -293,15 +326,22 @@ namespace PCIBusiness
 		//	url                = dbConn.ColString("URL");
 			userID             = dbConn.ColString("MerchantUserId");
 			password           = dbConn.ColString("MerchantUserPassword");
-		//	merchantUserId     = dbConn.ColString("MerchantUserId");
 
-		//	Payment/Customer
-			countryCode        = dbConn.ColString("CountryCode");
-			email              = dbConn.ColString("email");
+		//	Customer
 			firstName          = dbConn.ColString("firstName");
 			lastName           = dbConn.ColString("lastName");
+			email              = dbConn.ColString("email");
 			phoneCell          = dbConn.ColString("mobile");
 			regionalId         = dbConn.ColString("regionalId");
+			address            = new string[3];
+			address[0]         = dbConn.ColString("address1");
+			address[1]         = dbConn.ColString("address2");
+			address[2]         = dbConn.ColString("address3");
+			postalCode         = dbConn.ColString("PostalCode");
+			provinceCode       = dbConn.ColString("Province");
+			countryCode        = dbConn.ColString("CountryCode");
+
+		//	Payment
 			merchantReference  = dbConn.ColString("merchantReference");
 			paymentAmount      = dbConn.ColLong  ("amountInCents");
 			currencyCode       = dbConn.ColString("currencyCode");
@@ -311,6 +351,7 @@ namespace PCIBusiness
 			ccName             = dbConn.ColString("nameOnCard",0);
 			ccNumber           = dbConn.ColString("cardNumber",0);
 			ccExpiry           = dbConn.ColString("cardExpiry",0);
+			ccType             = dbConn.ColString("cardType",0);
 			ccCVV              = dbConn.ColString("cvv",0);
 			ccToken            = dbConn.ColString("token",0);
 		}
@@ -319,6 +360,7 @@ namespace PCIBusiness
 		{
 			provider    = null;
 			transaction = null;
+			address     = null;
 		}
 
 		public Payment(string bureau)
