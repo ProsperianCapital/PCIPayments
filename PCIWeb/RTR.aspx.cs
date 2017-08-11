@@ -8,10 +8,24 @@ namespace PCIWeb
 {
 	public partial class RTR : System.Web.UI.Page
 	{
+		private byte systemStatus;
+
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			lblTest.Text    = "";
-			lblError.Text   = "";
+			try
+			{
+				systemStatus = System.Convert.ToByte(Tools.ConfigValue("SystemStatus"));
+			}
+			catch
+			{
+				systemStatus = 0;
+			}
+			lblSStatus.Text     = ( systemStatus == 0 ? "Active" : "Disabled" );
+			btnProcess1.Enabled = ( systemStatus == 0 );
+			btnProcess2.Enabled = ( systemStatus == 0 );
+			lblTest.Text        = "";
+			lblError.Text       = "";
+
 			ProviderDetails();
 
 			if ( ! Page.IsPostBack )
@@ -27,6 +41,7 @@ namespace PCIWeb
 				lblSQLDB.Text     = "";
 				lblSQLUser.Text   = "";
 				lblSQLStatus.Text = "";
+				lblSMode.Text     = Tools.ConfigValue("SystemMode");
 
 				foreach ( string x in connString )
 				{
@@ -58,23 +73,44 @@ namespace PCIWeb
 		private void ProviderDetails()
 		{
 			if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) )
-				lblProvider.Text = (new PCIBusiness.TransactionPayU()).ConnectionDetails(1);
+				using ( PCIBusiness.TransactionPayU x = new PCIBusiness.TransactionPayU() )
+				{
+					lblBureauCode.Text   = x.BureauCode;
+					lblBureauURL.Text    = x.URL;
+					lblBureauStatus.Text = x.BureauStatus;
+				}
 			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) )
-				lblProvider.Text = (new PCIBusiness.TransactionT24()).ConnectionDetails(1);
+				using ( PCIBusiness.TransactionT24 x = new PCIBusiness.TransactionT24() )
+				{
+					lblBureauCode.Text   = x.BureauCode;
+					lblBureauURL.Text    = x.URL;
+					lblBureauStatus.Text = x.BureauStatus;
+				}
 			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.Ikajo) )
-				lblProvider.Text = (new PCIBusiness.TransactionIkajo()).ConnectionDetails(1);
+				using ( PCIBusiness.TransactionIkajo x = new PCIBusiness.TransactionIkajo() )
+				{
+					lblBureauCode.Text   = x.BureauCode;
+					lblBureauURL.Text    = x.URL;
+					lblBureauStatus.Text = x.BureauStatus;
+				}
 			else
-				lblProvider.Text = "";
+			{
+				lblBureauCode.Text   = "";
+				lblBureauURL.Text    = "";
+				lblBureauStatus.Text = "";
+			}
 		}
 
 		protected void btnProcess1_Click(Object sender, EventArgs e)
 		{
-			Process(1);
+			if ( systemStatus == 0 )
+				Process(1);
 		}
 
 		protected void btnProcess2_Click(Object sender, EventArgs e)
 		{
-			Process(2);
+			if ( systemStatus == 0 )
+				Process(2);
 		}
 
 		private void Process(byte mode)
@@ -87,7 +123,7 @@ namespace PCIWeb
 				using (PCIBusiness.Payments payments = new PCIBusiness.Payments())
 				{
 					int k         = payments.ProcessCards(provider,mode);
-					lblError.Text = k.ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed";
+					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed";
 				//	payments.ProcessTokens(provider,mode);
 				}
 				PCIBusiness.Tools.LogInfo("RTR.Process/10","Finished");

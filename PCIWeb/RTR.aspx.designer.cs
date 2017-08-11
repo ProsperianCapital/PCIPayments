@@ -22,15 +22,6 @@ namespace PCIWeb {
         protected global::System.Web.UI.HtmlControls.HtmlForm frmRTR;
         
         /// <summary>
-        /// lblProvider control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal lblProvider;
-        
-        /// <summary>
         /// lblSQLServer control.
         /// </summary>
         /// <remarks>
@@ -67,6 +58,24 @@ namespace PCIWeb {
         protected global::System.Web.UI.WebControls.Literal lblSQLStatus;
         
         /// <summary>
+        /// lblSMode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal lblSMode;
+        
+        /// <summary>
+        /// lblSStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal lblSStatus;
+        
+        /// <summary>
         /// lstProvider control.
         /// </summary>
         /// <remarks>
@@ -74,6 +83,33 @@ namespace PCIWeb {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList lstProvider;
+        
+        /// <summary>
+        /// lblBureauCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal lblBureauCode;
+        
+        /// <summary>
+        /// lblBureauURL control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal lblBureauURL;
+        
+        /// <summary>
+        /// lblBureauStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal lblBureauStatus;
         
         /// <summary>
         /// btnProcess1 control.

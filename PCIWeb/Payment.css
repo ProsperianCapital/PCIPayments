@@ -33,17 +33,23 @@ body
 	color: red;
 	font-weight: bold;
 }
+.ButtonRow
+{
+	padding: 5px;
+	background-color: powderblue;
+}
 .Button
 {
 	padding: 5px;
-	color: #000000;
+	color: darkgreen;
+	font-weight: bold;
 	font-size: 14px;
 	cursor: pointer;
-	background-color: #CCCCCC;
+	background-color: #DDCCCC;
 }
 .Button:hover
 {
-	background-color: lightblue;
+	background-color: yellow;
 }
 .BoxRight
 {
