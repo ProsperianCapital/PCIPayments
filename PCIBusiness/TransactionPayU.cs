@@ -158,7 +158,7 @@ namespace PCIBusiness
 			int ret = 300;
 			xmlSent = "";
 
-			Tools.LogInfo("TransactionPayU.GetToken/10","Started ... " + payment.MerchantReference,100);
+//			Tools.LogInfo("TransactionPayU.GetToken/10","Started ... " + payment.MerchantReference,100);
 
 			try
 			{
@@ -239,7 +239,7 @@ namespace PCIBusiness
 			int ret = 600;
 			xmlSent = "";
 
-			Tools.LogInfo("TransactionPayU.ProcessPayment/10","Started ... " + payment.MerchantReference,100);
+//			Tools.LogInfo("TransactionPayU.ProcessPayment/10","Started ... " + payment.MerchantReference,100);
 
 //		   +   "<secure3d>false</secure3d>"
 //       +   "<storePaymentMethod>true</storePaymentMethod>"

@@ -130,15 +130,17 @@ namespace PCIBusiness
 					}
 				}
 
+				Tools.LogInfo("TransactionT24.PostHTML/80","Response = " + xmlReceived.ToString(),100);
 				ret       = 80;
 				xmlResult = new XmlDocument();
 				xmlResult.LoadXml(xmlReceived.ToString());
 
 //			//	Get data from result XML
 				ret        = 90;
-				payRef     = Tools.XMLNode(xmlResult,"transactionid");
 				resultCode = Tools.XMLNode(xmlResult,"status");
 				resultMsg  = Tools.XMLNode(xmlResult,"message");
+				payToken   = Tools.XMLNode(xmlResult,"merchant_card_number");
+				payRef     = Tools.XMLNode(xmlResult,"transaction_id");
 
 				if ( Successful )
 					return 0;
@@ -158,14 +160,13 @@ namespace PCIBusiness
 		{
 			int ret = 10;
 
+//        + "&merchant_card_number="
+
 			try
 			{
 				xmlSent = "version=2"
-				        + "&merchant_card_number="
 				        + "&ipaddress="
 				        + "&merchant_account="      + Tools.URLString(merchantAccount)
-				        + "&merchant_order="        + Tools.URLString(payment.MerchantReference)
-				        + "&merchant_product_desc=" + Tools.URLString(payment.MerchantReference)
 				        + "&first_name="            + Tools.URLString(payment.FirstName)
 				        + "&last_name="             + Tools.URLString(payment.LastName)
 				        + "&address1="              + Tools.URLString(payment.Address(1))
@@ -175,6 +176,8 @@ namespace PCIBusiness
 				        + "&country="               + Tools.URLString(payment.CountryCode)
 				        + "&phone="                 + Tools.URLString(payment.PhoneCell)
 				        + "&email="                 + Tools.URLString(payment.EMail)
+				        + "&merchant_order="        + Tools.URLString(payment.MerchantReference)
+				        + "&merchant_product_desc=" + Tools.URLString(payment.PaymentDescription)
 				        + "&amount="                + Tools.URLString(payment.PaymentAmount.ToString())
 				        + "&currency="              + Tools.URLString(payment.CurrencyCode)
 				        + "&credit_card_type="      + Tools.URLString(payment.CardType)
@@ -186,8 +189,6 @@ namespace PCIBusiness
 			//	Checksum (SHA1)
 				ret = 20;
 				string chk = merchantAccount
-					        + payment.MerchantReference
-					        + payment.MerchantReference
 							  + payment.FirstName
 							  + payment.LastName
 							  + payment.Address(1)
@@ -197,6 +198,8 @@ namespace PCIBusiness
 							  + payment.CountryCode
 							  + payment.PhoneCell
 							  + payment.EMail
+					        + payment.MerchantReference
+					        + payment.PaymentDescription
 							  + payment.PaymentAmount.ToString()
 							  + payment.CurrencyCode
 							  + payment.CardType
@@ -205,55 +208,56 @@ namespace PCIBusiness
 							  + payment.CardExpiryYY
 							  + payment.CardCVV;
 
-				ret        = 30;
-				xmlSent    = xmlSent + "&address2=";
-				if ( payment.Address(2).Length > 0 && payment.Address(2) != payment.Address(255) )
-				{
-					xmlSent = xmlSent + Tools.URLString(payment.Address(2));
-					chk     = chk + payment.Address(2);
-				}
+//				ret        = 30;
+//				xmlSent    = xmlSent + "&address2=";
+//				if ( payment.Address(2).Length > 0 && payment.Address(2) != payment.Address(255) )
+//				{
+//					xmlSent = xmlSent + Tools.URLString(payment.Address(2));
+//					chk     = chk + payment.Address(2);
+//				}
+
 				chk        = chk + partnerControl;
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
+
+				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),100);
+
 				ret        = PostHTML(URL);
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("TransactionT24.Process","Ret="+ret.ToString()+" / "+postHTML,ex);
+				Tools.LogException("TransactionT24.GetToken/3","Ret="+ret.ToString()+" / "+postHTML,ex);
 			}
 			return ret;
 		}
 
-
-		public int GetTokenOLD(Payment payment)
+		public override int ProcessPayment(Payment payment)
 		{
 			int ret = 10;
 
 			try
 			{
-				xmlSent = postHTML.Replace("value='merchant_account'"     ,"value='"+merchantAccount+"'")
-				                  .Replace("value='merchant_order'"       ,"value='"+payment.MerchantReference+"'")
-				                  .Replace("value='merchant_product_desc'","value='RTR Payment Code "+payment.MerchantReference+"'")
-				                  .Replace("value='first_name'"           ,"value='"+payment.FirstName+"'")
-				                  .Replace("value='last_name'"            ,"value='"+payment.LastName+"'")
-				                  .Replace("value='address1'"             ,"value='"+payment.Address(1)+"'")
-				                  .Replace("value='city'"                 ,"value='"+payment.Address(255)+"'")
-				                  .Replace("value='state'"                ,"value='"+payment.ProvinceCode+"'")
-				                  .Replace("value='zip_code'"             ,"value='"+payment.PostalCode+"'")
-				                  .Replace("value='country'"              ,"value='"+payment.CountryCode+"'")
-				                  .Replace("value='phone'"                ,"value='"+payment.PhoneCell+"'")
-				                  .Replace("value='email'"                ,"value='"+payment.EMail+"'")
-				                  .Replace("value='amount'"               ,"value='"+payment.PaymentAmount.ToString()+"'")
-				                  .Replace("value='credit_card_type'"     ,"value='"+payment.CardType+"'")
-				                  .Replace("value='credit_card_number'"   ,"value='"+payment.CardNumber+"'")
-				                  .Replace("value='expire_month'"         ,"value='"+payment.CardExpiryMonth+"'")
-				                  .Replace("value='expire_year'"          ,"value='"+payment.CardExpiryYY+"'")
-				                  .Replace("value='cvv2'"                 ,"value='"+payment.CardCVV+"'");
+				xmlSent = "version=2"
+				        + "&ipaddress="
+				        + "&merchant_account="      + Tools.URLString(merchantAccount)
+				        + "&first_name="            + Tools.URLString(payment.FirstName)
+				        + "&last_name="             + Tools.URLString(payment.LastName)
+				        + "&address1="              + Tools.URLString(payment.Address(1))
+				        + "&city="                  + Tools.URLString(payment.Address(255))
+				        + "&state="                 + Tools.URLString(payment.ProvinceCode)
+				        + "&zip_code="              + Tools.URLString(payment.PostalCode)
+				        + "&country="               + Tools.URLString(payment.CountryCode)
+				        + "&phone="                 + Tools.URLString(payment.PhoneCell)
+				        + "&email="                 + Tools.URLString(payment.EMail)
+				        + "&merchant_order="        + Tools.URLString(payment.MerchantReference)
+				        + "&merchant_product_desc=" + Tools.URLString(payment.PaymentDescription)
+				        + "&amount="                + Tools.URLString(payment.PaymentAmount.ToString())
+				        + "&currency="              + Tools.URLString(payment.CurrencyCode)
+				        + "&merchant_card_number="  + Tools.URLString(payment.CardToken);
+
 			//	Checksum (SHA1)
 				ret = 20;
 				string chk = merchantAccount
-					        + payment.MerchantReference
-							  + "RTR Payment Code "+payment.MerchantReference
 							  + payment.FirstName
 							  + payment.LastName
 							  + payment.Address(1)
@@ -263,38 +267,27 @@ namespace PCIBusiness
 							  + payment.CountryCode
 							  + payment.PhoneCell
 							  + payment.EMail
+					        + payment.MerchantReference
+					        + payment.PaymentDescription
 							  + payment.PaymentAmount.ToString()
-							  + "USD"
-							  + payment.CardType.ToString()
-							  + payment.CardNumber.ToString()
-							  + payment.CardExpiryMonth.ToString()
-							  + payment.CardExpiryYY.ToString()
-							  + payment.CardCVV.ToString();
+							  + payment.CurrencyCode
+							  + payment.CardToken;
 
-				ret = 30;
-				if ( payment.Address(1) == payment.Address(255) )
-					xmlSent = xmlSent.Replace("value='address2'","value=''");
-				else
-				{
-					xmlSent = xmlSent.Replace("value='address2'","value='"+payment.Address(2)+"'");
-					chk     = chk + payment.Address(2);
-				}
 				chk        = chk + partnerControl;
 				ret        = 40;  
-				xmlSent    = xmlSent.Replace("value='control'","value='"+HashSHA1(chk)+"'");
+				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
+
+				Tools.LogInfo("TransactionT24.ProcessPayment/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),100);
+
 				ret        = PostHTML(URL);
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("TransactionT24.Process","Ret="+ret.ToString()+" / "+postHTML,ex);
+				Tools.LogException("TransactionT24.ProcessPayment/3","Ret="+ret.ToString()+" / "+postHTML,ex);
 			}
 			return ret;
 		}
 
-		public override int ProcessPayment(Payment payment)
-		{
-			return 0;
-		}
 
 		private string HashSHA1(string x)
 		{

@@ -333,12 +333,13 @@ namespace PCIBusiness
 			email              = dbConn.ColString("email");
 			phoneCell          = dbConn.ColString("mobile");
 			regionalId         = dbConn.ColString("regionalId");
-			address            = new string[3];
+			address            = new string[4];
 			address[0]         = dbConn.ColString("address1");
-			address[1]         = dbConn.ColString("address2");
-			address[2]         = dbConn.ColString("address3");
+			address[1]         = dbConn.ColString("address2",0);
+			address[2]         = dbConn.ColString("address3",0);
+			address[3]         = dbConn.ColString("address4",0);
 			postalCode         = dbConn.ColString("PostalCode");
-			provinceCode       = dbConn.ColString("Province");
+			provinceCode       = dbConn.ColString("Province",0);
 			countryCode        = dbConn.ColString("CountryCode");
 
 		//	Payment
