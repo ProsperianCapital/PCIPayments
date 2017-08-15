@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Fail.aspx" />
+    <Content Include="LogoProsperian.png" />
     <Content Include="Payment.css" />
     <Content Include="RTR.aspx" />
     <Content Include="Succeed.aspx" />
