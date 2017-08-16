@@ -72,33 +72,47 @@ namespace PCIWeb
 
 		private void ProviderDetails()
 		{
-			if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) )
-				using ( PCIBusiness.TransactionPayU x = new PCIBusiness.TransactionPayU() )
+			string bureau = lstProvider.SelectedValue.Trim();
+			if ( bureau.Length > 0 )
+				using (Payments payments = new Payments())
 				{
-					lblBureauCode.Text   = x.BureauCode;
-					lblBureauURL.Text    = x.URL;
-					lblBureauStatus.Text = x.BureauStatus;
+					Provider provider    = payments.Summary(bureau);
+					lblBureauCode.Text   = provider.BureauCode;
+					lblBureauURL.Text    = provider.BureauURL;
+					lblBureauStatus.Text = provider.BureauStatusName;
+					lblMerchantKey.Text  = provider.MerchantKey;
+					lblMerchantUser.Text = provider.MerchantUserID;
+					lblCards.Text        = provider.CardsToBeTokenized.ToString();
+					lblPayments.Text     = provider.PaymentsToBeProcessed.ToString();
 				}
-			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) )
-				using ( PCIBusiness.TransactionT24 x = new PCIBusiness.TransactionT24() )
-				{
-					lblBureauCode.Text   = x.BureauCode;
-					lblBureauURL.Text    = x.URL;
-					lblBureauStatus.Text = x.BureauStatus;
-				}
-			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.Ikajo) )
-				using ( PCIBusiness.TransactionIkajo x = new PCIBusiness.TransactionIkajo() )
-				{
-					lblBureauCode.Text   = x.BureauCode;
-					lblBureauURL.Text    = x.URL;
-					lblBureauStatus.Text = x.BureauStatus;
-				}
-			else
-			{
-				lblBureauCode.Text   = "";
-				lblBureauURL.Text    = "";
-				lblBureauStatus.Text = "";
-			}
+
+//			if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) )
+//				using ( PCIBusiness.TransactionPayU x = new PCIBusiness.TransactionPayU() )
+//				{
+//	//				lblBureauCode.Text   = x.BureauCode;
+//					lblBureauURL.Text    = x.URL;
+//					lblBureauStatus.Text = x.BureauStatus;
+//				}
+//			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) )
+//				using ( PCIBusiness.TransactionT24 x = new PCIBusiness.TransactionT24() )
+//				{
+//					lblBureauCode.Text   = x.BureauCode;
+//					lblBureauURL.Text    = x.URL;
+//					lblBureauStatus.Text = x.BureauStatus;
+//				}
+//			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.Ikajo) )
+//				using ( PCIBusiness.TransactionIkajo x = new PCIBusiness.TransactionIkajo() )
+//				{
+//					lblBureauCode.Text   = x.BureauCode;
+//					lblBureauURL.Text    = x.URL;
+//					lblBureauStatus.Text = x.BureauStatus;
+//				}
+//			else
+//			{
+//				lblBureauCode.Text   = "";
+//				lblBureauURL.Text    = "";
+//				lblBureauStatus.Text = "";
+//			}
 		}
 
 		protected void btnProcess1_Click(Object sender, EventArgs e)
@@ -151,6 +165,7 @@ namespace PCIWeb
 				               + "Request.Url.PathAndQuery = " + Request.Url.PathAndQuery + "<br />"
 				               + "Request.RawUrl = " + Request.RawUrl + "<br />"
 				               + "Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<br />"
+				               + "System Mode = " + PCIBusiness.Tools.ConfigValue("SystemMode") + "<br />"
 				               + "Error Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileErrors") + "<br />"
 				               + "Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />";
 				System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["TestDB"];

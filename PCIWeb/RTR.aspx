@@ -8,6 +8,30 @@
 <link rel="stylesheet" href="Payment.css" type="text/css" />
 </head>
 <body>
+<script type="text/javascript">
+function Busy(show,msg)
+{
+	try
+	{
+		var h = document.getElementById('divBusy');
+		if ( show > 0 )
+		{
+			h.style.visibility = "visible";
+			h.style.display    = "";
+			h = document.getElementById('msgBusy');
+			if ( msg != null )
+				h.innerHTML = msg;
+		}
+		else
+		{
+			h.style.visibility = "hidden";
+			h.style.display    = "none";
+		}
+	}
+	catch (x)
+	{ }
+}
+</script>
 <a href="http://prosperian.mu" target="P"><img src="LogoProsperian.png" title="Prosperian Capital" /></a>
 <form runat="server" id="frmRTR">
 	<p class="Header">
@@ -37,6 +61,7 @@
 				<asp:ListItem Value="016" Text="PayU" Selected="True"></asp:ListItem>
 				<asp:ListItem Value="203" Text="Ikajo"></asp:ListItem>
 				<asp:ListItem Value="034" Text="Transact24"></asp:ListItem>
+				<asp:ListItem Value="567" Text="MyGate"></asp:ListItem>
 			</asp:DropDownList></td></tr>
 	<tr>
 		<td>Bureau Code</td>
@@ -45,14 +70,26 @@
 		<td>Payment URL</td>
 		<td> : <asp:Literal runat="server" ID="lblBureauURL"></asp:Literal></td></tr>
 	<tr>
+		<td>Prosperian Account/Key</td>
+		<td> : <asp:Literal runat="server" ID="lblMerchantKey"></asp:Literal></td></tr>
+	<tr>
+		<td>Prosperian User ID</td>
+		<td> : <asp:Literal runat="server" ID="lblMerchantUser"></asp:Literal></td></tr>
+	<tr>
+		<td>Cards waiting to be tokenized</td>
+		<td> : <asp:Literal runat="server" ID="lblCards"></asp:Literal></td></tr>
+	<tr>
+		<td>Payments waiting to be processed</td>
+		<td> : <asp:Literal runat="server" ID="lblPayments"></asp:Literal></td></tr>
+	<tr>
 		<td>Status</td>
 		<td> : <asp:Literal runat="server" ID="lblBureauStatus"></asp:Literal></td></tr>
 	</table>
 	<p class="ButtonRow">
-	<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" onclick="btnProcess1_Click" Text="Get Tokens" />&nbsp;
-	<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" onclick="btnProcess2_Click" Text="Process Payments" />&nbsp;
-	<asp:Button  runat="server" ID="btnTest1"    CssClass="Button" onclick="btnConfig_Click"   Text="Show Config" Visible="false" />
-	<asp:Button  runat="server" ID="btnTest2"    CssClass="Button" onclick="btnSQL_Click"      Text="Test SQL ..." />
+	<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Retrieving cards ... please be patient')" onclick="btnProcess1_Click" Text="Get Tokens" />&nbsp;
+	<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Retrieving payments ... please be patient')" onclick="btnProcess2_Click" Text="Process Payments" />&nbsp;
+	<asp:Button  runat="server" ID="btnTest1"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnConfig_Click"   Text="Show Config" Visible="false" />
+	<asp:Button  runat="server" ID="btnTest2"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnSQL_Click"      Text="Test SQL ..." />
 	<asp:TextBox runat="server" ID="txtTest" Width="560px"></asp:TextBox>
 	</p>
 	<hr />
@@ -63,5 +100,15 @@
 	<span style="float:right;margin-right:5px"><asp:Literal runat="server" ID="lblVersion"></asp:Literal></span>
 	</p>
 </form>
+<div id="divBusy" style="left:10px;top:20px;position:fixed;border:1px solid #000000;padding:5px;background-color:aquamarine">
+	<table style="background-color:aquamarine">
+		<tr>
+			<td><img src="Busy.gif" title="Busy ..." /></td>
+			<td id="msgBusy" style="font-size:20px;font-style:italic">Busy ... please wait</td></tr>
+	</table>
+</div>
+<script type="text/javascript">
+Busy(0);
+</script>
 </body>
 </html>
