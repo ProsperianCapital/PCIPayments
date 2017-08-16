@@ -8,20 +8,69 @@ namespace PCIBusiness
 		private string bureauCode;
 		private int    success;
 		private int    fail;
+		private int    err;
 
 		public override BaseData NewItem()
 		{
-			return new Payment("");
+			return new   Payment("");
 		}
 
-		public int CountSucceeded
+		public int      CountSucceeded
 		{
-			 get { return success; }
+			get { return success; }
 		}
 
-		public int CountFailed
+		public int      CountFailed
 		{
 			get { return fail; }
+		}
+		public Provider Summary(string bureau)
+		{
+			int      k;
+			Provider provider   = new Provider();
+			provider.BureauCode = bureau;
+
+			try
+			{
+				k   = 0;
+    			sql = "exec sp_Get_CardToToken " + Tools.DBString(bureau);
+				err = ExecuteSQL(null,false,false);
+				if ( err > 0 )
+					Tools.LogException("Payments.Summary/10",sql + " failed, return code " + err.ToString());
+				else
+					while ( ! dbConn.EOF )
+					{
+						if ( k == 0 )
+							provider.LoadData(dbConn);
+						k++;
+						dbConn.NextRow();
+					}
+				provider.CardsToBeTokenized = k;
+
+				k   = 0;
+    			sql = "exec sp_Get_CardPayment " + Tools.DBString(bureau);
+				err = ExecuteSQL(null,false,false);
+				if ( err > 0 )
+					Tools.LogException("Payments.Summary/20",sql + " failed, return code " + err.ToString());
+				else
+					while ( ! dbConn.EOF )
+					{
+						if ( k == 0 )
+							provider.LoadData(dbConn);
+						k++;
+						dbConn.NextRow();
+					}
+				provider.PaymentsToBeProcessed = k;
+			}
+			catch (Exception ex)
+			{
+				Tools.LogException("Payments.Summary/30","",ex);
+			}
+			finally
+			{
+				Tools.CloseDB(ref dbConn);
+			}
+			return provider;
 		}
 
 		public int ProcessCards(string bureau,byte mode=0)
@@ -43,7 +92,7 @@ namespace PCIBusiness
 
 			try
 			{
-				int err = ExecuteSQL(null,false,false);
+				err = ExecuteSQL(null,false,false);
 				if ( err > 0 )
 					Tools.LogException("Payments.ProcessCards/20",sql + " failed, return code " + err.ToString());
 				else

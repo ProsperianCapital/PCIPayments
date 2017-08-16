@@ -39,10 +39,10 @@ namespace PCIBusiness
 		{
 			get { return "Development"; }
 		}
-		public  string  URL
-		{
-			get { return ""; }
-		}
+//		public  string  URL
+//		{
+//			get { return ""; }
+//		}
 
 		public override int ProcessPayment(Payment payment)
 		{

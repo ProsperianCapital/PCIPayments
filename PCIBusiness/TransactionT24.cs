@@ -49,10 +49,10 @@ namespace PCIBusiness
 		{
 			get { return "Testing"; }
 		}
-		public  string  URL
-		{
-			get { return "https://payment.ccp.boarding.transact24.com/PaymentCard"; }
-		}
+//		public  string  URL
+//		{
+//			get { return "https://payment.ccp.boarding.transact24.com/PaymentCard"; }
+//		}
 
 		public override string ConnectionDetails(byte mode,string separator="")
 		{
@@ -222,7 +222,7 @@ namespace PCIBusiness
 
 				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),100);
 
-				ret        = PostHTML(URL);
+				ret        = PostHTML(payment.URL);
 			}
 			catch (Exception ex)
 			{
@@ -279,7 +279,7 @@ namespace PCIBusiness
 
 				Tools.LogInfo("TransactionT24.ProcessPayment/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),100);
 
-				ret        = PostHTML(URL);
+				ret        = PostHTML(payment.URL);
 			}
 			catch (Exception ex)
 			{

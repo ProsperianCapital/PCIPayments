@@ -32,7 +32,7 @@ namespace PCIBusiness
 		private string   safeKey;
 		private string   userID;
 		private string   password;
-//		private string   url;
+		private string   url;
 
 		private Provider    provider;
 		private Transaction transaction;
@@ -51,9 +51,9 @@ namespace PCIBusiness
 		{
 			get { return  Tools.NullToString(password); }
 		}
-//		public string    URL
-//		{
-//		//	get { return  Tools.NullToString(url); }
+		public string    URL
+		{
+			get { return  Tools.NullToString(url); }
 //			get
 //			{
 //				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
@@ -64,7 +64,7 @@ namespace PCIBusiness
 //					return "https://payment.ccp.boarding.transact24.com/PaymentCard";
 //				return "";
 //			}
-//		}
+		}
 
 //		Payment/Customer stuff
 		public string    MerchantReference
@@ -323,7 +323,7 @@ namespace PCIBusiness
 
 		//	Payment Provider
 			safeKey            = dbConn.ColString("Safekey");
-		//	url                = dbConn.ColString("URL");
+			url                = dbConn.ColString("url");
 			userID             = dbConn.ColString("MerchantUserId");
 			password           = dbConn.ColString("MerchantUserPassword");
 
@@ -364,7 +364,7 @@ namespace PCIBusiness
 			address     = null;
 		}
 
-		public Payment(string bureau)
+		public Payment(string bureau) : base()
 		{
 			bureauCode = Tools.NullToString(bureau);
 		//	Load provider info here ... it will be passed to the Transaction

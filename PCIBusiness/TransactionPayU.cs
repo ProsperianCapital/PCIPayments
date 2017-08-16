@@ -39,10 +39,10 @@ namespace PCIBusiness
 		{
 			get { return "Live"; }
 		}
-		public  string  URL
-		{
-			get { return "https://www.payu.co.za"; }
-		}
+//		public  string  URL
+//		{
+//			get { return "https://www.payu.co.za"; }
+//		}
 
 		public override string ConnectionDetails(byte mode,string separator="")
 		{
@@ -198,7 +198,7 @@ namespace PCIBusiness
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-				ret      = SendXML(URL,payment.UserID,payment.Password);
+				ret      = SendXML(payment.URL,payment.UserID,payment.Password);
 				payRef   = Tools.XMLNode(xmlResult,"payUReference");
 				payToken = Tools.XMLNode(xmlResult,"pmId");
 
@@ -219,7 +219,7 @@ namespace PCIBusiness
 				           +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
 				           + "</Basket>"
 				           + "</ns1:doTransaction>";
-					ret = SendXML(URL,payment.UserID,payment.Password);
+					ret = SendXML(payment.URL,payment.UserID,payment.Password);
 					Tools.LogInfo("TransactionPayU.GetToken/30","ResultCode="+ResultCode,100);
 				}
 			}
@@ -280,7 +280,7 @@ namespace PCIBusiness
 
 				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML = " + xmlSent,100);
 
-				ret    = SendXML(URL,payment.UserID,payment.Password);
+				ret    = SendXML(payment.URL,payment.UserID,payment.Password);
 				payRef = Tools.XMLNode(xmlResult,"payUReference");
 			}
 			catch (Exception ex)
