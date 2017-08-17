@@ -166,22 +166,40 @@ namespace PCIWeb {
         protected global::System.Web.UI.WebControls.Button btnProcess2;
         
         /// <summary>
-        /// btnTest1 control.
+        /// btnConfig control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnTest1;
+        protected global::System.Web.UI.WebControls.Button btnConfig;
         
         /// <summary>
-        /// btnTest2 control.
+        /// btnInfo control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnTest2;
+        protected global::System.Web.UI.WebControls.Button btnInfo;
+        
+        /// <summary>
+        /// btnError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnError;
+        
+        /// <summary>
+        /// btnSQL control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSQL;
         
         /// <summary>
         /// txtTest control.

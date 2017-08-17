@@ -88,8 +88,11 @@ function Busy(show,msg)
 	<p class="ButtonRow">
 	<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Retrieving cards ... please be patient')" onclick="btnProcess1_Click" Text="Get Tokens" />&nbsp;
 	<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Retrieving payments ... please be patient')" onclick="btnProcess2_Click" Text="Process Payments" />&nbsp;
-	<asp:Button  runat="server" ID="btnTest1"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnConfig_Click"   Text="Show Config" Visible="false" />
-	<asp:Button  runat="server" ID="btnTest2"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnSQL_Click"      Text="Test SQL ..." />
+	&nbsp;&nbsp;
+	<asp:Button  runat="server" ID="btnConfig"   CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnConfig_Click" Text="Config ..." />
+	<asp:Button  runat="server" ID="btnInfo"     CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnInfo_Click"   Text="Info Log ..." />
+	<asp:Button  runat="server" ID="btnError"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnError_Click"  Text="Error Log ..." />
+	<asp:Button  runat="server" ID="btnSQL"      CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnSQL_Click"    Text="Test SQL ..." />
 	<asp:TextBox runat="server" ID="txtTest" Width="560px"></asp:TextBox>
 	</p>
 	<hr />
@@ -104,7 +107,7 @@ function Busy(show,msg)
 	<table style="background-color:aquamarine">
 		<tr>
 			<td><img src="Busy.gif" title="Busy ..." /></td>
-			<td id="msgBusy" style="font-size:20px;font-style:italic">Busy ... please wait</td></tr>
+			<td id="msgBusy" style="font-size:18px;font-style:italic;color:red;font-weight:bold">Busy ... please wait</td></tr>
 	</table>
 </div>
 <script type="text/javascript">

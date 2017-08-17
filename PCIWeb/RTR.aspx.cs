@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Configuration;
 using System.Text;
 using System.Web.UI.WebControls;
@@ -9,6 +10,7 @@ namespace PCIWeb
 	public partial class RTR : System.Web.UI.Page
 	{
 		private byte systemStatus;
+		private int  timeOut;
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -147,17 +149,51 @@ namespace PCIWeb
 				PCIBusiness.Tools.LogException("RTR.Process/15","",ex);
 			}
 		}
+		private void ShowFile(string fileName)
+		{
+			StreamReader fHandle = null;
+			try
+			{
+				int k    = fileName.LastIndexOf(".");
+				fileName = fileName.Substring(0,k) + "-" + PCIBusiness.Tools.DateToString(System.DateTime.Now,7) + fileName.Substring(k);
+				fHandle  = File.OpenText(fileName);
+				string h = fHandle.ReadToEnd().Replace(Environment.NewLine,"</p><p>");
+				if ( ! h.EndsWith("<p>") )
+					h = h + "<p>";
+				lblTest.Text = "<div class='Error'>Log File : " + fileName + "</div><p>" + h + "&nbsp;</p>";
+			}
+			catch
+			{
+				lblError.Text = "File " + fileName + " could not be found";
+			}
+			finally
+			{
+				if ( fHandle != null )
+					fHandle.Close();
+				fHandle = null;
+			}
+		}
+
 
 		protected void btnSQL_Click(Object sender, EventArgs e)
 		{
-			lblTest.Text = Tools.SQLDebug(txtTest.Text);
+			lblTest.Text = Tools.SQLDebug(txtTest.Text) + "<p>&nbsp;</p>";
+		}
+
+		protected void btnInfo_Click(Object sender, EventArgs e)
+		{
+			ShowFile(PCIBusiness.Tools.ConfigValue("LogFileInfo"));
+		}
+		protected void btnError_Click(Object sender, EventArgs e)
+		{
+			ShowFile(PCIBusiness.Tools.ConfigValue("LogFileErrors"));
 		}
 
 		protected void btnConfig_Click(Object sender, EventArgs e)
 		{
 			try
 			{
-				string folder  = "<hr />System Version = " + PCIBusiness.SystemDetails.AppVersion + "<br />"
+				string folder  = "System Version = " + PCIBusiness.SystemDetails.AppVersion + "<br />"
 				               + "Server.MapPath = " + Server.MapPath("") + "<br />"
 				               + "Request.Url.AbsoluteUri = " + Request.Url.AbsoluteUri + "<br />"
 				               + "Request.Url.AbsolutePath = " + Request.Url.AbsolutePath + "<br />"
@@ -166,16 +202,28 @@ namespace PCIWeb
 				               + "Request.RawUrl = " + Request.RawUrl + "<br />"
 				               + "Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<br />"
 				               + "System Mode = " + PCIBusiness.Tools.ConfigValue("SystemMode") + "<br />"
+				               + "Page timeout = " + Server.ScriptTimeout.ToString() + " seconds<br />"
 				               + "Error Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileErrors") + "<br />"
 				               + "Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />";
 				System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["TestDB"];
-				folder         = folder + "DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<br />";
+				folder         = folder + "DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
 				lblTest.Text   = folder;
 			}
 			catch (Exception ex)
 			{
-				PCIBusiness.Tools.LogException("RTR.btnProcess_Click/15","",ex);
+				PCIBusiness.Tools.LogException("RTR.btnProcess_Click","",ex);
 			}
+		}
+
+		public RTR() : base()
+		{
+			timeOut              = Server.ScriptTimeout;
+			Server.ScriptTimeout = 1800; // 30 minutes
+		}
+
+		~RTR()
+		{
+			Server.ScriptTimeout = timeOut;
 		}
 	}
 }
