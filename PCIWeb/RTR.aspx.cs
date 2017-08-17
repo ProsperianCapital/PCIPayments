@@ -157,7 +157,8 @@ namespace PCIWeb
 				int k    = fileName.LastIndexOf(".");
 				fileName = fileName.Substring(0,k) + "-" + PCIBusiness.Tools.DateToString(System.DateTime.Now,7) + fileName.Substring(k);
 				fHandle  = File.OpenText(fileName);
-				string h = fHandle.ReadToEnd().Replace(Environment.NewLine,"</p><p>");
+				string h = fHandle.ReadToEnd().Trim().Replace("<","&lt;").Replace(">","&gt;");
+				h        = h.Replace(Environment.NewLine,"</p><p>");
 				if ( ! h.EndsWith("<p>") )
 					h = h + "<p>";
 				lblTest.Text = "<div class='Error'>Log File : " + fileName + "</div><p>" + h + "&nbsp;</p>";
