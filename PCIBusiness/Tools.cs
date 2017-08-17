@@ -702,7 +702,7 @@ namespace PCIBusiness
 			if ( sql.Length < 3 )
 			{
 				str = "Invalid SQL (" + sql + ")";
-				Tools.LogInfo("Tools.SQLDebug/1",str);
+//				Tools.LogInfo("Tools.SQLDebug/1",str);
 				return str;
 			}
 
@@ -721,7 +721,7 @@ namespace PCIBusiness
 				{
 					str = "Execution successful, column count = " + conn.ColumnCount.ToString() + ( conn.EOF ? " (NO rows)" : " (At least one row)" );
 					Tools.LogInfo("Tools.SQLDebug/3",str);
-					ret.Append(str+Constants.C_HTMLBREAK());
+					ret.Append(str+"<hr />"); // Constants.C_HTMLBREAK());
 
 					for ( int k = 0 ; k < conn.ColumnCount ; k++ )
 					{
