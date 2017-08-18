@@ -79,8 +79,6 @@ namespace PCIBusiness
 			success    = 0;
 			fail       = 0;
 
-			Tools.LogInfo("Payments.ProcessCards/10","Mode="+mode.ToString()+", BureauCode="+bureauCode,100);
-
 			if ( bureauCode.Length < 1 )
 				return 10;
 			else if ( mode == 1 )
@@ -89,6 +87,8 @@ namespace PCIBusiness
     			sql = "exec sp_Get_CardPayment "  + Tools.DBString(bureauCode);
 			else
 				return 20;
+
+			Tools.LogInfo("Payments.ProcessCards/10","Mode="+mode.ToString()+", BureauCode="+bureauCode+", SQL="+sql,110);
 
 			try
 			{
@@ -121,7 +121,7 @@ namespace PCIBusiness
 			finally
 			{
 				Tools.CloseDB(ref dbConn);
-				Tools.LogInfo("Payments.ProcessCards/90","Finished (" + (success+fail).ToString() + " cards/tokens processed)",100);
+				Tools.LogInfo("Payments.ProcessCards/90","Finished (" + (success+fail).ToString() + " cards/tokens processed)",110);
 			}
 			return 90;
 		}

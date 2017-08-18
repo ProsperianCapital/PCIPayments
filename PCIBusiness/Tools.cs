@@ -435,7 +435,7 @@ namespace PCIBusiness
 		// Use this routine to log debugging/info messages
 		//	To decide which messages to write, adjust the severity below
 		//	Calling routines must supply a severity between 0-255 (default 10)
-			if ( severity > 0 )
+			if ( severity > 100 )
 				LogWrite("LogFileInfo",component,msg);
 		}
 
@@ -702,7 +702,7 @@ namespace PCIBusiness
 			if ( sql.Length < 3 )
 			{
 				str = "Invalid SQL (" + sql + ")";
-//				Tools.LogInfo("Tools.SQLDebug/1",str);
+//				Tools.LogInfo("Tools.SQLDebug/1",str,255);
 				return str;
 			}
 
@@ -712,7 +712,7 @@ namespace PCIBusiness
 			try
 			{
 				str = "SQL = " + sql;
-				Tools.LogInfo("Tools.SQLDebug/2",str);
+				Tools.LogInfo("Tools.SQLDebug/2",str,255);
 				ret.Append(str+Constants.C_HTMLBREAK());
 
 				Tools.OpenDB(ref conn);
@@ -720,7 +720,7 @@ namespace PCIBusiness
 				if ( conn.Execute(sql) )
 				{
 					str = "Execution successful, column count = " + conn.ColumnCount.ToString() + ( conn.EOF ? " (NO rows)" : " (At least one row)" );
-					Tools.LogInfo("Tools.SQLDebug/3",str);
+					Tools.LogInfo("Tools.SQLDebug/3",str,255);
 					ret.Append(str+"<hr />"); // Constants.C_HTMLBREAK());
 
 					for ( int k = 0 ; k < conn.ColumnCount ; k++ )
@@ -729,21 +729,21 @@ namespace PCIBusiness
 						    + ") Name = " + conn.ColName(k)
 						    + ", Type = " + conn.ColDataType("",k)
 						    + ", Value = " + conn.ColValue(k);
-						Tools.LogInfo("Tools.SQLDebug/4",str);
+						Tools.LogInfo("Tools.SQLDebug/4",str,255);
 						ret.Append(str+Constants.C_HTMLBREAK());
 					}
 				}
 				else
 				{
 					str = "Execution failed";
-					Tools.LogInfo("Tools.SQLDebug/5",str);
+					Tools.LogInfo("Tools.SQLDebug/5",str,255);
 					ret.Append(str+Constants.C_HTMLBREAK());
 				}
 			}
 			catch (Exception ex)
 			{
 				str = "Error : " + ex.Message;
-				Tools.LogInfo("Tools.SQLDebug/6",str);
+				Tools.LogInfo("Tools.SQLDebug/6",str,255);
 				ret.Append(str+Constants.C_HTMLBREAK());
 			}
 			finally

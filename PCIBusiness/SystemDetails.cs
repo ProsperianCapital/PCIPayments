@@ -5,8 +5,8 @@ namespace PCIBusiness
 	public static class SystemDetails
 	{
 		public static string AppName    = "Prosperian Capital Payments System";
-		public static string AppDate    = "2017/08/17 15:43:47";
-		public static string AppVersion = "1.0.038";
+		public static string AppDate    = "2017/08/18 15:43:47";
+		public static string AppVersion = "1.0.039";
 		public static string Developer  = "Paul Kilfoil, Software Development & IT Consulting";
 		public static string Owner      = "Prosperian Capital International";
 		public static string OwnerPhone = "+27 21 950 6060";

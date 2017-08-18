@@ -12,33 +12,33 @@ namespace PCIBusiness
 		static string userID   = "Staging Enterprise Integration Store 1";
 		static string password = "j3w8swi5";
 
-		public override string ConnectionDetails(byte mode,string separator="")
-		{
-			if ( mode == 1 ) // HTML
-				return "<table>"
-					  + "<tr><td>Payment Provider</td><td class='Red'> : Ikajo</td></tr>"
-					  + "<tr><td>Status</td><td class='Red'> : In development</td></tr>"
-					  + "<tr><td colspan='2'><hr /></td></tr>"
-					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
-					  + "<tr><td>URL</td><td> : " + url + "</td></tr>"
-					  + "<tr><td>User ID</td><td> : " + userID + "</td></tr>"
-					  + "<tr><td>Password</td><td> : " + password + "</td></tr>"
-					  + "</table>";
+//		public override string ConnectionDetails(byte mode,string separator="")
+//		{
+//			if ( mode == 1 ) // HTML
+//				return "<table>"
+//					  + "<tr><td>Payment Provider</td><td class='Red'> : Ikajo</td></tr>"
+//					  + "<tr><td>Status</td><td class='Red'> : In development</td></tr>"
+//					  + "<tr><td colspan='2'><hr /></td></tr>"
+//					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
+//					  + "<tr><td>URL</td><td> : " + url + "</td></tr>"
+//					  + "<tr><td>User ID</td><td> : " + userID + "</td></tr>"
+//					  + "<tr><td>Password</td><td> : " + password + "</td></tr>"
+//					  + "</table>";
+//
+//			if ( Tools.NullToString(separator).Length < 1 )
+//				separator = Environment.NewLine;
+//
+//			return "Payment Provider : Ikajo" + separator
+//			     + "Bureau Code : " + bureauCode + separator
+//			     + "URL : " + url + separator
+//			     + "User ID : " + userID + separator
+//			     + "Password : " + password;
+//		}
 
-			if ( Tools.NullToString(separator).Length < 1 )
-				separator = Environment.NewLine;
-
-			return "Payment Provider : Ikajo" + separator
-			     + "Bureau Code : " + bureauCode + separator
-			     + "URL : " + url + separator
-			     + "User ID : " + userID + separator
-			     + "Password : " + password;
-		}
-
-		public  string  BureauStatus
-		{
-			get { return "Development"; }
-		}
+//		public  string  BureauStatus
+//		{
+//			get { return "Development"; }
+//		}
 //		public  string  URL
 //		{
 //			get { return ""; }

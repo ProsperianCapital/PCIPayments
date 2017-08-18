@@ -45,35 +45,35 @@ namespace PCIBusiness
 //			  <input type='hidden' id='return_url'            value='return_url' />
 //			  <input type='hidden' id='server_return_url'     value='server_return_url' />
 
-		public  string  BureauStatus
-		{
-			get { return "Testing"; }
-		}
+//		public  string  BureauStatus
+//		{
+//			get { return "Testing"; }
+//		}
 //		public  string  URL
 //		{
 //			get { return "https://payment.ccp.boarding.transact24.com/PaymentCard"; }
 //		}
-
-		public override string ConnectionDetails(byte mode,string separator="")
-		{
-			if ( mode == 1 ) // HTML
-				return "<table>"
-					  + "<tr><td>Payment Provider</td><td class='Red'> : Transact24</td></tr>"
-					  + "<tr><td>Status</td><td class='Red'> : In development</td></tr>"
-					  + "<tr><td colspan='2'><hr /></td></tr>"
-					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
-					  + "<tr><td>Partner Control</td><td> : " + partnerControl + "</td></tr>"
-					  + "<tr><td>Merchant Account</td><td> : " + merchantAccount + "</td></tr>"
-					  + "</table>";
-
-			if ( Tools.NullToString(separator).Length < 1 )
-				separator = Environment.NewLine;
-
-			return "Payment Provider : Transact24" + separator
-			     + "Bureau Code : " + bureauCode + separator
-				  + "Partner Control : " + partnerControl + separator
-				  + "Merchant Account : " + merchantAccount;
-		}
+//
+//		public override string ConnectionDetails(byte mode,string separator="")
+//		{
+//			if ( mode == 1 ) // HTML
+//				return "<table>"
+//					  + "<tr><td>Payment Provider</td><td class='Red'> : Transact24</td></tr>"
+//					  + "<tr><td>Status</td><td class='Red'> : In development</td></tr>"
+//					  + "<tr><td colspan='2'><hr /></td></tr>"
+//					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
+//					  + "<tr><td>Partner Control</td><td> : " + partnerControl + "</td></tr>"
+//					  + "<tr><td>Merchant Account</td><td> : " + merchantAccount + "</td></tr>"
+//					  + "</table>";
+//
+//			if ( Tools.NullToString(separator).Length < 1 )
+//				separator = Environment.NewLine;
+//
+//			return "Payment Provider : Transact24" + separator
+//			     + "Bureau Code : " + bureauCode + separator
+//				  + "Partner Control : " + partnerControl + separator
+//				  + "Merchant Account : " + merchantAccount;
+//		}
 
 		public  bool   Successful
 		{
@@ -92,7 +92,7 @@ namespace PCIBusiness
 
 			try
 			{
-				Tools.LogInfo("TransactionT24.PostHTML/10","XML = " + xmlSent,100);
+				Tools.LogInfo("TransactionT24.PostHTML/10","XML Sent=" + xmlSent,30);
 
 			// Construct web request object
 				ret = 20;
@@ -130,7 +130,7 @@ namespace PCIBusiness
 					}
 				}
 
-				Tools.LogInfo("TransactionT24.PostHTML/80","Response = " + xmlReceived.ToString(),100);
+				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),30);
 				ret       = 80;
 				xmlResult = new XmlDocument();
 				xmlResult.LoadXml(xmlReceived.ToString());
@@ -144,14 +144,14 @@ namespace PCIBusiness
 
 				if ( Successful )
 					return 0;
+				else
+					Tools.LogInfo("TransactionT24.PostHTML/80","Ret="+ret.ToString()+", XML Received=" + xmlReceived.ToString(),150);
 			}
 			catch (Exception ex)
 			{
-				Tools.LogInfo("TransactionT24.PostHTML/85","Ret="+ret.ToString()+" / "+xmlSent,100);
-				Tools.LogException("TransactionT24.PostHTML/90","Ret="+ret.ToString()+" / "+xmlSent,ex);
+				Tools.LogInfo("TransactionT24.PostHTML/85","Ret="+ret.ToString()+", XML Sent="+xmlSent,255);
+				Tools.LogException("TransactionT24.PostHTML/90","Ret="+ret.ToString()+", XML Sent="+xmlSent,ex);
 			}
-
-			Tools.LogInfo("TransactionT24.PostHTML/95","Ret="+ret.ToString(),100);
 			return ret;
 		}
 
@@ -220,7 +220,7 @@ namespace PCIBusiness
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
-				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),100);
+				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),177);
 
 				ret        = PostHTML(payment.URL);
 			}
@@ -277,7 +277,7 @@ namespace PCIBusiness
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
-				Tools.LogInfo("TransactionT24.ProcessPayment/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),100);
+				Tools.LogInfo("TransactionT24.ProcessPayment/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),177);
 
 				ret        = PostHTML(payment.URL);
 			}
