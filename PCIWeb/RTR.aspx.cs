@@ -134,7 +134,7 @@ namespace PCIWeb
 			try
 			{
 				string provider = lstProvider.SelectedValue;
-				PCIBusiness.Tools.LogInfo("RTR.Process/5","Started, provider '" + provider + "'");
+				PCIBusiness.Tools.LogInfo("RTR.Process/5","Started, provider '" + provider + "'",10);
 
 				using (PCIBusiness.Payments payments = new PCIBusiness.Payments())
 				{
@@ -142,7 +142,7 @@ namespace PCIWeb
 					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed";
 				//	payments.ProcessTokens(provider,mode);
 				}
-				PCIBusiness.Tools.LogInfo("RTR.Process/10","Finished");
+				PCIBusiness.Tools.LogInfo("RTR.Process/10","Finished",10);
 			}
 			catch (Exception ex)
 			{
@@ -194,20 +194,33 @@ namespace PCIWeb
 		{
 			try
 			{
-				string folder  = "System Version = " + PCIBusiness.SystemDetails.AppVersion + "<br />"
-				               + "Server.MapPath = " + Server.MapPath("") + "<br />"
-				               + "Request.Url.AbsoluteUri = " + Request.Url.AbsoluteUri + "<br />"
-				               + "Request.Url.AbsolutePath = " + Request.Url.AbsolutePath + "<br />"
-				               + "Request.Url.LocalPath = " + Request.Url.LocalPath + "<br />"
-				               + "Request.Url.PathAndQuery = " + Request.Url.PathAndQuery + "<br />"
-				               + "Request.RawUrl = " + Request.RawUrl + "<br />"
-				               + "Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<br />"
-				               + "System Mode = " + PCIBusiness.Tools.ConfigValue("SystemMode") + "<br />"
-				               + "Page timeout = " + Server.ScriptTimeout.ToString() + " seconds<br />"
-				               + "Error Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileErrors") + "<br />"
-				               + "Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />";
+				string folder  = "<u>System</u><br />"
+				               + "- Version = " + PCIBusiness.SystemDetails.AppVersion + "<br />"
+				               + "- Date = " + PCIBusiness.SystemDetails.AppDate + "<br />"
+				               + "- Owner = " + PCIBusiness.SystemDetails.Owner + "<br />"
+				               + "- Developer = " + PCIBusiness.SystemDetails.Developer + "<hr />"
+				               + "<u>Environment</u><br />"
+				               + "- Machine Name = " + Environment.MachineName + "<br />"
+				               + "- Processors = " + Environment.ProcessorCount.ToString() + "<br />"
+				               + "- Available Memory = " + Environment.WorkingSet.ToString() + " bytes<br />"
+				               + "- Operating System = " + Environment.OSVersion.ToString() + "<br />"
+				               + "- Microsoft .NET Runtime = " + Environment.Version.ToString() + "<br />"
+				               + "- User Name = " + Environment.UserName + "<hr />"
+				               + "<u>Internal</u><br />"
+				               + "- Server.MapPath = " + Server.MapPath("") + "<br />"
+				               + "- Request.Url.AbsoluteUri = " + Request.Url.AbsoluteUri + "<br />"
+				               + "- Request.Url.AbsolutePath = " + Request.Url.AbsolutePath + "<br />"
+				               + "- Request.Url.LocalPath = " + Request.Url.LocalPath + "<br />"
+				               + "- Request.Url.PathAndQuery = " + Request.Url.PathAndQuery + "<br />"
+				               + "- Request.RawUrl = " + Request.RawUrl + "<br />"
+				               + "- Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<hr />"
+				               + "<u>Settings</u><br />"
+				               + "- System Mode = " + PCIBusiness.Tools.ConfigValue("SystemMode") + "<br />"
+				               + "- Page timeout = " + Server.ScriptTimeout.ToString() + " seconds<br />"
+				               + "- Error Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileErrors") + "<br />"
+				               + "- Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />";
 				System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["DBConn"];
-				folder         = folder + "DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
+				folder         = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
 				lblTest.Text   = folder;
 			}
 			catch (Exception ex)
