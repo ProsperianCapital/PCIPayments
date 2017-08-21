@@ -39,10 +39,24 @@ namespace PCIBusiness
 		{
 			get { return     Tools.NullToString(xmlSent); }
 		}
-		public  XmlDocument XMLResult
+		public  string      XMLResult
 		{
-			get { return     xmlResult; }
+			get
+			{
+				try
+				{
+					return     xmlResult.InnerXml;
+				}
+				catch
+				{ }
+				return "";
+			}
 		}
+//		public  XmlDocument XMLResult
+//		{
+//			get { return     xmlResult; }
+//		}
+
 //		public  Constants.BureauStatus ProviderStatus
 //		{
 //			get

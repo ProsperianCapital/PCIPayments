@@ -264,7 +264,7 @@ namespace PCIBusiness
 		                                 + ",@CardTokenisationStatusCode = '" + ( ret == 0 ? "007'" : "001'" )
 			                              + ",@PaymentBureauToken = "          + Tools.DBString(transaction.PaymentToken)
 			                              + ",@BureauSubmissionSoap = "        + Tools.DBString(transaction.XMLSent,3)
-			                              + ",@BureauResultSoap = "            + Tools.DBString(transaction.XMLResult.InnerXml,3);
+			                              + ",@BureauResultSoap = "            + Tools.DBString(transaction.XMLResult,3);
 			Tools.LogInfo("Payment.GetToken/20","SQL=" + sql,30);
 			int k = ExecuteSQLUpdate();
 			Tools.LogInfo("Payment.GetToken/90","Ret=" + ret.ToString(),30);
