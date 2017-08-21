@@ -60,7 +60,7 @@ function Busy(show,msg)
 			<asp:DropDownList runat="server" id="lstProvider" AutoPostBack="true">
 				<asp:ListItem Value="016" Text="PayU" Selected="True"></asp:ListItem>
 				<asp:ListItem Value="203" Text="Ikajo"></asp:ListItem>
-				<asp:ListItem Value="034" Text="Transact24"></asp:ListItem>
+				<asp:ListItem Value="006" Text="Transact24"></asp:ListItem>
 				<asp:ListItem Value="567" Text="MyGate"></asp:ListItem>
 			</asp:DropDownList></td></tr>
 	<tr>
