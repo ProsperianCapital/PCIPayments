@@ -89,7 +89,7 @@ namespace PCIBusiness
 
 			try
 			{
-				Tools.LogInfo("TransactionT24.PostHTML/10","XML Sent=" + xmlSent,30);
+				Tools.LogInfo("TransactionT24.PostHTML/10","URL=" + url + ", XML Sent=" + xmlSent,30);
 
 			// Construct web request object
 				ret = 20;
@@ -146,8 +146,8 @@ namespace PCIBusiness
 			}
 			catch (Exception ex)
 			{
-				Tools.LogInfo("TransactionT24.PostHTML/85","Ret="+ret.ToString()+", XML Sent="+xmlSent,255);
-				Tools.LogException("TransactionT24.PostHTML/90","Ret="+ret.ToString()+", XML Sent="+xmlSent,ex);
+				Tools.LogInfo("TransactionT24.PostHTML/85","Ret="+ret.ToString()+", URL=" + url + ", XML Sent="+xmlSent,255);
+				Tools.LogException("TransactionT24.PostHTML/90","Ret="+ret.ToString()+", URL=" + url + ", XML Sent="+xmlSent,ex);
 			}
 			return ret;
 		}
