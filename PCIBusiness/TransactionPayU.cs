@@ -35,15 +35,6 @@ namespace PCIBusiness
 
 		private string resultSuccessful;
 
-//		public  string  BureauStatus
-//		{
-//			get { return "Live"; }
-//		}
-//		public  string  URL
-//		{
-//			get { return "https://www.payu.co.za"; }
-//		}
-
 		public  bool   Successful
 		{
 			get { return Tools.NullToString(resultSuccessful).ToUpper() == "TRUE"; }
@@ -139,7 +130,7 @@ namespace PCIBusiness
 			try
 			{
 				xmlSent = "<ns1:doTransaction>"
-				        + "<Safekey>" + payment.SafeKey + "</Safekey>"
+				        + "<Safekey>" + payment.ProviderKey + "</Safekey>"
 				        + "<Api>ONE_ZERO</Api>"
 				        + "<TransactionType>RESERVE</TransactionType>"
 				        + "<Customfield>"
@@ -152,7 +143,7 @@ namespace PCIBusiness
 				        +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
 				        + "</AdditionalInformation>"
 				        + "<Customer>"
-				        +   "<merchantUserId>" + payment.UserID + "</merchantUserId>"
+				        +   "<merchantUserId>" + payment.ProviderUserID + "</merchantUserId>"
 				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
 				        +   "<email>" + payment.EMail + "</email>"
 				        +   "<firstName>" + payment.FirstName + "</firstName>"
@@ -169,12 +160,12 @@ namespace PCIBusiness
 				        +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
 				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
 			           +    "<cardNumber>" + payment.CardNumber + "</cardNumber>"
-			           +    "<cardExpiry>" + payment.CardExpiry + "</cardExpiry>"
+			           +    "<cardExpiry>" + payment.CardExpiryMM + payment.CardExpiryYYYY + "</cardExpiry>"
 			           +    "<cvv>" + payment.CardCVV + "</cvv>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-				ret      = SendXML(payment.URL,payment.UserID,payment.Password);
+				ret      = SendXML(payment.ProviderURL,payment.ProviderUserID,payment.ProviderPassword);
 				payRef   = Tools.XMLNode(xmlResult,"payUReference");
 				payToken = Tools.XMLNode(xmlResult,"pmId");
 
@@ -183,7 +174,7 @@ namespace PCIBusiness
 				if ( ret == 0 )
 				{
 					xmlSent = "<ns1:doTransaction>"
-				           + "<Safekey>" + payment.SafeKey + "</Safekey>"
+				           + "<Safekey>" + payment.ProviderKey + "</Safekey>"
 				           + "<Api>ONE_ZERO</Api>"
 				           + "<TransactionType>RESERVE_CANCEL</TransactionType>"
 				           + "<AdditionalInformation>"
@@ -195,7 +186,7 @@ namespace PCIBusiness
 				           +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
 				           + "</Basket>"
 				           + "</ns1:doTransaction>";
-					ret = SendXML(payment.URL,payment.UserID,payment.Password);
+					ret = SendXML(payment.ProviderURL,payment.ProviderUserID,payment.ProviderPassword);
 					Tools.LogInfo("TransactionPayU.GetToken/30","ResultCode="+ResultCode,30);
 				}
 			}
@@ -221,7 +212,7 @@ namespace PCIBusiness
 			try
 			{
 				xmlSent = "<ns1:doTransaction>"
-				        + "<Safekey>" + payment.SafeKey + "</Safekey>"
+				        + "<Safekey>" + payment.ProviderKey + "</Safekey>"
 				        + "<Api>ONE_ZERO</Api>"
 				        + "<TransactionType>PAYMENT</TransactionType>"
 				        + "<AuthenticationType>TOKEN</AuthenticationType>"
@@ -233,7 +224,7 @@ namespace PCIBusiness
 				        +   "<merchantReference>" + payment.MerchantReference + "</merchantReference>"
 				        + "</AdditionalInformation>"
 				        + "<Customer>"
-				        +   "<merchantUserId>" + payment.UserID + "</merchantUserId>"
+				        +   "<merchantUserId>" + payment.ProviderUserID + "</merchantUserId>"
 				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
 				        +   "<email>" + payment.EMail + "</email>"
 				        +   "<firstName>" + payment.FirstName + "</firstName>"
@@ -254,7 +245,7 @@ namespace PCIBusiness
 
 				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML Sent=" + xmlSent,30);
 
-				ret    = SendXML(payment.URL,payment.UserID,payment.Password);
+				ret    = SendXML(payment.ProviderURL,payment.ProviderUserID,payment.ProviderPassword);
 				payRef = Tools.XMLNode(xmlResult,"payUReference");
 			}
 			catch (Exception ex)
@@ -264,78 +255,6 @@ namespace PCIBusiness
 			}
 			return ret;
 		}
-
-//		public int Process(string customerXML)
-//		{
-//			string soapXML = "";
-//			int    ret     = 10;
-//			payRef         = "";
-//
-//			try
-//			{
-//				soapXML = "<ns1:doTransaction>"
-//				        + stdXML
-//				        + customerXML
-//				        + "</ns1:doTransaction>";
-//
-//			// Construct soap object
-//				ret = 20;
-//				XmlDocument soapEnvelopeXml = CreateSoapEnvelope(soapXML);
-//
-//			// Create username and password namespace
-//				ret = 30;
-//				XmlNamespaceManager mgr = new XmlNamespaceManager(soapEnvelopeXml.NameTable);
-//				mgr.AddNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
-//				XmlNode userName        = soapEnvelopeXml.SelectSingleNode("//wsse:Username",mgr);
-//				userName.InnerText      = userID;
-//				XmlNode userPassword    = soapEnvelopeXml.SelectSingleNode("//wsse:Password",mgr);
-//				userPassword.InnerText  = password;
-//
-//			// Construct web request object
-//				ret = 40;
-//				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url+"/service/PayUAPI?wsdl");
-//				webRequest.Headers.Add(@"SOAP:Action");
-//				webRequest.ContentType = "text/xml;charset=\"utf-8\"";
-//				webRequest.Accept      = "text/xml";
-//				webRequest.Method      = "POST";
-//
-//			// Insert soap envelope into web request
-//				ret = 50;
-//				using (Stream stream = webRequest.GetRequestStream())
-//				{
-//					soapEnvelopeXml.Save(stream);
-//				}
-//
-//			// Get the PayU reference number from the completed web request.
-//				ret = 60;
-//				string soapResult;
-//
-//				using (WebResponse webResponse = webRequest.GetResponse())
-//					using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
-//					{
-//						soapResult = rd.ReadToEnd();
-//					}
-//
-//			// Create an empty soap result object
-//				ret = 70;
-//				XmlDocument soapResultXml = new XmlDocument();
-//				soapResultXml.LoadXml(soapResult.ToString());
-//
-//			//	Get data from result XML
-//				ret              = 80;
-//				resultSuccessful = Tools.XMLNode(soapResultXml,"successful");
-//				resultCode       = Tools.XMLNode(soapResultXml,"resultCode");
-//				resultMsg        = Tools.XMLNode(soapResultXml,"resultMessage");
-//				payRef           = Tools.XMLNode(soapResultXml,"payUReference");
-//				if ( Successful && payRef.Length > 0 )
-//					ret = 0;
-//			}
-//			catch (Exception ex)
-//			{
-//				Tools.LogException("TransactionPayU.Process","Ret="+ret.ToString()+" / "+soapXML,ex);
-//			}
-//			return ret;
-//		}
 
 		private static XmlDocument CreateSoapEnvelope(string content)
 		{
@@ -351,9 +270,6 @@ namespace PCIBusiness
 		public TransactionPayU() : base()
 		{
 			bureauCode = Tools.BureauCode(Constants.PaymentProvider.PayU);
-//			url        = Tools.ConfigValue(bureauCode+"/URL");
-//			userID     = Tools.ConfigValue(bureauCode+"/UserID");
-//			password   = Tools.ConfigValue(bureauCode+"/Password");
 		}
 	}
 }

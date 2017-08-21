@@ -8,9 +8,9 @@ namespace PCIBusiness
 {
 	public class TransactionIkajo : Transaction
 	{
-		static string url      = "https://staging.payu.co.za";
-		static string userID   = "Staging Enterprise Integration Store 1";
-		static string password = "j3w8swi5";
+//		static string url      = "https://staging.payu.co.za";
+//		static string userID   = "Staging Enterprise Integration Store 1";
+//		static string password = "j3w8swi5";
 
 //		public override string ConnectionDetails(byte mode,string separator="")
 //		{

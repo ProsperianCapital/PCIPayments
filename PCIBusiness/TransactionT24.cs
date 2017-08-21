@@ -9,12 +9,9 @@ namespace PCIBusiness
 {
 	public class TransactionT24 : Transaction
 	{
-//		static string merchantURL     = "https://payment.ccp.boarding.transact24.com/Recurring";
-//		static string merchantURL     = "https://payment.ccp.boarding.transact24.com/PaymentCard";
-//		static string returnURL       = "http://pcipayments.azurewebsites.net/Succeed.aspx";
-//		static string returnURL       = "http://www.paulkilfoil.co.za/Prosperian/PaymentSucceed.aspx";
-		static string partnerControl  = "b0148b62531a9311f52560a2a88ba70f";
-		static string merchantAccount = "567654452";
+//		static string partnerControl  = "b0148b62531a9311f52560a2a88ba70f";
+//		static string merchantAccount = "567654452";
+
 		static string postHTML = 
 			@"<html><head></head><body>
 			  <form>
@@ -130,7 +127,7 @@ namespace PCIBusiness
 					}
 				}
 
-				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),30);
+				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),177);
 				ret       = 80;
 				xmlResult = new XmlDocument();
 				xmlResult.LoadXml(xmlReceived.ToString());
@@ -160,17 +157,15 @@ namespace PCIBusiness
 		{
 			int ret = 10;
 
-//        + "&merchant_card_number="
-
 			try
 			{
 				xmlSent = "version=2"
 				        + "&ipaddress="
-				        + "&merchant_account="      + Tools.URLString(merchantAccount)
+				        + "&merchant_account="      + Tools.URLString(payment.ProviderAccount)
 				        + "&first_name="            + Tools.URLString(payment.FirstName)
 				        + "&last_name="             + Tools.URLString(payment.LastName)
-				        + "&address1="              + Tools.URLString(payment.Address(1))
-				        + "&city="                  + Tools.URLString(payment.Address(255))
+				        + "&address1="              + Tools.URLString(payment.Address1)
+				        + "&city="                  + Tools.URLString(payment.Address2)
 				        + "&state="                 + Tools.URLString(payment.ProvinceCode)
 				        + "&zip_code="              + Tools.URLString(payment.PostalCode)
 				        + "&country="               + Tools.URLString(payment.CountryCode)
@@ -182,17 +177,17 @@ namespace PCIBusiness
 				        + "&currency="              + Tools.URLString(payment.CurrencyCode)
 				        + "&credit_card_type="      + Tools.URLString(payment.CardType)
 				        + "&credit_card_number="    + Tools.URLString(payment.CardNumber)
-				        + "&expire_month="          + Tools.URLString(payment.CardExpiryMonth)
+				        + "&expire_month="          + Tools.URLString(payment.CardExpiryMM)
 				        + "&expire_year="           + Tools.URLString(payment.CardExpiryYY)
 				        + "&cvv2="                  + Tools.URLString(payment.CardCVV);
 
 			//	Checksum (SHA1)
 				ret = 20;
-				string chk = merchantAccount
+				string chk = payment.ProviderAccount
 							  + payment.FirstName
 							  + payment.LastName
-							  + payment.Address(1)
-							  + payment.Address(255)
+							  + payment.Address1
+							  + payment.Address2
 							  + payment.ProvinceCode
 							  + payment.PostalCode
 							  + payment.CountryCode
@@ -204,7 +199,7 @@ namespace PCIBusiness
 							  + payment.CurrencyCode
 							  + payment.CardType
 							  + payment.CardNumber
-							  + payment.CardExpiryMonth
+							  + payment.CardExpiryMM
 							  + payment.CardExpiryYY
 							  + payment.CardCVV;
 
@@ -216,13 +211,13 @@ namespace PCIBusiness
 //					chk     = chk + payment.Address(2);
 //				}
 
-				chk        = chk + partnerControl;
+				chk        = chk + payment.ProviderKey; // partnerControl;
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
 				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),177);
 
-				ret        = PostHTML(payment.URL);
+				ret        = PostHTML(payment.ProviderURL);
 			}
 			catch (Exception ex)
 			{
@@ -239,11 +234,11 @@ namespace PCIBusiness
 			{
 				xmlSent = "version=2"
 				        + "&ipaddress="
-				        + "&merchant_account="      + Tools.URLString(merchantAccount)
+				        + "&merchant_account="      + Tools.URLString(payment.ProviderAccount)
 				        + "&first_name="            + Tools.URLString(payment.FirstName)
 				        + "&last_name="             + Tools.URLString(payment.LastName)
-				        + "&address1="              + Tools.URLString(payment.Address(1))
-				        + "&city="                  + Tools.URLString(payment.Address(255))
+				        + "&address1="              + Tools.URLString(payment.Address1)
+				        + "&city="                  + Tools.URLString(payment.Address2)
 				        + "&state="                 + Tools.URLString(payment.ProvinceCode)
 				        + "&zip_code="              + Tools.URLString(payment.PostalCode)
 				        + "&country="               + Tools.URLString(payment.CountryCode)
@@ -257,11 +252,11 @@ namespace PCIBusiness
 
 			//	Checksum (SHA1)
 				ret = 20;
-				string chk = merchantAccount
+				string chk = payment.ProviderAccount
 							  + payment.FirstName
 							  + payment.LastName
-							  + payment.Address(1)
-							  + payment.Address(255)
+							  + payment.Address1
+							  + payment.Address2
 							  + payment.ProvinceCode
 							  + payment.PostalCode
 							  + payment.CountryCode
@@ -273,13 +268,13 @@ namespace PCIBusiness
 							  + payment.CurrencyCode
 							  + payment.CardToken;
 
-				chk        = chk + partnerControl;
+				chk        = chk + payment.ProviderKey; // partnerControl;
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
 				Tools.LogInfo("TransactionT24.ProcessPayment/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),177);
 
-				ret        = PostHTML(payment.URL);
+				ret        = PostHTML(payment.ProviderURL);
 			}
 			catch (Exception ex)
 			{

@@ -5,10 +5,10 @@ namespace PCIBusiness
 {
 	public class Payments : BaseList
 	{
-		private string bureauCode;
-		private int    success;
-		private int    fail;
-		private int    err;
+		private string  bureauCode;
+		private int     success;
+		private int     fail;
+		private int     err;
 
 		public override BaseData NewItem()
 		{

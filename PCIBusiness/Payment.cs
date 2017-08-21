@@ -11,111 +11,84 @@ namespace PCIBusiness
 		private string   countryCode;
 		private string   firstName;
 		private string   lastName;
-		private string[] address;
+		private string   address1;
+		private string   address2;
 		private string   postalCode;
 		private string   provinceCode;
 		private string   regionalId;
 		private string   email;
 		private string   phoneCell;
 		private int      paymentAmount;
-		private byte     paymentStatus;
+//		private byte     paymentStatus;
 		private string   ccToken;
 		private string   paymentDescription;
 		private string   currencyCode;
 		private string   ccNumber;
 		private string   ccType;
-		private string   ccExpiry;
+		private string   ccExpiryMonth;
+		private string   ccExpiryYear;
 		private string   ccName;
 		private string   ccCVV;
 		private string   bureauCode;
 
-		private string   safeKey;
-		private string   userID;
-		private string   password;
-		private string   url;
+		private string   providerAccount;
+		private string   providerKey;
+		private string   providerUserID;
+		private string   providerPassword;
+		private string   providerURL;
 
 		private Provider    provider;
 		private Transaction transaction;
 
 
 //		Payment Provider stuff
-		public string    SafeKey
+		public string    ProviderKey
 		{
-			get { return  Tools.NullToString(safeKey); }
+			get { return  Tools.NullToString(providerKey); }
 		}
-		public string    UserID
+		public string    ProviderAccount
 		{
-			get { return  Tools.NullToString(userID); }
+			get { return  "567654452"; } // T24
 		}
-		public string    Password
+		public string    ProviderUserID
 		{
-			get { return  Tools.NullToString(password); }
+			get { return  Tools.NullToString(providerUserID); }
 		}
-		public string    URL
+		public string    ProviderPassword
 		{
-			get { return  Tools.NullToString(url); }
-//			get
-//			{
-//				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-//					return "https://www.payu.co.za";
-//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
-//					return "";
-//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
-//					return "https://payment.ccp.boarding.transact24.com/PaymentCard";
-//				return "";
-//			}
+			get { return  Tools.NullToString(providerPassword); }
+		}
+		public string    ProviderURL
+		{
+			get { return  Tools.NullToString(providerURL); }
 		}
 
-//		Payment/Customer stuff
-		public string    MerchantReference
-		{
-			get { return  Tools.NullToString(merchantReference); }
-		}
-//		Renamed to "UserID"
 //		public string    MerchantUserId
 //		{
 //			get { return  Tools.NullToString(merchantUserId); }
 //		}
-		public string    Address(byte line)
-		{
-			if ( address == null || line < 1 || ( line > address.Length && line < 255 ) )
-				return "";
-			if ( line == 255 ) // Last non-blank address
-			{
-				for ( int k = address.Length ; k > 0 ; k-- )
-					if ( address[k-1].Length > 0 )
-						return address[k-1];
-				return "";
-			}
-			return address[line-1];
-//			while ( line < address.Length )
+//		public string    Address(byte line)
+//		{
+//			if ( address == null || line < 1 || ( line > address.Length && line < 255 ) )
+//				return "";
+//			if ( line == 255 ) // Last non-blank address
 //			{
-//				if ( address[line].Length > 0 )
-//					return address[line];
-//				line++;
+//				for ( int k = address.Length ; k > 0 ; k-- )
+//					if ( address[k-1].Length > 0 )
+//						return address[k-1];
+//				return "";
 //			}
-//			return "";
-		}
-		public string    PostalCode
-		{
-			get { return  Tools.NullToString(postalCode); }
-		}
-		public string    ProvinceCode
-		{
-			get { return  Tools.NullToString(provinceCode); }
-		}
-		public string    CountryCode
-		{
-			get { return  Tools.NullToString(countryCode); }
-		}
-		public string    CurrencyCode
-		{
-			get { return  Tools.NullToString(currencyCode); }
-		}
-		public string    PaymentDescription
-		{
-			get { return  Tools.NullToString(paymentDescription); }
-		}
+//			return address[line-1];
+////			while ( line < address.Length )
+////			{
+////				if ( address[line].Length > 0 )
+////					return address[line];
+////				line++;
+////			}
+////			return "";
+//		}
+
+//		Customer stuff
 		public string    FirstName
 		{
 			get { return  Tools.NullToString(firstName); }
@@ -136,14 +109,50 @@ namespace PCIBusiness
 		{
 			get { return  Tools.NullToString(regionalId); }
 		}
+		public string    Address1
+		{
+			get { return  Tools.NullToString(address1); }
+		}
+		public string    Address2
+		{
+			get { return  Tools.NullToString(address2); }
+		}
+		public string    PostalCode
+		{
+			get { return  Tools.NullToString(postalCode); }
+		}
+		public string    ProvinceCode
+		{
+			get { return  Tools.NullToString(provinceCode); }
+		}
+		public string    CountryCode
+		{
+			get { return  Tools.NullToString(countryCode); }
+		}
+
+//		payment stuff
+		public string    MerchantReference
+		{
+			get { return  Tools.NullToString(merchantReference); }
+		}
+		public string    CurrencyCode
+		{
+			get { return  Tools.NullToString(currencyCode); }
+		}
+		public string    PaymentDescription
+		{
+			get { return  Tools.NullToString(paymentDescription); }
+		}
 		public  int      PaymentAmount
 		{
 			get { return  paymentAmount; }
 		}
-		public  byte     PaymentStatus
-		{
-			get { return  paymentStatus; }
-		}
+//		public  byte     PaymentStatus
+//		{
+//			get { return  paymentStatus; }
+//		}
+
+//		Card stuff
 		public  string   CardToken
 		{
 			get { return  Tools.NullToString(ccToken); }
@@ -156,39 +165,69 @@ namespace PCIBusiness
 		{
 			get { return  Tools.NullToString(ccNumber); }
 		}
-		public  string   CardExpiry
+		public  string   CardExpiryMM
 		{
-			get { return  Tools.NullToString(ccExpiry); }
+			get { return  Tools.NullToString(ccExpiryMonth).PadLeft(2,'0'); }
 		}
-		public  string   CardExpiryMonth
-		{
-			get
-			{
-				if ( CardExpiry.Length >= 4 )
-					return ccExpiry.Substring(0,2);
-				return "";
-			}
-		}
-		public  string   CardExpiryYYYY // 4 digits
+		public  string   CardExpiryYY
 		{
 			get
 			{
-				if ( CardExpiry.Length == 6 )
-					return ccExpiry.Substring(2,4);
+				ccExpiryYear = Tools.NullToString(ccExpiryYear);
+				if ( ccExpiryYear.Length == 4 )
+					return ccExpiryYear.Substring(2,2);
+				if ( ccExpiryYear.Length == 2 )
+					return ccExpiryYear;
 				return "";
 			}
 		}
-		public  string   CardExpiryYY // 2 digits
+		public  string   CardExpiryYYYY
 		{
 			get
 			{
-				if ( CardExpiry.Length == 6 )
-					return ccExpiry.Substring(4,2);
-				if ( CardExpiry.Length == 4 )
-					return ccExpiry.Substring(2,2);
+				ccExpiryYear = Tools.NullToString(ccExpiryYear);
+				if ( ccExpiryYear.Length == 4 )
+					return ccExpiryYear;
+				if ( ccExpiryYear.Length == 2 )
+					return "20" + ccExpiryYear;
 				return "";
 			}
 		}
+
+
+//		public  string   CardExpiry
+//		{
+//			get { return  Tools.NullToString(ccExpiry); }
+//		}
+//		public  string   CardExpiryMonth
+//		{
+//			get
+//			{
+//				if ( CardExpiry.Length >= 4 )
+//					return ccExpiry.Substring(0,2);
+//				return "";
+//			}
+//		}
+//		public  string   CardExpiryYYYY // 4 digits
+//		{
+//			get
+//			{
+//				if ( CardExpiry.Length == 6 )
+//					return ccExpiry.Substring(2,4);
+//				return "";
+//			}
+//		}
+//		public  string   CardExpiryYY // 2 digits
+//		{
+//			get
+//			{
+//				if ( CardExpiry.Length == 6 )
+//					return ccExpiry.Substring(4,2);
+//				if ( CardExpiry.Length == 4 )
+//					return ccExpiry.Substring(2,2);
+//				return "";
+//			}
+//		}
 		public  string   CardName
 		{
 			get { return  Tools.NullToString(ccName); }
@@ -310,40 +349,24 @@ namespace PCIBusiness
 */
 		public override void LoadData(DBConn dbConn)
 		{
-			dbConn.SourceInfo = "Payment.LoadData";
-
-		//	PK's test
-		//	paymentCode       = dbConn.ColLong  ("PaymentCode");
-		//	paymentAuditCode  = dbConn.ColLong  ("PaymentAuditCode",0);
-		//	paymentAmount     = dbConn.ColLong  ("PaymentAmount");
-		//	paymentStatus     = dbConn.ColByte  ("PaymentStatus");
-		//	paymentToken      = dbConn.ColString("PaymentToken");
-		//	ccNumber          = dbConn.ColString("CreditCardNumber");
-		//	ccType            = dbConn.ColByte  ("CreditCardType");
-		//	ccExpiry          = dbConn.ColString("CreditCardExpiry");
-		//	ccName            = dbConn.ColString("CreditCardName");
-		//	ccCVV             = dbConn.ColString("CreditCardCVV");
-		//	providerCode      = dbConn.ColLong  ("ProviderCode");
+			dbConn.SourceInfo  = "Payment.LoadData";
 
 		//	Payment Provider
-			safeKey            = dbConn.ColString("Safekey");
-			url                = dbConn.ColString("url");
-			userID             = dbConn.ColString("MerchantUserId");
-			password           = dbConn.ColString("MerchantUserPassword");
+			providerKey        = dbConn.ColString("Safekey");
+			providerURL        = dbConn.ColString("url");
+			providerUserID     = dbConn.ColString("MerchantUserId");
+			providerPassword   = dbConn.ColString("MerchantUserPassword");
 
 		//	Customer
 			firstName          = dbConn.ColString("firstName");
 			lastName           = dbConn.ColString("lastName");
 			email              = dbConn.ColString("email");
 			phoneCell          = dbConn.ColString("mobile");
-			regionalId         = dbConn.ColString("regionalId");
-			address            = new string[4];
-			address[0]         = dbConn.ColString("address1");
-			address[1]         = dbConn.ColString("address2",0);
-			address[2]         = dbConn.ColString("address3",0);
-			address[3]         = dbConn.ColString("address4",0);
-			postalCode         = dbConn.ColString("PostalCode");
-			provinceCode       = dbConn.ColString("Province",0);
+			regionalId         = dbConn.ColString("regionalId",0);
+			address1           = dbConn.ColString("address1",0);
+			address2           = dbConn.ColString("city",0);
+			postalCode         = dbConn.ColString("zip_code",0);
+			provinceCode       = dbConn.ColString("State",0);
 			countryCode        = dbConn.ColString("CountryCode");
 
 		//	Payment
@@ -355,7 +378,8 @@ namespace PCIBusiness
 		//	Card/token details, not always present, don't log errors
 			ccName             = dbConn.ColString("nameOnCard",0);
 			ccNumber           = dbConn.ColString("cardNumber",0);
-			ccExpiry           = dbConn.ColString("cardExpiry",0);
+			ccExpiryMonth      = dbConn.ColString("cardExpiryMonth",0);
+			ccExpiryYear       = dbConn.ColString("cardExpiryYear",0);
 			ccType             = dbConn.ColString("cardType",0);
 			ccCVV              = dbConn.ColString("cvv",0);
 			ccToken            = dbConn.ColString("token",0);
@@ -365,7 +389,6 @@ namespace PCIBusiness
 		{
 			provider    = null;
 			transaction = null;
-			address     = null;
 		}
 
 		public Payment(string bureau) : base()

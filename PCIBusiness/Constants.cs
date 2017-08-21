@@ -44,7 +44,7 @@ namespace PCIBusiness
 		{
 			PayU   =  16,
 			Ikajo  = 203,
-			T24    =  34,
+			T24    =   6,
 			MyGate = 567
 		}
 
