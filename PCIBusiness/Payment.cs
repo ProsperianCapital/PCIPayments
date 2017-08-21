@@ -60,7 +60,8 @@ namespace PCIBusiness
 		}
 		public string    ProviderURL
 		{
-			get { return  Tools.NullToString(providerURL); }
+//			get { return  Tools.NullToString(providerURL); }
+			get { return  "https://payment.ccp.boarding.transact24.com/PaymentCard"; }
 		}
 
 //		public string    MerchantUserId
