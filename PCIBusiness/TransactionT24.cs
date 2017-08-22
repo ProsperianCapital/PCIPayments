@@ -127,7 +127,7 @@ namespace PCIBusiness
 					}
 				}
 
-				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),177);
+				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),30);
 				ret       = 80;
 				xmlResult = new XmlDocument();
 				xmlResult.LoadXml(xmlReceived.ToString());
@@ -141,8 +141,8 @@ namespace PCIBusiness
 
 				if ( Successful )
 					return 0;
-				else
-					Tools.LogInfo("TransactionT24.PostHTML/80","Ret="+ret.ToString()+", XML Received=" + xmlReceived.ToString(),150);
+
+				Tools.LogInfo("TransactionT24.SendXML/80","URL=" + url + ", XML Sent=" + xmlSent+", XML Received="+xmlReceived,200);
 			}
 			catch (Exception ex)
 			{

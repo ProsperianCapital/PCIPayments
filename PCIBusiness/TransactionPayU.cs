@@ -109,8 +109,8 @@ namespace PCIBusiness
 
 				if ( Successful )
 					return 0;
-				else
-					Tools.LogInfo("TransactionPayU.SendXML/50","Ret="+ret.ToString()+", XML Received="+xmlReceived,120);
+
+				Tools.LogInfo("TransactionPayU.SendXML/80","URL=" + url + ", XML Sent=" + xmlSent+", XML Received="+xmlReceived,200);
 			}
 			catch (Exception ex)
 			{
@@ -243,7 +243,7 @@ namespace PCIBusiness
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML Sent=" + xmlSent,177);
+				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML Sent=" + xmlSent,30);
 
 				ret    = SendXML(payment.ProviderURL,payment.ProviderUserID,payment.ProviderPassword);
 				payRef = Tools.XMLNode(xmlResult,"payUReference");

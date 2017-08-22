@@ -697,21 +697,16 @@ namespace PCIBusiness
 
 		public static string SQLDebug(string sql)
 		{
-			string str;
 			sql = Tools.NullToString(sql);
 			if ( sql.Length < 3 )
-			{
-				str = "Invalid SQL (" + sql + ")";
-//				Tools.LogInfo("Tools.SQLDebug/1",str,255);
-				return str;
-			}
+				return "Invalid SQL" + ( sql.Length > 0 ? " (" + sql + ")" : "" );
 
 			DBConn        conn = null;
 			StringBuilder ret  = new StringBuilder();
+			string        str  = "SQL = " + sql;
 
 			try
 			{
-				str = "SQL = " + sql;
 				Tools.LogInfo("Tools.SQLDebug/2",str,255);
 				ret.Append(str+Constants.C_HTMLBREAK());
 

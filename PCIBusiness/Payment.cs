@@ -261,24 +261,27 @@ namespace PCIBusiness
 			sql     = "";
 			Tools.LogInfo("Payment.GetToken/10","Merchant Ref=" + merchantReference,10);
 
-			if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-				transaction = new TransactionPayU();
-			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
-				transaction = new TransactionIkajo();
-			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
-				transaction = new TransactionT24();
-			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
-				transaction = new TransactionMyGate();
-			else
-				return ret;
-
+			if ( transaction == null || transaction.BureauCode != bureauCode )
+			{
+				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
+					transaction = new TransactionPayU();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
+					transaction = new TransactionIkajo();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
+					transaction = new TransactionT24();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
+					transaction = new TransactionMyGate();
+				else
+					return ret;
+			}
 			ret = transaction.GetToken(this);
 			sql = "exec sp_Upd_CardTokenVault @MerchantReference = "           + Tools.DBString(merchantReference) // nvarchar(20),
 				                           + ",@PaymentBureauCode = "           + Tools.DBString(bureauCode)        // char(3),
-		                                 + ",@CardTokenisationStatusCode = '" + ( ret == 0 ? "007'" : "001'" )
 			                              + ",@PaymentBureauToken = "          + Tools.DBString(transaction.PaymentToken)
 			                              + ",@BureauSubmissionSoap = "        + Tools.DBString(transaction.XMLSent,3)
-			                              + ",@BureauResultSoap = "            + Tools.DBString(transaction.XMLResult,3);
+			                              + ",@BureauResultSoap = "            + Tools.DBString(transaction.XMLResult,3)
+			                              + ",@TransactionStatusCode = "       + Tools.DBString(transaction.ResultCode)
+		                                 + ",@CardTokenisationStatusCode = '" + ( ret == 0 ? "007'" : "001'" );
 			Tools.LogInfo("Payment.GetToken/20","SQL=" + sql,30);
 			int k = ExecuteSQLUpdate();
 			Tools.LogInfo("Payment.GetToken/90","Ret=" + ret.ToString(),30);
@@ -291,17 +294,19 @@ namespace PCIBusiness
 			int k;
 			Tools.LogInfo("Payment.ProcessPayment/10","Merchant Ref=" + merchantReference,10);
 
-			if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-				transaction = new TransactionPayU();
-			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
-				transaction = new TransactionIkajo();
-			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
-				transaction = new TransactionT24();
-			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
-				transaction = new TransactionMyGate();
-			else
-				return ret;
-
+			if ( transaction == null || transaction.BureauCode != bureauCode )
+			{
+				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
+					transaction = new TransactionPayU();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
+					transaction = new TransactionIkajo();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
+					transaction = new TransactionT24();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
+					transaction = new TransactionMyGate();
+				else
+					return ret;
+			}
 			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
 			                           + ",@TransactionStatusCode = '77'";
 			Tools.LogInfo("Payment.ProcessPayment/20","SQL 1=" + sql,30);
