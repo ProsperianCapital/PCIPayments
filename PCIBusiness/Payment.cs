@@ -31,7 +31,7 @@ namespace PCIBusiness
 		private string   ccCVV;
 		private string   bureauCode;
 
-		private string   providerAccount;
+//		private string   providerAccount;
 		private string   providerKey;
 		private string   providerUserID;
 		private string   providerPassword;
@@ -46,10 +46,21 @@ namespace PCIBusiness
 		{
 			get { return  Tools.NullToString(providerKey); }
 		}
-		public string    ProviderAccount
-		{
-			get { return  "567654452"; } // T24
-		}
+//		public string    ProviderAccount
+//		{
+//			get 
+//			{
+//				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
+//					return "";
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
+//					return "567654452";
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
+//					return "";
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
+//					return "MY014473";
+//				return "";
+//			}
+//		}
 		public string    ProviderUserID
 		{
 			get { return  Tools.NullToString(providerUserID); }
@@ -60,8 +71,10 @@ namespace PCIBusiness
 		}
 		public string    ProviderURL
 		{
-//			get { return  Tools.NullToString(providerURL); }
-			get { return  "https://payment.ccp.boarding.transact24.com/PaymentCard"; }
+			get { return  Tools.NullToString(providerURL); }
+
+//		Testing ...
+//			get { return  "https://payment.ccp.boarding.transact24.com/PaymentCard"; } // T24
 		}
 
 //		public string    MerchantUserId
@@ -355,7 +368,7 @@ namespace PCIBusiness
 		//	Payment Provider
 			providerKey        = dbConn.ColString("Safekey");
 			providerURL        = dbConn.ColString("url");
-			providerUserID     = dbConn.ColString("MerchantUserId");
+			providerUserID     = dbConn.ColString("MerchantUserId"); // Also used as merchant account
 			providerPassword   = dbConn.ColString("MerchantUserPassword");
 
 		//	Customer

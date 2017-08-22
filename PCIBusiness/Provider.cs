@@ -10,6 +10,7 @@ namespace PCIBusiness
 		private byte    bureauStatus;
 		private string  providerURL;
 		private string  merchantKey;
+//		private string  merchantAccount;
 		private string  userID;
 		private string  userPassword;
 		private int     cardCount;
@@ -44,6 +45,10 @@ namespace PCIBusiness
 					return "In development";
 			}
 		}
+//		public  string  MerchantAccount
+//		{
+//			get { return Tools.NullToString(merchantAccount); }
+//		}
 		public  string  MerchantKey
 		{
 			get { return Tools.NullToString(merchantKey); }

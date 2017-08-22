@@ -9,8 +9,8 @@ namespace PCIBusiness
 {
 	public class TransactionT24 : Transaction
 	{
-//		static string partnerControl  = "b0148b62531a9311f52560a2a88ba70f";
-//		static string merchantAccount = "567654452";
+//		static string partnerControl = "b0148b62531a9311f52560a2a88ba70f";
+//		static string merchantID     = "567654452";
 
 		static string postHTML = 
 			@"<html><head></head><body>
@@ -161,7 +161,7 @@ namespace PCIBusiness
 			{
 				xmlSent = "version=2"
 				        + "&ipaddress="
-				        + "&merchant_account="      + Tools.URLString(payment.ProviderAccount)
+				        + "&merchant_account="      + Tools.URLString(payment.ProviderUserID)
 				        + "&first_name="            + Tools.URLString(payment.FirstName)
 				        + "&last_name="             + Tools.URLString(payment.LastName)
 				        + "&address1="              + Tools.URLString(payment.Address1)
@@ -183,7 +183,7 @@ namespace PCIBusiness
 
 			//	Checksum (SHA1)
 				ret = 20;
-				string chk = payment.ProviderAccount
+				string chk = payment.ProviderUserID
 							  + payment.FirstName
 							  + payment.LastName
 							  + payment.Address1
@@ -215,7 +215,7 @@ namespace PCIBusiness
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
-				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),177);
+				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", Key="+payment.ProviderKey,177);
 
 				ret        = PostHTML(payment.ProviderURL);
 			}
@@ -234,7 +234,7 @@ namespace PCIBusiness
 			{
 				xmlSent = "version=2"
 				        + "&ipaddress="
-				        + "&merchant_account="      + Tools.URLString(payment.ProviderAccount)
+				        + "&merchant_account="      + Tools.URLString(payment.ProviderUserID)
 				        + "&first_name="            + Tools.URLString(payment.FirstName)
 				        + "&last_name="             + Tools.URLString(payment.LastName)
 				        + "&address1="              + Tools.URLString(payment.Address1)
@@ -252,7 +252,7 @@ namespace PCIBusiness
 
 			//	Checksum (SHA1)
 				ret = 20;
-				string chk = payment.ProviderAccount
+				string chk = payment.ProviderUserID
 							  + payment.FirstName
 							  + payment.LastName
 							  + payment.Address1
@@ -272,7 +272,7 @@ namespace PCIBusiness
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
-				Tools.LogInfo("TransactionT24.ProcessPayment/2","POST="+xmlSent+", CheckSum="+HashSHA1(chk),177);
+				Tools.LogInfo("TransactionT24.ProcessPayment/2","POST="+xmlSent+", Key="+payment.ProviderKey,177);
 
 				ret        = PostHTML(payment.ProviderURL);
 			}
