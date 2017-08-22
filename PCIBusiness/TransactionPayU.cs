@@ -243,7 +243,7 @@ namespace PCIBusiness
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
-				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML Sent=" + xmlSent,30);
+				Tools.LogInfo("TransactionPayU.ProcessPayment/20","XML Sent=" + xmlSent,177);
 
 				ret    = SendXML(payment.ProviderURL,payment.ProviderUserID,payment.ProviderPassword);
 				payRef = Tools.XMLNode(xmlResult,"payUReference");
