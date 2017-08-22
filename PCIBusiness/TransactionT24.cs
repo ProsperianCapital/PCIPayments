@@ -292,6 +292,9 @@ namespace PCIBusiness
 				hashArr = sha1.ComputeHash(Encoding.UTF8.GetBytes(x));
 			foreach (byte h in hashArr)
 				hashStr.Append(h.ToString("x2"));
+
+			Tools.LogInfo("TransactionT24.HashSHA1","Str In="+x+", Hash Out="+hashStr.ToString(),177);
+
 			return hashStr.ToString();
 		}
 

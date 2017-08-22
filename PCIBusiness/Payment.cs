@@ -161,7 +161,8 @@ namespace PCIBusiness
 		}
 		public  int      PaymentAmount
 		{
-			get { return (paymentAmount > 0 ? paymentAmount : 0); }
+//			get { return (paymentAmount > 0 ? paymentAmount : 0); }
+			get { return  paymentAmount; }
 		}
 //		public  byte     PaymentStatus
 //		{
