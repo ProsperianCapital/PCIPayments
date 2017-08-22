@@ -161,7 +161,7 @@ namespace PCIBusiness
 		}
 		public  int      PaymentAmount
 		{
-			get { return  paymentAmount; }
+			get { return (paymentAmount > 0 ? paymentAmount : 0); }
 		}
 //		public  byte     PaymentStatus
 //		{
@@ -387,7 +387,7 @@ namespace PCIBusiness
 			address1           = dbConn.ColString("address1",0);
 			address2           = dbConn.ColString("city",0);
 			postalCode         = dbConn.ColString("zip_code",0);
-			provinceCode       = dbConn.ColString("State",0);
+			provinceCode       = ""; // dbConn.ColString("State",0);
 			countryCode        = dbConn.ColString("CountryCode");
 
 		//	Payment
