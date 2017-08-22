@@ -48,6 +48,9 @@ namespace PCIBusiness
 
 			try
 			{
+				if ( ! url.ToUpper().EndsWith("WSDL") )
+					url = url + "/service/PayUAPI?wsdl";
+
 				Tools.LogInfo("TransactionPayU.SendXML/10","URL=" + url + ", XML Sent=" + xmlSent,30);
 
 			// Construct soap object
@@ -64,11 +67,11 @@ namespace PCIBusiness
 				userPassword.InnerText  = password;
 
 			// Construct web request object
-				Tools.LogInfo("TransactionPayU.SendXML/30","URL=" + url + "/service/PayUAPI?wsdl"
+				Tools.LogInfo("TransactionPayU.SendXML/30","URL=" + url                     //  + "/service/PayUAPI?wsdl"
 					                                    + ", UserID=" + userID
 					                                    + ", Password=" + password,30);
 				ret = 40;
-				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url+"/service/PayUAPI?wsdl");
+				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url); // +"/service/PayUAPI?wsdl");
 				webRequest.Headers.Add(@"SOAP:Action");
 				webRequest.ContentType = "text/xml;charset=\"utf-8\"";
 				webRequest.Accept      = "text/xml";
