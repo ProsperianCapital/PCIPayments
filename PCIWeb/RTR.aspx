@@ -86,13 +86,14 @@ function Busy(show,msg)
 		<td> : <asp:Literal runat="server" ID="lblBureauStatus"></asp:Literal></td></tr>
 	</table>
 	<p class="ButtonRow">
-	<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Retrieving cards ... please be patient')" onclick="btnProcess1_Click" Text="Get Tokens" />&nbsp;
-	<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Retrieving payments ... please be patient')" onclick="btnProcess2_Click" Text="Process Payments" />&nbsp;
-	&nbsp;&nbsp;
-	<asp:Button  runat="server" ID="btnConfig"   CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnConfig_Click" Text="Config ..." />
-	<asp:Button  runat="server" ID="btnInfo"     CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnInfo_Click"   Text="Info Log ..." />
-	<asp:Button  runat="server" ID="btnError"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnError_Click"  Text="Error Log ..." />
-	<asp:Button  runat="server" ID="btnSQL"      CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnSQL_Click"    Text="Test SQL ..." />
+	<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Getting tokens ... please be patient')" onclick="btnProcess1_Click" Text="Get Tokens" />
+	<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Processing payments ... please be patient')" onclick="btnProcess2_Click" Text="Process Payments" />
+	&nbsp;&nbsp;&nbsp;
+	<asp:Button  runat="server" ID="btnConfig"   CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnConfig_Click" Text="Config" />
+	<asp:Button  runat="server" ID="btnInfo"     CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnInfo_Click"   Text="Info Log" />
+	<asp:Button  runat="server" ID="btnError"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnError_Click"  Text="Error Log" />
+	&nbsp;&nbsp;&nbsp;
+	<asp:Button  runat="server" ID="btnSQL"      CssClass="Button" OnClientClick="JavaScript:Busy(1,'Executing SQL ...')" onclick="btnSQL_Click" Text="Test SQL ..." />
 	<asp:TextBox runat="server" ID="txtTest" Width="560px"></asp:TextBox>
 	</p>
 	<hr />
