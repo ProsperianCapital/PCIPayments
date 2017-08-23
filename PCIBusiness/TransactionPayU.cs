@@ -67,9 +67,7 @@ namespace PCIBusiness
 				userPassword.InnerText  = password;
 
 			// Construct web request object
-				Tools.LogInfo("TransactionPayU.SendXML/30","URL=" + url                     //  + "/service/PayUAPI?wsdl"
-					                                    + ", UserID=" + userID
-					                                    + ", Password=" + password,199);
+				Tools.LogInfo("TransactionPayU.SendXML/30","Create/set up web request, URL=" + url,199);
 				ret = 40;
 				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url); // +"/service/PayUAPI?wsdl");
 				webRequest.Headers.Add(@"SOAP:Action");
@@ -78,16 +76,19 @@ namespace PCIBusiness
 				webRequest.Method      = "POST";
 
 			// Insert soap envelope into web request
+				Tools.LogInfo("TransactionPayU.SendXML/35","Save web request",199);
 				ret = 50;
 				using (Stream stream = webRequest.GetRequestStream())
 					soapEnvelopeXml.Save(stream);
 
 			// Get the completed web request XML
+				Tools.LogInfo("TransactionPayU.SendXML/40","Get web response",199);
 				ret = 60;
 
 				using (WebResponse webResponse = webRequest.GetResponse())
 				{
 					ret = 63;
+					Tools.LogInfo("TransactionPayU.SendXML/45","Read web response stream",199);
 					using (StreamReader rd = new StreamReader(webResponse.GetResponseStream()))
 					{
 						ret         = 66;
@@ -95,7 +96,7 @@ namespace PCIBusiness
 					}
 				}
 
-				Tools.LogInfo("TransactionPayU.SendXML/40","XML Received=" + xmlReceived,199);
+				Tools.LogInfo("TransactionPayU.SendXML/50","XML Received=" + xmlReceived,199);
 
 			// Create an empty soap result object
 				ret       = 70;
