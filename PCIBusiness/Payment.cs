@@ -141,6 +141,16 @@ namespace PCIBusiness
 		{
 			get { return  Tools.NullToString(provinceCode); }
 		}
+		public string    State // Province, but only if USA
+		{
+			get
+			{
+				string x = Tools.NullToString(countryCode).ToUpper();
+				if ( x.Length > 1 && x.StartsWith("US") )
+					return ProvinceCode;
+				return "";
+			}
+		}
 		public string    CountryCode
 		{
 			get { return  Tools.NullToString(countryCode); }
@@ -312,14 +322,15 @@ namespace PCIBusiness
 			}
 			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
 			                           + ",@TransactionStatusCode = '77'";
-			Tools.LogInfo("Payment.ProcessPayment/20","SQL 1=" + sql,30);
+			Tools.LogInfo("Payment.ProcessPayment/20","SQL 1=" + sql,199);
 			k   = ExecuteSQLUpdate();
+			Tools.LogInfo("Payment.ProcessPayment/30","SQL 1 complete",199);
 			ret = transaction.ProcessPayment(this);
 			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
 			                           + ",@TransactionStatusCode = " + Tools.DBString(transaction.ResultCode);
-			Tools.LogInfo("Payment.ProcessPayment/30","SQL 2=" + sql,30);
+			Tools.LogInfo("Payment.ProcessPayment/40","SQL 2=" + sql,199);
 			k   = ExecuteSQLUpdate();
-			Tools.LogInfo("Payment.ProcessPayment/90","Ret=" + ret.ToString(),30);
+			Tools.LogInfo("Payment.ProcessPayment/50","SQL 2 complete",199);
 			return ret;
 		}
 
@@ -388,7 +399,7 @@ namespace PCIBusiness
 			address1           = dbConn.ColString("address1",0);
 			address2           = dbConn.ColString("city",0);
 			postalCode         = dbConn.ColString("zip_code",0);
-			provinceCode       = ""; // dbConn.ColString("State",0);
+			provinceCode       = dbConn.ColString("State",0);
 			countryCode        = dbConn.ColString("CountryCode");
 
 		//	Payment

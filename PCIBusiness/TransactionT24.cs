@@ -166,7 +166,7 @@ namespace PCIBusiness
 				        + "&last_name="             + Tools.URLString(payment.LastName)
 				        + "&address1="              + Tools.URLString(payment.Address1)
 				        + "&city="                  + Tools.URLString(payment.Address2)
-				        + "&state="                 + Tools.URLString(payment.ProvinceCode)
+				        + "&state="                 + Tools.URLString(payment.State) // USA Only
 				        + "&zip_code="              + Tools.URLString(payment.PostalCode)
 				        + "&country="               + Tools.URLString(payment.CountryCode)
 				        + "&phone="                 + Tools.URLString(payment.PhoneCell)
@@ -188,7 +188,7 @@ namespace PCIBusiness
 							  + payment.LastName
 							  + payment.Address1
 							  + payment.Address2
-							  + payment.ProvinceCode
+							  + payment.State
 							  + payment.PostalCode
 							  + payment.CountryCode
 							  + payment.PhoneCell
@@ -239,7 +239,7 @@ namespace PCIBusiness
 				        + "&last_name="             + Tools.URLString(payment.LastName)
 				        + "&address1="              + Tools.URLString(payment.Address1)
 				        + "&city="                  + Tools.URLString(payment.Address2)
-				        + "&state="                 + Tools.URLString(payment.ProvinceCode)
+				        + "&state="                 + Tools.URLString(payment.State) // USA Only
 				        + "&zip_code="              + Tools.URLString(payment.PostalCode)
 				        + "&country="               + Tools.URLString(payment.CountryCode)
 				        + "&phone="                 + Tools.URLString(payment.PhoneCell)
@@ -257,7 +257,7 @@ namespace PCIBusiness
 							  + payment.LastName
 							  + payment.Address1
 							  + payment.Address2
-							  + payment.ProvinceCode
+							  + payment.State
 							  + payment.PostalCode
 							  + payment.CountryCode
 							  + payment.PhoneCell
@@ -288,6 +288,9 @@ namespace PCIBusiness
 		{
 			StringBuilder hashStr = new StringBuilder();
 			byte[]        hashArr;
+
+//			x = "567654635samHartogh123 ABC StreetABC City1234ZA0839683725samantha.hartogh@prosperian.mu20161031x105025x2098Token0USD255236700317170170418000ba2e2640cc6d35615c14ccd42d5c4445";
+
 			using (System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed())
 				hashArr = sha1.ComputeHash(Encoding.UTF8.GetBytes(x));
 			foreach (byte h in hashArr)
