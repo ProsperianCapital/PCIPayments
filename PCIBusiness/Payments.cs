@@ -110,6 +110,7 @@ namespace PCIBusiness
 								success++;
 							else
 								fail++;
+							return 0;
 						}
 						return 0;
 					}
