@@ -32,6 +32,11 @@ namespace PCIBusiness
 				<SOAP-ENV:Body>
 				</SOAP-ENV:Body>
 			</SOAP-ENV:Envelope>";
+/*
+<xs:schema targetNamespace="https://www.payu.co.za/SetTransactionResponseMessage" version="1.0">
+<xs:import namespace="http://soap.api.controller.web.payjar.com/"/>
+<xs:import namespace="https://www.payu.co.za/PayUMapLoader"/>
+*/
 
 		private string resultSuccessful;
 
@@ -244,6 +249,72 @@ namespace PCIBusiness
 				        + "</Basket>"
 				        + "<Creditcard>"
 				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+						  +   "<pmId>" + payment.CardToken + "</pmId>"
+				        + "</Creditcard>"
+				        + "</ns1:doTransaction>";
+
+				xmlSent = xmlSent
+				        + "<ns1:doTransaction>"
+				        + "<Safekey>" + payment.ProviderKey + "</Safekey>"
+				        + "<Api>ONE_ZERO</Api>"
+				        + "<TransactionType>PAYMENT</TransactionType>"
+				        + "<AuthenticationType>TOKEN</AuthenticationType>"
+				        + "<Customfield>"
+				        +   "<key>processingType</key>"
+				        +   "<value>REAL_TIME_RECURRING</value>"
+				        + "</Customfield>"
+				        + "<AdditionalInformation>"
+				        +   "<merchantReference>6789</merchantReference>"
+				        + "</AdditionalInformation>"
+				        + "<Customer>"
+				        +   "<merchantUserId>" + payment.ProviderUserID + "</merchantUserId>"
+				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
+				        +   "<email>" + payment.EMail + "</email>"
+				        +   "<firstName>" + payment.FirstName + "</firstName>"
+				        +   "<lastName>" + payment.LastName + "</lastName>"
+				        +   "<mobile>" + payment.PhoneCell + "</mobile>"
+				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
+				        + "</Customer>"
+				        + "<Basket>"
+				        +	"<amountInCents>6789</amountInCents>"
+				        +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+				        +	"<description>" + payment.PaymentDescription + "</description>"
+				        + "</Basket>"
+				        + "<Creditcard>"
+				        +	"<amountInCents>6789</amountInCents>"
+						  +   "<pmId>" + payment.CardToken + "</pmId>"
+				        + "</Creditcard>"
+				        + "</ns1:doTransaction>";
+
+				xmlSent = xmlSent
+				        + "<ns1:doTransaction>"
+				        + "<Safekey>" + payment.ProviderKey + "</Safekey>"
+				        + "<Api>ONE_ZERO</Api>"
+				        + "<TransactionType>PAYMENT</TransactionType>"
+				        + "<AuthenticationType>TOKEN</AuthenticationType>"
+				        + "<Customfield>"
+				        +   "<key>processingType</key>"
+				        +   "<value>REAL_TIME_RECURRING</value>"
+				        + "</Customfield>"
+				        + "<AdditionalInformation>"
+				        +   "<merchantReference>12345</merchantReference>"
+				        + "</AdditionalInformation>"
+				        + "<Customer>"
+				        +   "<merchantUserId>" + payment.ProviderUserID + "</merchantUserId>"
+				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
+				        +   "<email>" + payment.EMail + "</email>"
+				        +   "<firstName>" + payment.FirstName + "</firstName>"
+				        +   "<lastName>" + payment.LastName + "</lastName>"
+				        +   "<mobile>" + payment.PhoneCell + "</mobile>"
+				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
+				        + "</Customer>"
+				        + "<Basket>"
+				        +	"<amountInCents>12345</amountInCents>"
+				        +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+				        +	"<description>" + payment.PaymentDescription + "</description>"
+				        + "</Basket>"
+				        + "<Creditcard>"
+				        +	"<amountInCents>12345</amountInCents>"
 						  +   "<pmId>" + payment.CardToken + "</pmId>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
