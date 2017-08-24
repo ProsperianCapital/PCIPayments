@@ -133,12 +133,16 @@ namespace PCIWeb
 		{
 			try
 			{
+				int    rows     = 0;
 				string provider = lstProvider.SelectedValue;
 				PCIBusiness.Tools.LogInfo("RTR.Process/5","Started, provider '" + provider + "'",10);
 
+				if ( txtRows.Text.Length > 0 && txtRows.Text.ToUpper() != "ALL" )
+					rows = Tools.StringToInt(txtRows.Text);
+
 				using (PCIBusiness.Payments payments = new PCIBusiness.Payments())
 				{
-					int k         = payments.ProcessCards(provider,mode);
+					int k         = payments.ProcessCards(provider,mode,rows);
 					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed";
 				//	payments.ProcessTokens(provider,mode);
 				}

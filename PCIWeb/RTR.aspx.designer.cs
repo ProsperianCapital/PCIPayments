@@ -85,6 +85,15 @@ namespace PCIWeb {
         protected global::System.Web.UI.WebControls.DropDownList lstProvider;
         
         /// <summary>
+        /// txtRows control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtRows;
+        
+        /// <summary>
         /// lblBureauCode control.
         /// </summary>
         /// <remarks>

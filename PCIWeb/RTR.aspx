@@ -64,6 +64,9 @@ function Busy(show,msg)
 				<asp:ListItem Value="567" Text="MyGate"></asp:ListItem>
 			</asp:DropDownList></td></tr>
 	<tr>
+		<td>Process only the top (or "ALL")</td>
+		<td> : <asp:TextBox runat="server" ID="txtRows" Width="50px">ALL</asp:TextBox> row(s)</td></tr>
+	<tr>
 		<td>Bureau Code</td>
 		<td> : <asp:Literal runat="server" ID="lblBureauCode"></asp:Literal></td></tr>
 	<tr>
