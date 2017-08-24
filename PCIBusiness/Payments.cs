@@ -73,7 +73,7 @@ namespace PCIBusiness
 			return provider;
 		}
 
-		public int ProcessCards(string bureau,byte mode=0)
+		public int ProcessCards(string bureau,byte mode=0,int rowsToProcess=0)
 		{
 			bureauCode = Tools.NullToString(bureau);
 			success    = 0;
@@ -88,7 +88,7 @@ namespace PCIBusiness
 			else
 				return 20;
 
-			Tools.LogInfo("Payments.ProcessCards/10","Mode="+mode.ToString()+", BureauCode="+bureauCode+", SQL="+sql,110);
+			Tools.LogInfo("Payments.ProcessCards/10","Mode="+mode.ToString()+", Rows=" + rowsToProcess.ToString() + ", BureauCode="+bureauCode+", SQL="+sql,110);
 
 			try
 			{
@@ -110,7 +110,8 @@ namespace PCIBusiness
 								success++;
 							else
 								fail++;
-							return 0;
+							if ( rowsToProcess > 0 && success + fail >= rowsToProcess )
+								break;
 						}
 						return 0;
 					}
