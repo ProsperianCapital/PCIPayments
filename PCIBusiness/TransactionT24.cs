@@ -191,28 +191,31 @@ namespace PCIBusiness
 
 				Tools.LogInfo("TransactionT24.GetToken/20","ResultCode="+ResultCode + ", payRef=" + payRef + ", payToken=" + payToken,177);
 
-				if ( ret == 0 ) // Do refund
-				{
-					Tools.LogInfo("TransactionT24.GetToken/30","(Refund) Transaction Id=" + payRef,177);
-					ret     = 50;
-					xmlSent =  "merchant_account=" + Tools.URLString(payment.ProviderUserID)
-					        + "&order_id="         + Tools.URLString(payRef)
-					        + "&amount="           + Tools.URLString(payment.PaymentAmount.ToString())
-					        + "&currency="         + Tools.URLString(payment.CurrencyCode)
-					        + "&version="          + Tools.URLString(providerVersion);
-					ret     = 60;
-					chk     = payment.ProviderUserID
-					        + payRef
-					        + payment.PaymentAmount.ToString()
-					        + payment.CurrencyCode
-					        + providerVersion
-					        + payment.ProviderKey;
-//	sha1(merchant_Account + order_id (which is the transaction id) + amount + currency + version + pcontrol )
-					ret     = 70;  
-					xmlSent = xmlSent + "&control=" + HashSHA1(chk);
-					Tools.LogInfo("TransactionT24.GetToken/40","(Refund) POST="+xmlSent+", Key="+payment.ProviderKey,177);
-					ret     = PostHTML("https://payment.ccp.transact24.com/Refund");
-				}
+//	Removed at Deon Smith's request (2017/08/25)
+//	This code is correct, complete and tested. Merely un-comment it
+//
+//				if ( ret == 0 ) // Do refund
+//				{
+//					Tools.LogInfo("TransactionT24.GetToken/30","(Refund) Transaction Id=" + payRef,177);
+//					ret     = 50;
+//					xmlSent =  "merchant_account=" + Tools.URLString(payment.ProviderUserID)
+//					        + "&order_id="         + Tools.URLString(payRef)
+//					        + "&amount="           + Tools.URLString(payment.PaymentAmount.ToString())
+//					        + "&currency="         + Tools.URLString(payment.CurrencyCode)
+//					        + "&version="          + Tools.URLString(providerVersion);
+//					ret     = 60;
+//					chk     = payment.ProviderUserID
+//					        + payRef
+//					        + payment.PaymentAmount.ToString()
+//					        + payment.CurrencyCode
+//					        + providerVersion
+//					        + payment.ProviderKey;
+//					ret     = 70;  
+//					xmlSent = xmlSent + "&control=" + HashSHA1(chk);
+//					Tools.LogInfo("TransactionT24.GetToken/40","(Refund) POST="+xmlSent+", Key="+payment.ProviderKey,177);
+//					ret     = PostHTML("https://payment.ccp.transact24.com/Refund");
+//				}
+
 			}
 			catch (Exception ex)
 			{
