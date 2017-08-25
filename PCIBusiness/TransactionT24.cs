@@ -120,7 +120,6 @@ namespace PCIBusiness
 			return ret;
 		}
 
-
 		public override int GetToken(Payment payment)
 		{
 			int ret = 10;
@@ -191,7 +190,7 @@ namespace PCIBusiness
 
 				Tools.LogInfo("TransactionT24.GetToken/20","ResultCode="+ResultCode + ", payRef=" + payRef + ", payToken=" + payToken,177);
 
-				if ( ret == 0 )
+				if ( ret == 0 ) // Do refund
 				{
 					Tools.LogInfo("TransactionT24.GetToken/30","(Refund) Transaction Id=" + payRef,177);
 					ret     = 50;
