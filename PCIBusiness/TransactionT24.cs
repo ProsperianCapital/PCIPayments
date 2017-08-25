@@ -12,6 +12,7 @@ namespace PCIBusiness
 //		static string partnerControl = "b0148b62531a9311f52560a2a88ba70f";
 //		static string merchantID     = "567654452";
 
+		static string providerVersion = "2";
 		static string postHTML = 
 			@"<html><head></head><body>
 			  <form>
@@ -126,7 +127,7 @@ namespace PCIBusiness
 
 			try
 			{
-				xmlSent = "version=2"
+				xmlSent = "version="                + Tools.URLString(providerVersion)
 				        + "&ipaddress="
 				        + "&merchant_account="      + Tools.URLString(payment.ProviderUserID)
 				        + "&first_name="            + Tools.URLString(payment.FirstName)
@@ -168,7 +169,8 @@ namespace PCIBusiness
 							  + payment.CardNumber
 							  + payment.CardExpiryMM
 							  + payment.CardExpiryYY
-							  + payment.CardCVV;
+							  + payment.CardCVV
+							  + payment.ProviderKey;
 
 //				ret        = 30;
 //				xmlSent    = xmlSent + "&address2=";
@@ -178,7 +180,6 @@ namespace PCIBusiness
 //					chk     = chk + payment.Address(2);
 //				}
 
-				chk        = chk + payment.ProviderKey; // partnerControl;
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
@@ -194,17 +195,19 @@ namespace PCIBusiness
 				{
 					Tools.LogInfo("TransactionT24.GetToken/30","(Refund) Transaction Id=" + payRef,177);
 					ret     = 50;
-					xmlSent = "version=2"
-					        + "&merchant_account=" + Tools.URLString(payment.ProviderUserID)
+					xmlSent =  "merchant_account=" + Tools.URLString(payment.ProviderUserID)
 					        + "&order_id="         + Tools.URLString(payRef)
 					        + "&amount="           + Tools.URLString(payment.PaymentAmount.ToString())
-					        + "&currency="         + Tools.URLString(payment.CurrencyCode);
+					        + "&currency="         + Tools.URLString(payment.CurrencyCode)
+					        + "&version="          + Tools.URLString(providerVersion);
 					ret     = 60;
 					chk     = payment.ProviderUserID
 					        + payRef
 					        + payment.PaymentAmount.ToString()
 					        + payment.CurrencyCode
+					        + providerVersion
 					        + payment.ProviderKey;
+//	sha1(merchant_Account + order_id (which is the transaction id) + amount + currency + version + pcontrol )
 					ret     = 70;  
 					xmlSent = xmlSent + "&control=" + HashSHA1(chk);
 					Tools.LogInfo("TransactionT24.GetToken/40","(Refund) POST="+xmlSent+", Key="+payment.ProviderKey,177);
@@ -224,7 +227,7 @@ namespace PCIBusiness
 
 			try
 			{
-				xmlSent = "version=2"
+				xmlSent = "version="                + Tools.URLString(providerVersion)
 				        + "&ipaddress="
 				        + "&merchant_account="      + Tools.URLString(payment.ProviderUserID)
 				        + "&first_name="            + Tools.URLString(payment.FirstName)
