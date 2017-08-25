@@ -136,7 +136,7 @@ namespace PCIBusiness
 		public override int GetToken(Payment payment)
 		{
 			int    ret         = 300;
-			string xmlReceived = "";
+//			string xmlReceived = "";
 			xmlSent = "";
 
 			try

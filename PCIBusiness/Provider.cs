@@ -101,6 +101,8 @@ namespace PCIBusiness
 			providerURL       = dbConn.ColString("url");
 			userID            = dbConn.ColString("MerchantUserId");
 			userPassword      = dbConn.ColString("MerchantUserPassword");
+			bureauName        = "";
+			bureauStatus      = 0;
 		}
 
 		public Provider() : base()
