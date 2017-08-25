@@ -18,8 +18,8 @@ namespace PCIBusiness
 
 		static string soapEnvelope =
 			@"<SOAP-ENV:Envelope
-				xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' 
-				xmlns:ns1='http://soap.api.controller.web.payjar.com/' 
+				xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope'
+				xmlns:ns1='http://soap.api.controller.web.payjar.com'
 				xmlns:ns2='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'>
 				<SOAP-ENV:Header>
 					<wsse:Security SOAP-ENV:mustUnderstand='1' xmlns:wsse='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'>
@@ -74,7 +74,7 @@ namespace PCIBusiness
 			// Construct web request object
 				Tools.LogInfo("TransactionPayU.SendXML/30","Create/set up web request, URL=" + url,199);
 				ret = 40;
-				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url); // +"/service/PayUAPI?wsdl");
+				HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
 				webRequest.Headers.Add(@"SOAP:Action");
 				webRequest.ContentType = "text/xml;charset=\"utf-8\"";
 				webRequest.Accept      = "text/xml";
@@ -178,7 +178,7 @@ namespace PCIBusiness
 				payRef   = Tools.XMLNode(xmlResult,"payUReference");
 				payToken = Tools.XMLNode(xmlResult,"pmId");
 
-				Tools.LogInfo("TransactionPayU.GetToken/20","ResultCode="+ResultCode + ", payURef=" + payRef + ", pmId=" + payToken,199);
+				Tools.LogInfo("TransactionPayU.GetToken/20","ResultCode="+ResultCode + ", payRef=" + payRef + ", payToken=" + payToken,199);
 
 				if ( ret == 0 )
 				{
@@ -249,72 +249,6 @@ namespace PCIBusiness
 				        + "</Basket>"
 				        + "<Creditcard>"
 				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-						  +   "<pmId>" + payment.CardToken + "</pmId>"
-				        + "</Creditcard>"
-				        + "</ns1:doTransaction>";
-
-				xmlSent = xmlSent
-				        + "<ns1:doTransaction>"
-				        + "<Safekey>" + payment.ProviderKey + "</Safekey>"
-				        + "<Api>ONE_ZERO</Api>"
-				        + "<TransactionType>PAYMENT</TransactionType>"
-				        + "<AuthenticationType>TOKEN</AuthenticationType>"
-				        + "<Customfield>"
-				        +   "<key>processingType</key>"
-				        +   "<value>REAL_TIME_RECURRING</value>"
-				        + "</Customfield>"
-				        + "<AdditionalInformation>"
-				        +   "<merchantReference>211</merchantReference>"
-				        + "</AdditionalInformation>"
-				        + "<Customer>"
-				        +   "<merchantUserId>" + payment.ProviderUserID + "</merchantUserId>"
-				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
-				        +   "<email>" + payment.EMail + "</email>"
-				        +   "<firstName>" + payment.FirstName + "</firstName>"
-				        +   "<lastName>" + payment.LastName + "</lastName>"
-				        +   "<mobile>" + payment.PhoneCell + "</mobile>"
-				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
-				        + "</Customer>"
-				        + "<Basket>"
-				        +	"<amountInCents>211</amountInCents>"
-				        +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
-				        +	"<description>" + payment.PaymentDescription + "</description>"
-				        + "</Basket>"
-				        + "<Creditcard>"
-				        +	"<amountInCents>211</amountInCents>"
-						  +   "<pmId>" + payment.CardToken + "</pmId>"
-				        + "</Creditcard>"
-				        + "</ns1:doTransaction>";
-
-				xmlSent = xmlSent
-				        + "<ns1:doTransaction>"
-				        + "<Safekey>" + payment.ProviderKey + "</Safekey>"
-				        + "<Api>ONE_ZERO</Api>"
-				        + "<TransactionType>PAYMENT</TransactionType>"
-				        + "<AuthenticationType>TOKEN</AuthenticationType>"
-				        + "<Customfield>"
-				        +   "<key>processingType</key>"
-				        +   "<value>REAL_TIME_RECURRING</value>"
-				        + "</Customfield>"
-				        + "<AdditionalInformation>"
-				        +   "<merchantReference>123</merchantReference>"
-				        + "</AdditionalInformation>"
-				        + "<Customer>"
-				        +   "<merchantUserId>" + payment.ProviderUserID + "</merchantUserId>"
-				        +   "<countryCode>" + payment.CountryCode + "</countryCode>"
-				        +   "<email>" + payment.EMail + "</email>"
-				        +   "<firstName>" + payment.FirstName + "</firstName>"
-				        +   "<lastName>" + payment.LastName + "</lastName>"
-				        +   "<mobile>" + payment.PhoneCell + "</mobile>"
-				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
-				        + "</Customer>"
-				        + "<Basket>"
-				        +	"<amountInCents>123</amountInCents>"
-				        +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
-				        +	"<description>" + payment.PaymentDescription + "</description>"
-				        + "</Basket>"
-				        + "<Creditcard>"
-				        +	"<amountInCents>123</amountInCents>"
 						  +   "<pmId>" + payment.CardToken + "</pmId>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";

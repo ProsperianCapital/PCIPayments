@@ -42,36 +42,6 @@ namespace PCIBusiness
 //			  <input type='hidden' id='return_url'            value='return_url' />
 //			  <input type='hidden' id='server_return_url'     value='server_return_url' />
 
-//		public  string  BureauStatus
-//		{
-//			get { return "Testing"; }
-//		}
-//		public  string  URL
-//		{
-//			get { return "https://payment.ccp.boarding.transact24.com/PaymentCard"; }
-//		}
-//
-//		public override string ConnectionDetails(byte mode,string separator="")
-//		{
-//			if ( mode == 1 ) // HTML
-//				return "<table>"
-//					  + "<tr><td>Payment Provider</td><td class='Red'> : Transact24</td></tr>"
-//					  + "<tr><td>Status</td><td class='Red'> : In development</td></tr>"
-//					  + "<tr><td colspan='2'><hr /></td></tr>"
-//					  + "<tr><td>Bureau Code</td><td> : " + bureauCode + "</td></tr>"
-//					  + "<tr><td>Partner Control</td><td> : " + partnerControl + "</td></tr>"
-//					  + "<tr><td>Merchant Account</td><td> : " + merchantAccount + "</td></tr>"
-//					  + "</table>";
-//
-//			if ( Tools.NullToString(separator).Length < 1 )
-//				separator = Environment.NewLine;
-//
-//			return "Payment Provider : Transact24" + separator
-//			     + "Bureau Code : " + bureauCode + separator
-//				  + "Partner Control : " + partnerControl + separator
-//				  + "Merchant Account : " + merchantAccount;
-//		}
-
 		public  bool   Successful
 		{
 			get
@@ -89,7 +59,7 @@ namespace PCIBusiness
 
 			try
 			{
-				Tools.LogInfo("TransactionT24.PostHTML/10","URL=" + url + ", XML Sent=" + xmlSent,30);
+				Tools.LogInfo("TransactionT24.PostHTML/10","URL=" + url + ", XML Sent=" + xmlSent,177);
 
 			// Construct web request object
 				ret = 20;
@@ -127,7 +97,7 @@ namespace PCIBusiness
 					}
 				}
 
-				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),30);
+				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),177);
 				ret       = 80;
 				xmlResult = new XmlDocument();
 				xmlResult.LoadXml(xmlReceived.ToString());
@@ -136,13 +106,11 @@ namespace PCIBusiness
 				ret        = 90;
 				resultCode = Tools.XMLNode(xmlResult,"status");
 				resultMsg  = Tools.XMLNode(xmlResult,"message");
-				payToken   = Tools.XMLNode(xmlResult,"merchant_card_number");
-				payRef     = Tools.XMLNode(xmlResult,"transaction_id");
 
 				if ( Successful )
 					return 0;
 
-				Tools.LogInfo("TransactionT24.SendXML/80","URL=" + url + ", XML Sent=" + xmlSent+", XML Received="+xmlReceived,200);
+				Tools.LogInfo("TransactionT24.SendXML/80","URL=" + url + ", XML Sent=" + xmlSent+", XML Received="+xmlReceived,177);
 			}
 			catch (Exception ex)
 			{
@@ -215,13 +183,38 @@ namespace PCIBusiness
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
-				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", Key="+payment.ProviderKey,177);
+				Tools.LogInfo("TransactionT24.GetToken/10","(Reserve) POST="+xmlSent+", Key="+payment.ProviderKey,177);
 
 				ret        = PostHTML(payment.ProviderURL);
+				payToken   = Tools.XMLNode(xmlResult,"merchant_card_number");
+				payRef     = Tools.XMLNode(xmlResult,"transaction_id");
+
+				Tools.LogInfo("TransactionT24.GetToken/20","ResultCode="+ResultCode + ", payRef=" + payRef + ", payToken=" + payToken,177);
+
+				if ( ret == 0 )
+				{
+					Tools.LogInfo("TransactionT24.GetToken/30","(Refund) Transaction Id=" + payRef,177);
+					ret     = 50;
+					xmlSent = "version=2"
+					        + "&merchant_account=" + Tools.URLString(payment.ProviderUserID)
+					        + "&order_id="         + Tools.URLString(payRef)
+					        + "&amount="           + Tools.URLString(payment.PaymentAmount.ToString())
+					        + "&currency="         + Tools.URLString(payment.CurrencyCode);
+					ret     = 60;
+					chk     = payment.ProviderUserID
+					        + payRef
+					        + payment.PaymentAmount.ToString()
+					        + payment.CurrencyCode
+					        + payment.ProviderKey;
+					ret     = 70;  
+					xmlSent = xmlSent + "&control=" + HashSHA1(chk);
+					Tools.LogInfo("TransactionT24.GetToken/40","(Refund) POST="+xmlSent+", Key="+payment.ProviderKey,177);
+					ret     = PostHTML("https://payment.ccp.transact24.com/Refund");
+				}
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("TransactionT24.GetToken/3","Ret="+ret.ToString()+" / "+postHTML,ex);
+				Tools.LogException("TransactionT24.GetToken/90","Ret="+ret.ToString()+" / "+postHTML,ex);
 			}
 			return ret;
 		}
@@ -272,13 +265,13 @@ namespace PCIBusiness
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
-				Tools.LogInfo("TransactionT24.ProcessPayment/2","POST="+xmlSent+", Key="+payment.ProviderKey,177);
+				Tools.LogInfo("TransactionT24.ProcessPayment/20","POST="+xmlSent+", Key="+payment.ProviderKey,177);
 
 				ret        = PostHTML(payment.ProviderURL);
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("TransactionT24.ProcessPayment/3","Ret="+ret.ToString()+" / "+postHTML,ex);
+				Tools.LogException("TransactionT24.ProcessPayment/90","Ret="+ret.ToString()+" / "+postHTML,ex);
 			}
 			return ret;
 		}
