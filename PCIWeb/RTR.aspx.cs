@@ -87,34 +87,6 @@ namespace PCIWeb
 					lblCards.Text        = provider.CardsToBeTokenized.ToString();
 					lblPayments.Text     = provider.PaymentsToBeProcessed.ToString();
 				}
-
-//			if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.PayU) )
-//				using ( PCIBusiness.TransactionPayU x = new PCIBusiness.TransactionPayU() )
-//				{
-//	//				lblBureauCode.Text   = x.BureauCode;
-//					lblBureauURL.Text    = x.URL;
-//					lblBureauStatus.Text = x.BureauStatus;
-//				}
-//			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.T24) )
-//				using ( PCIBusiness.TransactionT24 x = new PCIBusiness.TransactionT24() )
-//				{
-//					lblBureauCode.Text   = x.BureauCode;
-//					lblBureauURL.Text    = x.URL;
-//					lblBureauStatus.Text = x.BureauStatus;
-//				}
-//			else if ( lstProvider.SelectedValue == PCIBusiness.Tools.BureauCode(PCIBusiness.Constants.PaymentProvider.Ikajo) )
-//				using ( PCIBusiness.TransactionIkajo x = new PCIBusiness.TransactionIkajo() )
-//				{
-//					lblBureauCode.Text   = x.BureauCode;
-//					lblBureauURL.Text    = x.URL;
-//					lblBureauStatus.Text = x.BureauStatus;
-//				}
-//			else
-//			{
-//				lblBureauCode.Text   = "";
-//				lblBureauURL.Text    = "";
-//				lblBureauStatus.Text = "";
-//			}
 		}
 
 		protected void btnProcess1_Click(Object sender, EventArgs e)
@@ -133,18 +105,17 @@ namespace PCIWeb
 		{
 			try
 			{
-				int    rows     = 0;
+				int    maxRows  = 0;
 				string provider = lstProvider.SelectedValue;
 				PCIBusiness.Tools.LogInfo("RTR.Process/5","Started, provider '" + provider + "'",10);
 
-				if ( txtRows.Text.Length > 0 && txtRows.Text.ToUpper() != "ALL" )
-					rows = Tools.StringToInt(txtRows.Text);
+				if ( txtRows.Text.Length > 0 )
+					maxRows = Tools.StringToInt(txtRows.Text);
 
 				using (PCIBusiness.Payments payments = new PCIBusiness.Payments())
 				{
-					int k         = payments.ProcessCards(provider,mode,rows);
+					int k         = payments.ProcessCards(provider,mode,maxRows);
 					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed";
-				//	payments.ProcessTokens(provider,mode);
 				}
 				PCIBusiness.Tools.LogInfo("RTR.Process/10","Finished",10);
 			}
@@ -175,8 +146,8 @@ namespace PCIWeb
 			{
 				if ( fHandle != null )
 					fHandle.Close();
-				fHandle = null;
 			}
+			fHandle = null;
 		}
 
 
