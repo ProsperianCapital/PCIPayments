@@ -88,7 +88,7 @@ namespace PCIBusiness
 			else
 				return 20;
 
-			Tools.LogInfo("Payments.ProcessCards/10","Mode="+mode.ToString()+", Rows=" + rowsToProcess.ToString() + ", BureauCode="+bureauCode+", SQL="+sql,110);
+			Tools.LogInfo("Payments.ProcessCards/10","Mode="+mode.ToString()+", Rows=" + rowsToProcess.ToString() + ", BureauCode="+bureauCode+", SQL="+sql,10);
 
 			try
 			{
@@ -123,7 +123,7 @@ namespace PCIBusiness
 			finally
 			{
 				Tools.CloseDB(ref dbConn);
-				Tools.LogInfo("Payments.ProcessCards/90","Finished (" + (success+fail).ToString() + " cards/tokens processed)",110);
+				Tools.LogInfo("Payments.ProcessCards/90","Finished (" + (success+fail).ToString() + " cards/tokens processed)",20);
 			}
 			return 90;
 		}

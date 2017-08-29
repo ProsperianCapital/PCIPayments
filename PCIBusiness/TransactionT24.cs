@@ -13,35 +13,33 @@ namespace PCIBusiness
 //		static string merchantID     = "567654452";
 
 		static string providerVersion = "2";
-		static string postHTML = 
-			@"<html><head></head><body>
-			  <form>
-			  <input type='hidden' id='version'               value='2' />
-			  <input type='hidden' id='merchant_account'      value='merchant_account' />
-			  <input type='hidden' id='merchant_order'        value='merchant_order' />
-			  <input type='hidden' id='merchant_product_desc' value='merchant_product_desc' />
-			  <input type='hidden' id='first_name'            value='first_name' />
-			  <input type='hidden' id='last_name'             value='last_name' />
-			  <input type='hidden' id='address1'              value='address1' />
-			  <input type='hidden' id='city'                  value='city' />
-			  <input type='hidden' id='state'                 value='state' />
-			  <input type='hidden' id='zip_code'              value='zip_code' />
-			  <input type='hidden' id='country'               value='country' />
-			  <input type='hidden' id='phone'                 value='phone' />
-			  <input type='hidden' id='email'                 value='email' />
-			  <input type='hidden' id='amount'                value='amount' />
-			  <input type='hidden' id='currency'              value='USD' />
-			  <input type='hidden' id='credit_card_type'      value='credit_card_type' />
-			  <input type='hidden' id='credit_card_number'    value='credit_card_number' />
-			  <input type='hidden' id='expire_month'          value='expire_month' />
-			  <input type='hidden' id='expire_year'           value='expire_year' />
-			  <input type='hidden' id='cvv2'                  value='cvv2' />
-			  <input type='hidden' id='control'               value='control' />
-			  </form>
-			  </body></html>";
 
-//			  <input type='hidden' id='return_url'            value='return_url' />
-//			  <input type='hidden' id='server_return_url'     value='server_return_url' />
+//		static string postHTML = 
+//			@"<html><head></head><body>
+//			  <form>
+//			  <input type='hidden' id='version'               value='2' />
+//			  <input type='hidden' id='merchant_account'      value='merchant_account' />
+//			  <input type='hidden' id='merchant_order'        value='merchant_order' />
+//			  <input type='hidden' id='merchant_product_desc' value='merchant_product_desc' />
+//			  <input type='hidden' id='first_name'            value='first_name' />
+//			  <input type='hidden' id='last_name'             value='last_name' />
+//			  <input type='hidden' id='address1'              value='address1' />
+//			  <input type='hidden' id='city'                  value='city' />
+//			  <input type='hidden' id='state'                 value='state' />
+//			  <input type='hidden' id='zip_code'              value='zip_code' />
+//			  <input type='hidden' id='country'               value='country' />
+//			  <input type='hidden' id='phone'                 value='phone' />
+//			  <input type='hidden' id='email'                 value='email' />
+//			  <input type='hidden' id='amount'                value='amount' />
+//			  <input type='hidden' id='currency'              value='USD' />
+//			  <input type='hidden' id='credit_card_type'      value='credit_card_type' />
+//			  <input type='hidden' id='credit_card_number'    value='credit_card_number' />
+//			  <input type='hidden' id='expire_month'          value='expire_month' />
+//			  <input type='hidden' id='expire_year'           value='expire_year' />
+//			  <input type='hidden' id='cvv2'                  value='cvv2' />
+//			  <input type='hidden' id='control'               value='control' />
+//			  </form>
+//			  </body></html>";
 
 		public  bool   Successful
 		{
@@ -60,7 +58,7 @@ namespace PCIBusiness
 
 			try
 			{
-				Tools.LogInfo("TransactionT24.PostHTML/10","URL=" + url + ", XML Sent=" + xmlSent,177);
+				Tools.LogInfo("TransactionT24.PostHTML/10","URL=" + url + ", XML Sent=" + xmlSent,10);
 
 			// Construct web request object
 				ret = 20;
@@ -98,7 +96,7 @@ namespace PCIBusiness
 					}
 				}
 
-				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),177);
+				Tools.LogInfo("TransactionT24.PostHTML/70","XML Received=" + xmlReceived.ToString(),10);
 				ret       = 80;
 				xmlResult = new XmlDocument();
 				xmlResult.LoadXml(xmlReceived.ToString());
@@ -111,7 +109,7 @@ namespace PCIBusiness
 				if ( Successful )
 					return 0;
 
-				Tools.LogInfo("TransactionT24.SendXML/80","URL=" + url + ", XML Sent=" + xmlSent+", XML Received="+xmlReceived,177);
+				Tools.LogInfo("TransactionT24.SendXML/80","URL=" + url + ", XML Sent=" + xmlSent+", XML Received="+xmlReceived,220);
 			}
 			catch (Exception ex)
 			{
@@ -134,7 +132,7 @@ namespace PCIBusiness
 				        + "&last_name="             + Tools.URLString(payment.LastName)
 				        + "&address1="              + Tools.URLString(payment.Address1)
 				        + "&city="                  + Tools.URLString(payment.Address2)
-				        + "&state="                 + Tools.URLString(payment.State) // USA Only
+				        + "&state="                 + Tools.URLString(payment.State) // USA only, do not include in hash
 				        + "&zip_code="              + Tools.URLString(payment.PostalCode)
 				        + "&country="               + Tools.URLString(payment.CountryCode)
 				        + "&phone="                 + Tools.URLString(payment.PhoneCell)
@@ -151,26 +149,28 @@ namespace PCIBusiness
 
 			//	Checksum (SHA1)
 				ret = 20;
-				string chk = payment.ProviderUserID
-							  + payment.FirstName
-							  + payment.LastName
-							  + payment.Address1
-							  + payment.Address2
-							  + payment.State
-							  + payment.PostalCode
-							  + payment.CountryCode
-							  + payment.PhoneCell
-							  + payment.EMail
-					        + payment.MerchantReference
-					        + payment.PaymentDescription
-							  + payment.PaymentAmount.ToString()
-							  + payment.CurrencyCode
-							  + payment.CardType
-							  + payment.CardNumber
-							  + payment.CardExpiryMM
-							  + payment.CardExpiryYY
-							  + payment.CardCVV
-							  + payment.ProviderKey;
+				string chk = Tools.URLString(payment.ProviderUserID)
+							  + Tools.URLString(payment.FirstName)
+							  + Tools.URLString(payment.LastName)
+							  + Tools.URLString(payment.Address1)
+							  + Tools.URLString(payment.Address2)
+							  + Tools.URLString(payment.PostalCode)
+							  + Tools.URLString(payment.CountryCode)
+							  + Tools.URLString(payment.PhoneCell)
+							  + Tools.URLString(payment.EMail)
+					        + Tools.URLString(payment.MerchantReference)
+					        + Tools.URLString(payment.PaymentDescription)
+							  + Tools.URLString(payment.PaymentAmount.ToString())
+							  + Tools.URLString(payment.CurrencyCode)
+							  + Tools.URLString(payment.CardType)
+							  + Tools.URLString(payment.CardNumber)
+							  + Tools.URLString(payment.CardExpiryMM)
+							  + Tools.URLString(payment.CardExpiryYY)
+							  + Tools.URLString(payment.CardCVV)
+							  + Tools.URLString(payment.ProviderKey);
+
+//	Do NOT include "State" in the checksum (David Tin, 2017/08/29)
+//							  + Tools.URLString(payment.State)
 
 //				ret        = 30;
 //				xmlSent    = xmlSent + "&address2=";
@@ -183,13 +183,13 @@ namespace PCIBusiness
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
-				Tools.LogInfo("TransactionT24.GetToken/10","(Reserve) POST="+xmlSent+", Key="+payment.ProviderKey,177);
+				Tools.LogInfo("TransactionT24.GetToken/10","(Reserve) POST="+xmlSent+", Key="+payment.ProviderKey,10);
 
 				ret        = PostHTML(payment.ProviderURL);
 				payToken   = Tools.XMLNode(xmlResult,"merchant_card_number");
 				payRef     = Tools.XMLNode(xmlResult,"transaction_id");
 
-				Tools.LogInfo("TransactionT24.GetToken/20","ResultCode="+ResultCode + ", payRef=" + payRef + ", payToken=" + payToken,177);
+				Tools.LogInfo("TransactionT24.GetToken/20","ResultCode="+ResultCode + ", payRef=" + payRef + ", payToken=" + payToken,10);
 
 //	Removed at Deon Smith's request (2017/08/25)
 //	This code is correct, complete and tested. Merely un-comment it
@@ -219,7 +219,29 @@ namespace PCIBusiness
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("TransactionT24.GetToken/90","Ret="+ret.ToString()+" / "+postHTML,ex);
+				Tools.LogException("TransactionT24.GetToken/90","Ret="+ret.ToString()+", XML Sent=" + xmlSent,ex);
+			}
+			return ret;
+		}
+
+		public int GetTokenSimple(Payment payment) // Doesn't work ...
+		{
+			int ret = 10;
+
+			try
+			{
+				xmlSent =  "ccnumber="    + Tools.URLString(payment.CardNumber)
+				        + "&ccname="      + Tools.URLString(payment.CardName)
+				        + "&expiremonth=" + Tools.URLString(payment.CardExpiryMM)
+				        + "&expireyear="  + Tools.URLString(payment.CardExpiryYY)
+				        + "&cvv="         + Tools.URLString(payment.CardCVV);
+				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", Key="+payment.ProviderKey,10);
+				ret = 40;  
+				ret = PostHTML(payment.ProviderURL);
+			}
+			catch (Exception ex)
+			{
+				Tools.LogException("TransactionT24.GetToken/3","Ret="+ret.ToString()+", XML Sent=" + xmlSent,ex);
 			}
 			return ret;
 		}
@@ -237,7 +259,7 @@ namespace PCIBusiness
 				        + "&last_name="             + Tools.URLString(payment.LastName)
 				        + "&address1="              + Tools.URLString(payment.Address1)
 				        + "&city="                  + Tools.URLString(payment.Address2)
-				        + "&state="                 + Tools.URLString(payment.State) // USA Only
+				        + "&state="                 + Tools.URLString(payment.State) // USA only, do NOT include in hash
 				        + "&zip_code="              + Tools.URLString(payment.PostalCode)
 				        + "&country="               + Tools.URLString(payment.CountryCode)
 				        + "&phone="                 + Tools.URLString(payment.PhoneCell)
@@ -250,33 +272,32 @@ namespace PCIBusiness
 
 			//	Checksum (SHA1)
 				ret = 20;
-				string chk = payment.ProviderUserID
-							  + payment.FirstName
-							  + payment.LastName
-							  + payment.Address1
-							  + payment.Address2
-							  + payment.State
-							  + payment.PostalCode
-							  + payment.CountryCode
-							  + payment.PhoneCell
-							  + payment.EMail
-					        + payment.MerchantReference
-					        + payment.PaymentDescription
-							  + payment.PaymentAmount.ToString()
-							  + payment.CurrencyCode
-							  + payment.CardToken;
+				string chk = Tools.URLString(payment.ProviderUserID)
+							  + Tools.URLString(payment.FirstName)
+							  + Tools.URLString(payment.LastName)
+							  + Tools.URLString(payment.Address1)
+							  + Tools.URLString(payment.Address2)
+							  + Tools.URLString(payment.PostalCode)
+							  + Tools.URLString(payment.CountryCode)
+							  + Tools.URLString(payment.PhoneCell)
+							  + Tools.URLString(payment.EMail)
+					        + Tools.URLString(payment.MerchantReference)
+					        + Tools.URLString(payment.PaymentDescription)
+							  + Tools.URLString(payment.PaymentAmount.ToString())
+							  + Tools.URLString(payment.CurrencyCode)
+							  + Tools.URLString(payment.CardToken)
+							  + Tools.URLString(payment.ProviderKey);
 
-				chk        = chk + payment.ProviderKey; // partnerControl;
 				ret        = 40;  
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
-				Tools.LogInfo("TransactionT24.ProcessPayment/20","POST="+xmlSent+", Key="+payment.ProviderKey,177);
+				Tools.LogInfo("TransactionT24.ProcessPayment/20","POST="+xmlSent+", Key="+payment.ProviderKey,30);
 
 				ret        = PostHTML(payment.ProviderURL);
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("TransactionT24.ProcessPayment/90","Ret="+ret.ToString()+" / "+postHTML,ex);
+				Tools.LogException("TransactionT24.ProcessPayment/90","Ret="+ret.ToString()+", XML Sent=" + xmlSent,ex);
 			}
 			return ret;
 		}
@@ -287,14 +308,12 @@ namespace PCIBusiness
 			StringBuilder hashStr = new StringBuilder();
 			byte[]        hashArr;
 
-//			x = "567654635samHartogh123 ABC StreetABC City1234ZA0839683725samantha.hartogh@prosperian.mu20161031x105025x2098Token0USD255236700317170170418000ba2e2640cc6d35615c14ccd42d5c4445";
-
 			using (System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed())
 				hashArr = sha1.ComputeHash(Encoding.UTF8.GetBytes(x));
 			foreach (byte h in hashArr)
 				hashStr.Append(h.ToString("x2"));
 
-			Tools.LogInfo("TransactionT24.HashSHA1","Str In="+x+", Hash Out="+hashStr.ToString(),177);
+			Tools.LogInfo("TransactionT24.HashSHA1","Str In="+x+", Hash Out="+hashStr.ToString(),10);
 
 			return hashStr.ToString();
 		}
