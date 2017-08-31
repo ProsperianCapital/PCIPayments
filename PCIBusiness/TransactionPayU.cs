@@ -44,7 +44,7 @@ namespace PCIBusiness
 		{
 			get { return Tools.NullToString(resultSuccessful).ToUpper() == "TRUE"; }
 		}
-				
+
 		private int SendXML(string url,string userID,string password)
 		{
 			int    ret         = 10;
@@ -56,7 +56,7 @@ namespace PCIBusiness
 				if ( ! url.ToUpper().EndsWith("WSDL") )
 					url = url + "/service/PayUAPI?wsdl";
 
-				Tools.LogInfo("TransactionPayU.SendXML/10","URL=" + url + ", XML Sent=" + xmlSent,30);
+				Tools.LogInfo("TransactionPayU.SendXML/10","URL=" + url + ", XML Sent=" + xmlSent,220);
 
 			// Construct soap object
 				ret = 20;
@@ -161,16 +161,16 @@ namespace PCIBusiness
 				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
 				        + "</Customer>"
 				        + "<Basket>"
-				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-				        +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
-				        +	"<description>" + payment.PaymentDescription + "</description>"
+				        +   "<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+				        +   "<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+				        +   "<description>" + payment.PaymentDescription + "</description>"
 				        + "</Basket>"
 				        + "<Creditcard>"
-				        +	"<nameOnCard>" + payment.CardName + "</nameOnCard>"
-				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-			           +    "<cardNumber>" + payment.CardNumber + "</cardNumber>"
-			           +    "<cardExpiry>" + payment.CardExpiryMM + payment.CardExpiryYYYY + "</cardExpiry>"
-			           +    "<cvv>" + payment.CardCVV + "</cvv>"
+				        +   "<nameOnCard>" + payment.CardName + "</nameOnCard>"
+				        +   "<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+				        +   "<cardNumber>" + payment.CardNumber + "</cardNumber>"
+				        +   "<cardExpiry>" + payment.CardExpiryMM + payment.CardExpiryYYYY + "</cardExpiry>"
+				        +   "<cvv>" + payment.CardCVV + "</cvv>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
@@ -244,13 +244,13 @@ namespace PCIBusiness
 				        +   "<regionalId>" + payment.RegionalId + "</regionalId>"
 				        + "</Customer>"
 				        + "<Basket>"
-				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-				        +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
-				        +	"<description>" + payment.PaymentDescription + "</description>"
+				        +   "<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+				        +   "<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
+				        +   "<description>" + payment.PaymentDescription + "</description>"
 				        + "</Basket>"
 				        + "<Creditcard>"
-				        +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-						  +   "<pmId>" + payment.CardToken + "</pmId>"
+				        +   "<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
+				        +   "<PMID>" + payment.CardToken + "</PMID>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 

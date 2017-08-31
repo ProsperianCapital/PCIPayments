@@ -14,7 +14,7 @@ namespace PCIBusiness
 
 		static string providerVersion = "2";
 
-//		static string postHTML = 
+//		static string postHTML =
 //			@"<html><head></head><body>
 //			  <form>
 //			  <input type='hidden' id='version'               value='2' />
@@ -158,8 +158,8 @@ namespace PCIBusiness
 							  + Tools.URLString(payment.CountryCode)
 							  + Tools.URLString(payment.PhoneCell)
 							  + Tools.URLString(payment.EMail)
-					        + Tools.URLString(payment.MerchantReference)
-					        + Tools.URLString(payment.PaymentDescription)
+							  + Tools.URLString(payment.MerchantReference)
+							  + Tools.URLString(payment.PaymentDescription)
 							  + Tools.URLString(payment.PaymentAmount.ToString())
 							  + Tools.URLString(payment.CurrencyCode)
 							  + Tools.URLString(payment.CardType)
@@ -180,7 +180,7 @@ namespace PCIBusiness
 //					chk     = chk + payment.Address(2);
 //				}
 
-				ret        = 40;  
+				ret        = 40;
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
 				Tools.LogInfo("TransactionT24.GetToken/10","(Reserve) POST="+xmlSent+", Key="+payment.ProviderKey,10);
@@ -210,7 +210,7 @@ namespace PCIBusiness
 //					        + payment.CurrencyCode
 //					        + providerVersion
 //					        + payment.ProviderKey;
-//					ret     = 70;  
+//					ret     = 70;
 //					xmlSent = xmlSent + "&control=" + HashSHA1(chk);
 //					Tools.LogInfo("TransactionT24.GetToken/40","(Refund) POST="+xmlSent+", Key="+payment.ProviderKey,177);
 //					ret     = PostHTML("https://payment.ccp.transact24.com/Refund");
@@ -236,7 +236,7 @@ namespace PCIBusiness
 				        + "&expireyear="  + Tools.URLString(payment.CardExpiryYY)
 				        + "&cvv="         + Tools.URLString(payment.CardCVV);
 				Tools.LogInfo("TransactionT24.GetToken/2","POST="+xmlSent+", Key="+payment.ProviderKey,10);
-				ret = 40;  
+				ret = 40;
 				ret = PostHTML(payment.ProviderURL);
 			}
 			catch (Exception ex)
@@ -281,14 +281,14 @@ namespace PCIBusiness
 							  + Tools.URLString(payment.CountryCode)
 							  + Tools.URLString(payment.PhoneCell)
 							  + Tools.URLString(payment.EMail)
-					        + Tools.URLString(payment.MerchantReference)
-					        + Tools.URLString(payment.PaymentDescription)
+							  + Tools.URLString(payment.MerchantReference)
+							  + Tools.URLString(payment.PaymentDescription)
 							  + Tools.URLString(payment.PaymentAmount.ToString())
 							  + Tools.URLString(payment.CurrencyCode)
 							  + Tools.URLString(payment.CardToken)
 							  + Tools.URLString(payment.ProviderKey);
 
-				ret        = 40;  
+				ret        = 40;
 				xmlSent    = xmlSent + "&control=" + HashSHA1(chk);
 
 				Tools.LogInfo("TransactionT24.ProcessPayment/20","POST="+xmlSent+", Key="+payment.ProviderKey,30);
