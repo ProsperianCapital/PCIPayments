@@ -176,8 +176,24 @@ namespace PCIBusiness
 		}
 		public  int      PaymentAmount
 		{
+//	Cents
 //			get { return (paymentAmount > 0 ? paymentAmount : 0); }
 			get { return  paymentAmount; }
+		}
+		public  string   PaymentAmountDecimal
+		{
+//	Rands
+			get
+			{
+				if ( paymentAmount < 1 )
+					return "0.00";
+				string amt = paymentAmount.ToString();
+				if ( amt.Length == 1 )
+					return "0.0" + amt;
+				if ( amt.Length == 2 )
+					return "0." + amt;
+				return amt.Substring(0,amt.Length-2) + "." + amt.Substring(amt.Length-2);
+			}
 		}
 //		public  byte     PaymentStatus
 //		{
@@ -396,7 +412,7 @@ namespace PCIBusiness
 		//	Payment Provider
 			providerKey        = dbConn.ColString("Safekey");
 			providerURL        = dbConn.ColString("url");
-			providerAccount    = dbConn.ColString("MerchantAccount");
+			providerAccount    = dbConn.ColString("MerchantAccount",0);
 			providerUserID     = dbConn.ColString("MerchantUserId");
 			providerPassword   = dbConn.ColString("MerchantUserPassword");
 

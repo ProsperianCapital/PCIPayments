@@ -129,19 +129,6 @@ namespace PCIBusiness
 
 			try
 			{
-				string amt = payment.PaymentAmount.ToString();
-				if ( amt.Length < 1 || payment.PaymentAmount < 1 )
-				{
-					Tools.LogInfo("TransactionMyGate.ProcessPayment/10","Zero/missing amount",220);
-					return ret;
-				}
-				else if ( amt.Length == 1 )
-					amt = "0.0" + amt;
-				else if ( amt.Length == 2 )
-					amt = "0." + amt;
-				else
-					amt = amt.Substring(0,amt.Length-2) + "." + amt.Substring(amt.Length-2);
-
 				ret     = 610;
 				xmlSent = "<?xml version='1.0' encoding='utf-16'?>"
 				        + "<debitorder>"
@@ -160,7 +147,7 @@ namespace PCIBusiness
 				        +   "<clientpin>" + payment.CardPIN + "</clientpin>"
 				        +   "<clientuci>" + payment.CardPIN + "</clientuci>"
 				        +   "<clientuid>" + payment.CardToken + "</clientuid>"
-				        +   "<debitamount>" + amt + "</debitamount>"
+				        +   "<debitamount>" + payment.PaymentAmountDecimal + "</debitamount>"
 				        +   "<debitdate>" + Tools.DateToString(System.DateTime.Now,9) + "</debitdate>"
 				        +   "<debitreference>" + payment.PaymentDescription.Substring(0,13) + "</debitreference>"
 				        +   "<debitcellnotify/>"
@@ -171,7 +158,7 @@ namespace PCIBusiness
 				        +   "<totaltransactions>1</totaltransactions>"
 				        +   "<firstactiondate>" + Tools.DateToString(System.DateTime.Now,9) + "</firstactiondate>"
 				        +   "<lastactiondate>" + Tools.DateToString(System.DateTime.Now,9) + "</lastactiondate>"
-				        +   "<debittotal>" + amt + "</debittotal>"
+				        +   "<debittotal>" + payment.PaymentAmountDecimal + "</debittotal>"
 				        + "</footer>"
 				        + "</debitorder>";
 
