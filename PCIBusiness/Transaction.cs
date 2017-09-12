@@ -6,13 +6,13 @@ namespace PCIBusiness
 {
 	public abstract class Transaction : StdDisposable
 	{
-		protected string payRef;
-		protected string payToken;
-		protected string resultCode;
-		protected string resultMsg;
-		protected string xmlSent;
-//		protected string xmlReceived;
-		protected string bureauCode;
+		protected string      payRef;
+		protected string      payToken;
+		protected string      resultCode;
+		protected string      resultMsg;
+		protected string      xmlSent;
+		protected string      bureauCode;
+		protected string      strResult;
 		protected XmlDocument xmlResult;
 
 		public  string      PaymentReference
@@ -46,6 +46,12 @@ namespace PCIBusiness
 				try
 				{
 					return     xmlResult.InnerXml;
+				}
+				catch
+				{ }
+				try
+				{
+					return     Tools.NullToString(strResult);
 				}
 				catch
 				{ }
@@ -95,6 +101,8 @@ namespace PCIBusiness
 			resultMsg   = "";
 			xmlSent     = "";
 			bureauCode  = "";
+			strResult   = "";
+			xmlResult   = null;
 		}
 	}
 }

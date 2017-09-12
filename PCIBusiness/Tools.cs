@@ -186,6 +186,8 @@ namespace PCIBusiness
 				theDate = whatDate.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture);
 			else if  ( dateFormat ==  8 ) // Sat 13 Oct 2010
 				theDate = whatDate.ToString("ddd dd MMM yyyy");
+			else if  ( dateFormat ==  9 ) // yyMMdd
+				theDate = whatDate.ToString("yyMMdd",CultureInfo.InvariantCulture);
 			else if  ( dateFormat == 19 ) // YYYY/MM/DD (for SQL)
 				theDate = whatDate.ToString("yyyy/MM/dd",CultureInfo.InvariantCulture);
 

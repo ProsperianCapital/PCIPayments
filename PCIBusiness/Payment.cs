@@ -29,9 +29,10 @@ namespace PCIBusiness
 		private string   ccExpiryYear;
 		private string   ccName;
 		private string   ccCVV;
+		private string   ccPIN;
 		private string   bureauCode;
 
-//		private string   providerAccount;
+		private string   providerAccount;
 		private string   providerKey;
 		private string   providerUserID;
 		private string   providerPassword;
@@ -42,25 +43,27 @@ namespace PCIBusiness
 
 
 //		Payment Provider stuff
+		public string    ProviderAccount
+		{
+			get 
+			{
+				if ( Tools.NullToString(providerAccount).Length > 0 )
+					return providerAccount;
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
+					return "";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
+					return "567654452";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
+					return "";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
+					return "MY014473";
+				return "";
+			}
+		}
 		public string    ProviderKey
 		{
 			get { return  Tools.NullToString(providerKey); }
 		}
-//		public string    ProviderAccount
-//		{
-//			get 
-//			{
-//				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-//					return "";
-//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
-//					return "567654452";
-//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
-//					return "";
-//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
-//					return "MY014473";
-//				return "";
-//			}
-//		}
 		public string    ProviderUserID
 		{
 			get { return  Tools.NullToString(providerUserID); }
@@ -71,12 +74,14 @@ namespace PCIBusiness
 		}
 		public string    ProviderURL
 		{
-			get { return  Tools.NullToString(providerURL); }
+//			get { return  Tools.NullToString(providerURL); }
 
 //		Testing ...
 
 //			get { return  "https://payment.ccp.boarding.transact24.com/PaymentCard";           } // T24
 //			get { return  "https://www.mygate.co.za/Collections/1x0x0/pinManagement.cfc?wsdl"; } MyGate
+//			get { return  "http://localhost:53070/pinManagement.xml"; }
+			get { return  "http://localhost:53070/pinManagement.wsdl"; }
 		}
 
 //		public string    MerchantUserId
@@ -183,6 +188,10 @@ namespace PCIBusiness
 		public  string   CardToken
 		{
 			get { return  Tools.NullToString(ccToken); }
+		}
+		public  string   CardPIN
+		{
+			get { return  Tools.NullToString(ccPIN); }
 		}
 		public  string   CardType
 		{
@@ -387,7 +396,8 @@ namespace PCIBusiness
 		//	Payment Provider
 			providerKey        = dbConn.ColString("Safekey");
 			providerURL        = dbConn.ColString("url");
-			providerUserID     = dbConn.ColString("MerchantUserId"); // Also used as merchant account
+			providerAccount    = dbConn.ColString("MerchantAccount");
+			providerUserID     = dbConn.ColString("MerchantUserId");
 			providerPassword   = dbConn.ColString("MerchantUserPassword");
 
 		//	Customer
@@ -416,6 +426,7 @@ namespace PCIBusiness
 			ccType             = dbConn.ColString("cardType",0);
 			ccCVV              = dbConn.ColString("cvv",0);
 			ccToken            = dbConn.ColString("token",0);
+			ccPIN              = dbConn.ColString("PIN",0);
 		}
 
 		public override void CleanUp()

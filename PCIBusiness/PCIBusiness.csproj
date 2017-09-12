@@ -66,6 +66,11 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Payment.cs" />
     <Compile Include="Payments.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Provider.cs" />
     <Compile Include="Providers.cs" />
     <Compile Include="StdDisposable.cs" />
@@ -78,12 +83,63 @@
     <Compile Include="TransactionMyGate.cs" />
     <Compile Include="TransactionPayU.cs" />
     <Compile Include="TransactionT24.cs" />
+    <Compile Include="Web References\MyGatePayment\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\MyGateToken\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\MyGatePayment\MyGate_DebitOrder_WebService.wsdl" />
+    <None Include="Web References\MyGatePayment\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\MyGateToken\pinManagement.wsdl" />
+    <None Include="Web References\MyGateToken\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="https://www.mygate.co.za/Collections/1x0x0/pinManagement.cfc%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\MyGateToken\</RelPath>
+      <UpdateFromURL>https://www.mygate.co.za/Collections/1x0x0/pinManagement.cfc%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>PCIBusiness_PinManagement_PinManagement</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://www.mygate.co.za/console/includes/debitorders/functions/MyGate_DebitOrder_WebService.cfc%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\MyGatePayment\</RelPath>
+      <UpdateFromURL>https://www.mygate.co.za/console/includes/debitorders/functions/MyGate_DebitOrder_WebService.cfc%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>PCIBusiness_MyGatePayment_MyGate_DebitOrder_WebServiceService</CachedSettingsPropName>
+    </WebReferenceUrl>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

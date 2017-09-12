@@ -250,7 +250,7 @@ namespace PCIBusiness
 				        + "</Basket>"
 				        + "<Creditcard>"
 				        +   "<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
-				        +   "<PMID>" + payment.CardToken + "</PMID>"
+				        +   "<pmId>" + payment.CardToken + "</pmId>"
 				        + "</Creditcard>"
 				        + "</ns1:doTransaction>";
 
