@@ -74,14 +74,12 @@ namespace PCIBusiness
 		}
 		public string    ProviderURL
 		{
-//			get { return  Tools.NullToString(providerURL); }
+			get { return  Tools.NullToString(providerURL); }
 
 //		Testing ...
 
 //			get { return  "https://payment.ccp.boarding.transact24.com/PaymentCard";           } // T24
 //			get { return  "https://www.mygate.co.za/Collections/1x0x0/pinManagement.cfc?wsdl"; } MyGate
-//			get { return  "http://localhost:53070/pinManagement.xml"; }
-			get { return  "http://localhost:53070/pinManagement.wsdl"; }
 		}
 
 //		public string    MerchantUserId
