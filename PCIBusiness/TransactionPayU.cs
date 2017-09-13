@@ -16,27 +16,47 @@ namespace PCIBusiness
 //		static string userID   = "200239";
 //		static string password = "5AlTRPoD";
 
+//	Version 1 ... worked then mysteriously stopped working ...
+//		static string soapEnvelopeOLD =
+//			@"<SOAP-ENV:Envelope
+//				xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/'
+//				xmlns:ns1='http://soap.api.controller.web.payjar.com/'
+//				xmlns:ns2='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'>
+//				<SOAP-ENV:Header>
+//					<wsse:Security SOAP-ENV:mustUnderstand='1' xmlns:wsse='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'>
+//						<wsse:UsernameToken wsu:Id='UsernameToken-9' xmlns:wsu='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd'>
+//							<wsse:Username></wsse:Username>
+//							<wsse:Password Type='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText'></wsse:Password>
+//						</wsse:UsernameToken>
+//					</wsse:Security>
+//				</SOAP-ENV:Header>
+//				<SOAP-ENV:Body>
+//				</SOAP-ENV:Body>
+//			</SOAP-ENV:Envelope>";
+
+//	Version 2
 		static string soapEnvelope =
-			@"<SOAP-ENV:Envelope
-				xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope'
-				xmlns:ns1='http://soap.api.controller.web.payjar.com'
-				xmlns:ns2='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'>
-				<SOAP-ENV:Header>
-					<wsse:Security SOAP-ENV:mustUnderstand='1' xmlns:wsse='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'>
-						<wsse:UsernameToken wsu:Id='UsernameToken-9' xmlns:wsu='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd'>
-							<wsse:Username></wsse:Username>
-							<wsse:Password Type='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText'></wsse:Password>
-						</wsse:UsernameToken>
-					</wsse:Security>
-				</SOAP-ENV:Header>
-				<SOAP-ENV:Body>
-				</SOAP-ENV:Body>
-			</SOAP-ENV:Envelope>";
-/*
-<xs:schema targetNamespace="https://www.payu.co.za/SetTransactionResponseMessage" version="1.0">
-<xs:import namespace="http://soap.api.controller.web.payjar.com/"/>
-<xs:import namespace="https://www.payu.co.za/PayUMapLoader"/>
-*/
+			@"<soapenv:Envelope
+					xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'
+					xmlns:soap='http://soap.api.controller.web.payjar.com/'
+					xmlns:SOAP-ENV='SOAP-ENV'>
+				<soapenv:Header>
+				<wsse:Security
+					SOAP-ENV:mustUnderstand='1'
+					xmlns:wsse='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'>
+					<wsse:UsernameToken
+						wsu:Id='UsernameToken-9'
+						xmlns:wsu='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd'>
+						<wsse:Username></wsse:Username>
+						<wsse:Password Type='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText'></wsse:Password>
+					</wsse:UsernameToken>
+				</wsse:Security>
+				</soapenv:Header>
+				<soapenv:Body>
+					<soap:doTransaction>
+					</soap:doTransaction>
+				</soapenv:Body>
+				</soapenv:Envelope>";
 
 		private string resultSuccessful;
 
@@ -138,8 +158,7 @@ namespace PCIBusiness
 
 			try
 			{
-				xmlSent = "<ns1:doTransaction>"
-				        + "<Safekey>" + payment.ProviderKey + "</Safekey>"
+				xmlSent = "<Safekey>" + payment.ProviderKey + "</Safekey>"
 				        + "<Api>ONE_ZERO</Api>"
 				        + "<TransactionType>RESERVE</TransactionType>"
 				        + "<Customfield>"
@@ -171,8 +190,7 @@ namespace PCIBusiness
 				        +   "<cardNumber>" + payment.CardNumber + "</cardNumber>"
 				        +   "<cardExpiry>" + payment.CardExpiryMM + payment.CardExpiryYYYY + "</cardExpiry>"
 				        +   "<cvv>" + payment.CardCVV + "</cvv>"
-				        + "</Creditcard>"
-				        + "</ns1:doTransaction>";
+				        + "</Creditcard>";
 
 				ret      = SendXML(payment.ProviderURL,payment.ProviderUserID,payment.ProviderPassword);
 				payRef   = Tools.XMLNode(xmlResult,"payUReference");
@@ -182,8 +200,7 @@ namespace PCIBusiness
 				{
 					Tools.LogInfo("TransactionPayU.GetToken/20","ResultCode="+ResultCode + ", payRef=" + payRef + ", payToken=" + payToken,30);
 					Tools.LogInfo("TransactionPayU.GetToken/30","RESERVE_CANCEL, Merchant Ref=" + payment.MerchantReference,30);
-					xmlSent = "<ns1:doTransaction>"
-				           + "<Safekey>" + payment.ProviderKey + "</Safekey>"
+					xmlSent = "<Safekey>" + payment.ProviderKey + "</Safekey>"
 				           + "<Api>ONE_ZERO</Api>"
 				           + "<TransactionType>RESERVE_CANCEL</TransactionType>"
 				           + "<AdditionalInformation>"
@@ -193,8 +210,7 @@ namespace PCIBusiness
 				           + "<Basket>"
 				           +	"<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
 				           +	"<currencyCode>" + payment.CurrencyCode + "</currencyCode>"
-				           + "</Basket>"
-				           + "</ns1:doTransaction>";
+				           + "</Basket>";
 					ret = SendXML(payment.ProviderURL,payment.ProviderUserID,payment.ProviderPassword);
 					Tools.LogInfo("TransactionPayU.GetToken/40","ResultCode="+ResultCode,30);
 				}
@@ -222,8 +238,7 @@ namespace PCIBusiness
 
 			try
 			{
-				xmlSent = "<ns1:doTransaction>"
-				        + "<Safekey>" + payment.ProviderKey + "</Safekey>"
+				xmlSent = "<Safekey>" + payment.ProviderKey + "</Safekey>"
 				        + "<Api>ONE_ZERO</Api>"
 				        + "<TransactionType>PAYMENT</TransactionType>"
 				        + "<AuthenticationType>TOKEN</AuthenticationType>"
@@ -251,8 +266,7 @@ namespace PCIBusiness
 				        + "<Creditcard>"
 				        +   "<amountInCents>" + payment.PaymentAmount.ToString() + "</amountInCents>"
 				        +   "<pmId>" + payment.CardToken + "</pmId>"
-				        + "</Creditcard>"
-				        + "</ns1:doTransaction>";
+				        + "</Creditcard>";
 
 				ret    = SendXML(payment.ProviderURL,payment.ProviderUserID,payment.ProviderPassword);
 				payRef = Tools.XMLNode(xmlResult,"payUReference");
@@ -270,7 +284,7 @@ namespace PCIBusiness
 		private static XmlDocument CreateSoapEnvelope(string content)
 		{
 			StringBuilder str = new StringBuilder(soapEnvelope);
-			str.Insert(str.ToString().IndexOf("</SOAP-ENV:Body>"), content);
+			str.Insert(str.ToString().IndexOf("</soap:doTransaction>"), content);
 
 		//	Create an empty soap envelope
 			XmlDocument soapEnvelopeXml = new XmlDocument();

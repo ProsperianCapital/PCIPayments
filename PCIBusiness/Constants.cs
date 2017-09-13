@@ -42,10 +42,10 @@ namespace PCIBusiness
 
 		public enum PaymentProvider : int
 		{
-			PayU   =  16,
-			Ikajo  = 203,
+			MyGate =   2,
 			T24    =   6,
-			MyGate = 567
+			PayU   =  16,
+			Ikajo  = 203
 		}
 
 		public enum CreditCardType : byte
