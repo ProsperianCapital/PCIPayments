@@ -62,6 +62,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PCIUnattended.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -74,6 +77,9 @@
     <Content Include="Fail.aspx" />
     <Content Include="LogoProsperian.png" />
     <Content Include="Payment.css" />
+    <Content Include="PCIUnattended.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="RTR.aspx" />
     <Content Include="Succeed.aspx" />
     <Content Include="Web.config" />
@@ -106,10 +112,6 @@
     <ProjectReference Include="..\PCIBusiness\PCIBusiness.csproj">
       <Project>{24be56c3-fd48-4d4f-abb5-9d78b3aff620}</Project>
       <Name>PCIBusiness</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PCIUnattended\PCIUnattended.csproj">
-      <Project>{d16691ec-e9ae-4325-a717-031310fd1116}</Project>
-      <Name>PCIUnattended</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
