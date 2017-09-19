@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Configuration;
+using System.Diagnostics;
 using System.Text;
 using System.Web.UI.WebControls;
 using PCIBusiness;
@@ -9,8 +10,10 @@ namespace PCIWeb
 {
 	public partial class RTR : System.Web.UI.Page
 	{
-		private byte systemStatus;
-		private int  timeOut;
+		private byte   systemStatus;
+		private int    timeOut;
+		private int    maxRows;
+		private string provider;
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -91,26 +94,71 @@ namespace PCIWeb
 
 		protected void btnProcess1_Click(Object sender, EventArgs e)
 		{
-			if ( systemStatus == 0 )
-				Process(1);
+			if ( CheckData() == 0 )
+				if ( rdoWeb.Checked )
+					ProcessWeb(1);
+				else if ( rdoAsynch.Checked )
+					ProcessAsynch(1);
 		}
 
 		protected void btnProcess2_Click(Object sender, EventArgs e)
 		{
-			if ( systemStatus == 0 )
-				Process(2);
+			if ( CheckData() == 0 )
+				if ( rdoWeb.Checked )
+					ProcessWeb(2);
+				else if ( rdoAsynch.Checked )
+					ProcessAsynch(2);
 		}
 
-		private void Process(byte mode)
+		private void ProcessAsynch(byte mode)
+		{
+			ProcessStartInfo app = new ProcessStartInfo();
+			app.Arguments        =  "Mode=" + mode.ToString()
+			                     + " Rows=" + maxRows.ToString()
+			                     + " Provider=" + provider;
+			app.FileName         = "bin\\PCIUnattended.exe";
+			app.WindowStyle      = ProcessWindowStyle.Hidden;
+		//	app.WindowStyle      = ProcessWindowStyle.Normal;
+			app.CreateNoWindow   = false;
+		//	int exitCode         = 0;
+
+			if ( PCIBusiness.Tools.ConfigValue("BinFolder").Length > 0 )
+				app.FileName      = PCIBusiness.Tools.ConfigValue("BinFolder") + "PCIUnattended.exe";
+
+			try
+			{
+				Tools.LogInfo("RTR.ProcessAsynch/2",app.FileName + " " + app.Arguments);
+				System.Diagnostics.Process.Start(app);
+				Tools.LogInfo("RTR.ProcessAsynch/3","Launched");
+
+//			// Run the external process & wait for it to finish
+//				using (Process proc = System.Diagnostics.Process.Start(app))
+//				{
+//					Tools.LogInfo("RTR.ProcessAsynch/1","");
+//					proc.WaitForExit();
+//				// Retrieve the app's exit code
+//					exitCode = proc.ExitCode;
+//				}
+//				Tools.LogInfo("RTR.ProcessAsynch/2","exitCode="+exitCode.ToString());
+			}
+			catch (Exception ex)
+			{
+				Tools.LogException("RTR.ProcessAsynch/9","",ex);
+			}
+			app = null;
+		}
+
+		private void ProcessWeb(byte mode)
 		{
 			try
 			{
-				int    maxRows  = 0;
-				string provider = lstProvider.SelectedValue;
 				PCIBusiness.Tools.LogInfo("RTR.Process/5","Started, provider '" + provider + "'",10);
 
-				if ( txtRows.Text.Length > 0 )
-					maxRows = Tools.StringToInt(txtRows.Text);
+//				int    maxRows  = 0;
+//				string provider = lstProvider.SelectedValue;
+//
+//				if ( txtRows.Text.Length > 0 )
+//					maxRows = Tools.StringToInt(txtRows.Text);
 
 				using (PCIBusiness.Payments payments = new PCIBusiness.Payments())
 				{
@@ -124,6 +172,31 @@ namespace PCIWeb
 				PCIBusiness.Tools.LogException("RTR.Process/15","",ex);
 			}
 		}
+
+		private byte CheckData()
+		{
+			try
+			{
+				maxRows  = -7;
+				provider = lstProvider.SelectedValue;
+
+				if ( txtRows.Text.Length > 0 && txtRows.Text.Trim().ToUpper() != "ALL" )
+					maxRows = Tools.StringToInt(txtRows.Text);
+
+				if ( provider.Length < 1 || maxRows == 0 )
+					return 78; // Error
+
+				if ( maxRows < 1 )
+					maxRows = 0;
+				return 0;
+			}
+			catch (Exception ex)
+			{
+				PCIBusiness.Tools.LogException("RTR.Validate/15","",ex);
+			}
+			return 83;
+		}
+
 		private void ShowFile(string fileName)
 		{
 			StreamReader fHandle = null;

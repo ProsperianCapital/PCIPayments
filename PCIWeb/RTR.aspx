@@ -56,7 +56,7 @@ function Busy(show,msg)
 	<table class="Detail">
 	<tr>
 		<td>Payment Provider</td>
-		<td> :
+		<td>
 			<asp:DropDownList runat="server" id="lstProvider" AutoPostBack="true">
 				<asp:ListItem Value="016" Text="PayU" Selected="True"></asp:ListItem>
 				<asp:ListItem Value="203" Text="Ikajo"></asp:ListItem>
@@ -65,7 +65,14 @@ function Busy(show,msg)
 			</asp:DropDownList></td></tr>
 	<tr>
 		<td>Process only the top (or "ALL")</td>
-		<td> : <asp:TextBox runat="server" ID="txtRows" Width="50px">ALL</asp:TextBox> row(s)</td></tr>
+		<td><asp:TextBox runat="server" ID="txtRows" Width="50px">ALL</asp:TextBox> row(s)</td></tr>
+	<tr>
+		<td>Process via</td>
+		<td>
+			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoWeb" />Synchronous (this web page)<br />
+			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoAsynch" />Asynchronous (a separate EXE)</td></tr>
+	<tr>
+		<td colspan="2"><hr /></td></tr>
 	<tr>
 		<td>Bureau Code</td>
 		<td> : <asp:Literal runat="server" ID="lblBureauCode"></asp:Literal></td></tr>

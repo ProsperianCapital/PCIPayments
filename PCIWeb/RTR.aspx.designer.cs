@@ -94,6 +94,24 @@ namespace PCIWeb {
         protected global::System.Web.UI.WebControls.TextBox txtRows;
         
         /// <summary>
+        /// rdoWeb control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton rdoWeb;
+        
+        /// <summary>
+        /// rdoAsynch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton rdoAsynch;
+        
+        /// <summary>
         /// lblBureauCode control.
         /// </summary>
         /// <remarks>
