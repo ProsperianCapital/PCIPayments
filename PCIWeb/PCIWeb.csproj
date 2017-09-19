@@ -107,6 +107,10 @@
       <Project>{24be56c3-fd48-4d4f-abb5-9d78b3aff620}</Project>
       <Name>PCIBusiness</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PCIUnattended\PCIUnattended.csproj">
+      <Project>{d16691ec-e9ae-4325-a717-031310fd1116}</Project>
+      <Name>PCIUnattended</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
