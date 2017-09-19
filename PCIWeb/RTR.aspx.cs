@@ -127,9 +127,9 @@ namespace PCIWeb
 
 			try
 			{
-				Tools.LogInfo("RTR.ProcessAsynch/2",app.FileName + " " + app.Arguments);
+				Tools.LogInfo("RTR.ProcessAsynch/2",app.FileName + " " + app.Arguments,220);
 				System.Diagnostics.Process.Start(app);
-				Tools.LogInfo("RTR.ProcessAsynch/3","Launched");
+				Tools.LogInfo("RTR.ProcessAsynch/3","Launched",220);
 
 //			// Run the external process & wait for it to finish
 //				using (Process proc = System.Diagnostics.Process.Start(app))
@@ -143,7 +143,7 @@ namespace PCIWeb
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("RTR.ProcessAsynch/9","",ex);
+				Tools.LogException("RTR.ProcessAsynch/9",app.FileName + " " + app.Arguments,ex);
 			}
 			app = null;
 		}
@@ -266,7 +266,8 @@ namespace PCIWeb
 				               + "- System Mode = " + PCIBusiness.Tools.ConfigValue("SystemMode") + "<br />"
 				               + "- Page timeout = " + Server.ScriptTimeout.ToString() + " seconds<br />"
 				               + "- Error Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileErrors") + "<br />"
-				               + "- Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />";
+				               + "- Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />"
+				               + "- Bin folder = " + PCIBusiness.Tools.ConfigValue("BinFolder") + "<br />";
 				System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["DBConn"];
 				folder         = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
 				lblTest.Text   = folder;
