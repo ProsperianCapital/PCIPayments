@@ -318,9 +318,9 @@ namespace PCIBusiness
 			                              + ",@BureauResultSoap = "            + Tools.DBString(transaction.XMLResult,3)
 			                              + ",@TransactionStatusCode = "       + Tools.DBString(transaction.ResultCode)
 		                                 + ",@CardTokenisationStatusCode = '" + ( ret == 0 ? "007'" : "001'" );
-			Tools.LogInfo("Payment.GetToken/20","SQL=" + sql,50);
+			Tools.LogInfo("Payment.GetToken/20","SQL=" + sql,20);
 			int k = ExecuteSQLUpdate();
-			Tools.LogInfo("Payment.GetToken/90","Ret=" + ret.ToString(),50);
+			Tools.LogInfo("Payment.GetToken/90","Ret=" + ret.ToString(),20);
 			return ret;
 		}
 
@@ -345,15 +345,15 @@ namespace PCIBusiness
 			}
 			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
 			                           + ",@TransactionStatusCode = '77'";
-			Tools.LogInfo("Payment.ProcessPayment/20","SQL 1=" + sql,50);
+			Tools.LogInfo("Payment.ProcessPayment/20","SQL 1=" + sql,20);
 			k   = ExecuteSQLUpdate();
-			Tools.LogInfo("Payment.ProcessPayment/30","SQL 1 complete",50);
+			Tools.LogInfo("Payment.ProcessPayment/30","SQL 1 complete",20);
 			ret = transaction.ProcessPayment(this);
 			sql = "exec sp_Upd_CardPayment @MerchantReference = " + Tools.DBString(merchantReference)
 			                           + ",@TransactionStatusCode = " + Tools.DBString(transaction.ResultCode);
-			Tools.LogInfo("Payment.ProcessPayment/40","SQL 2=" + sql,50);
+			Tools.LogInfo("Payment.ProcessPayment/40","SQL 2=" + sql,20);
 			k   = ExecuteSQLUpdate();
-			Tools.LogInfo("Payment.ProcessPayment/50","SQL 2 complete",50);
+			Tools.LogInfo("Payment.ProcessPayment/50","SQL 2 complete",20);
 			return ret;
 		}
 

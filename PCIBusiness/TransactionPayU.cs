@@ -76,7 +76,7 @@ namespace PCIBusiness
 				if ( ! url.ToUpper().EndsWith("WSDL") )
 					url = url + "/service/PayUAPI?wsdl";
 
-				Tools.LogInfo("TransactionPayU.SendXML/10","URL=" + url + ", XML Sent=" + xmlSent,220);
+				Tools.LogInfo("TransactionPayU.SendXML/10","URL=" + url + ", XML Sent=" + xmlSent,10);
 
 			// Construct soap object
 				ret = 20;

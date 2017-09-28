@@ -72,7 +72,8 @@ namespace PCIBusiness
 				webRequest.KeepAlive      = false;
 
 				ret = 30;
-				byte[] page = Encoding.ASCII.GetBytes(xmlSent);
+//				byte[] page = Encoding.ASCII.GetBytes(xmlSent);
+				byte[] page = Encoding.UTF8.GetBytes(xmlSent); // To handle unicode
 
 			// Insert encoded HTML into web request
 				ret = 40;
