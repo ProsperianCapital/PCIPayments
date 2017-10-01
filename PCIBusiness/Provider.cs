@@ -37,12 +37,10 @@ namespace PCIBusiness
 		{
 			get 
 			{
-				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
+				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) ||
+				     bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
 					return "Live";
-				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
-					return "Testing";
-				else
-					return "In development";
+				return "In development";
 			}
 		}
 //		public  string  MerchantAccount
