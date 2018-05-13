@@ -4,29 +4,48 @@
 
 <html>
 <head>
-<title>Prosperian Capital</title>
-<link rel="stylesheet" href="Payment.css" type="text/css" />
+	<title>Prosperian Capital</title>
+	<link rel="stylesheet" href="Payment.css" type="text/css" />
 </head>
 <body>
 <script type="text/javascript">
+function GetElt(eltID)
+{
+	try
+	{
+		var p = document.getElementById(eltID);
+		return p;
+	}
+	catch (x)
+	{ }
+	return null;
+}
+function ShowElt(eltID,show)
+{
+	try
+	{
+		var p = GetElt(eltID);
+		if ( show > 0 )
+		{
+			p.style.visibility = "visible";
+			p.style.display    = "";
+		}
+		else
+		{
+			p.style.visibility = "hidden";
+			p.style.display    = "none";
+		}
+	}
+	catch (x)
+	{ }
+}
 function Busy(show,msg)
 {
 	try
 	{
-		var h = document.getElementById('divBusy');
-		if ( show > 0 )
-		{
-			h.style.visibility = "visible";
-			h.style.display    = "";
-			h = document.getElementById('msgBusy');
-			if ( msg != null )
-				h.innerHTML = msg;
-		}
-		else
-		{
-			h.style.visibility = "hidden";
-			h.style.display    = "none";
-		}
+		ShowElt('divBusy',show);
+		if ( show > 0 && msg != null )
+			GetElt('msgBusy').innerHTML = msg;
 	}
 	catch (x)
 	{ }
@@ -34,9 +53,10 @@ function Busy(show,msg)
 </script>
 <a href="http://prosperian.mu" target="P"><img src="LogoProsperian.png" title="Prosperian Capital" /></a>
 <form runat="server" id="frmRTR">
-	<p class="Header">
+	<div class="Header">
 	Prosperian Capital : RTR Payments
-	</p>
+	</div>
+	<hr />
 	<table class="BoxRight">
 	<tr>
 		<td>SQL Server</td><td> : <b><i><asp:Literal runat="server" ID="lblSQLServer"></asp:Literal></i></b></td></tr>
@@ -45,7 +65,7 @@ function Busy(show,msg)
 	<tr>
 		<td>SQL User</td><td> : <b><i><asp:Literal runat="server" ID="lblSQLUser"></asp:Literal></i></b></td></tr>
 	<tr>
-		<td>SQL Status</td><td> : <b><i><asp:Literal runat="server" ID="lblSQLStatus"></asp:Literal></i></td></tr>
+		<td>SQL Status</td><td> : <b><i><asp:Literal runat="server" ID="lblSQLStatus"></asp:Literal></i></b></td></tr>
 	<tr>
 		<td colspan="2"><hr /></td></tr>
 	<tr>
@@ -57,12 +77,7 @@ function Busy(show,msg)
 	<tr>
 		<td>Payment Provider</td>
 		<td>
-			<asp:DropDownList runat="server" id="lstProvider" AutoPostBack="true">
-				<asp:ListItem Value="016" Text="PayU" Selected="True"></asp:ListItem>
-				<asp:ListItem Value="203" Text="Ikajo"></asp:ListItem>
-				<asp:ListItem Value="006" Text="Transact24"></asp:ListItem>
-				<asp:ListItem Value="567" Text="MyGate"></asp:ListItem>
-			</asp:DropDownList></td></tr>
+			<asp:DropDownList runat="server" id="lstProvider" AutoPostBack="true"></asp:DropDownList></td></tr>
 	<tr>
 		<td>Process only the top (or "ALL")</td>
 		<td><asp:TextBox runat="server" ID="txtRows" Width="50px">ALL</asp:TextBox> row(s)</td></tr>
@@ -95,25 +110,45 @@ function Busy(show,msg)
 		<td>Status</td>
 		<td> : <asp:Literal runat="server" ID="lblBureauStatus"></asp:Literal></td></tr>
 	</table>
-	<p class="ButtonRow">
+	<div class="ButtonRow">
 	<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Getting tokens ... please be patient')" onclick="btnProcess1_Click" Text="Get Tokens" />
 	<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Processing payments ... please be patient')" onclick="btnProcess2_Click" Text="Process Payments" />
-	&nbsp;&nbsp;&nbsp;
 	<asp:Button  runat="server" ID="btnConfig"   CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnConfig_Click" Text="Config" />
-	<asp:Button  runat="server" ID="btnInfo"     CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnInfo_Click"   Text="Info Log" />
-	<asp:Button  runat="server" ID="btnError"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnError_Click"  Text="Error Log" />
-	&nbsp;&nbsp;&nbsp;
+	<input type="button" class="Button" onclick="JavaScript:ShowElt('divLogs',1)" value="Logs" />
 	<asp:Button  runat="server" ID="btnSQL"      CssClass="Button" OnClientClick="JavaScript:Busy(1,'Executing SQL ...')" onclick="btnSQL_Click" Text="Test SQL ..." />
+	<asp:Button  runat="server" ID="btnJSON"     CssClass="Button" OnClientClick="JavaScript:Busy(1,'Parsing JSON string ...')" onclick="btnJSON_Click" Text="Test JSON ..." visible="false" />
 	<asp:TextBox runat="server" ID="txtTest" Width="560px"></asp:TextBox>
-	</p>
+	<!--
 	<hr />
-	<asp:Literal runat="server" ID="lblTest"></asp:Literal>
+	<asp Button  run@t="server" ID="btnInfo"     CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnInfo_Click"   Text="Today's Info Log" />
+	<asp Button  run@t="server" ID="btnError"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnError_Click"  Text="Today's Error Log" />
+	<asp Button  run@t="server" ID="btnInfoX"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnInfoX_Click"   Text="Info Log dd ..." />
+	<asp Button  run@t="server" ID="btnErrorX"   CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnErrorX_Click"  Text="Error Log dd ..." />
+	-->
+	</div>
+	<hr />
+	<asp:Label runat="server" ID="lblTest"></asp:Label>
 	<asp:Label runat="server" ID="lblError" CssClass="Error"></asp:Label>
 	<p class="Footer">
 	&nbsp;Phone +230 404 8000&nbsp; | &nbsp;Email <a href="mailto:info@prosperian.mu">Info@prosperian.mu</a>
 	<span style="float:right;margin-right:5px"><asp:Literal runat="server" ID="lblVersion"></asp:Literal></span>
 	</p>
+
+	<div id="divLogs" style="display:none;left:10px;bottom:40px;position:fixed;border:1px solid #000000;padding:5px;background-color:aquamarine">
+		<div style="background-color:hotpink;padding:5px;font-size:18px;font-weight:bold">Log Files</div>
+		Show logs for ...<br />
+		<asp:RadioButton runat="server" ID="rdo0" GroupName="rdoLog" />Today<br />
+		<asp:RadioButton runat="server" ID="rdo1" GroupName="rdoLog" />Yesterday<br />
+		<asp:RadioButton runat="server" ID="rdo2" GroupName="rdoLog" />2 days ago<br />
+		<asp:RadioButton runat="server" ID="rdoX" GroupName="rdoLog" onclick="JavaScript:GetElt('txtDate').focus()" />This date:&nbsp;<asp:TextBox runat="server" ID="txtDate" MaxLength="10" Width="85px"></asp:TextBox>&nbsp;dd/mm/yyyy
+		<hr />
+		<asp:Button runat="server" CssClass="Button" ID="btnError" OnClientClick="JavaScript:Busy(1)" onclick="btnError_Click" Text="Errors" />
+		<asp:Button runat="server" CssClass="Button" ID="btnInfo"  OnClientClick="JavaScript:Busy(1)" onclick="btnInfo_Click" Text="Info" />
+		<input type="button" class="Button" onclick="JavaScript:ShowElt('divLogs',0)" value="Close" />
+	</div>
+
 </form>
+
 <div id="divBusy" style="left:10px;top:20px;position:fixed;border:1px solid #000000;padding:5px;background-color:aquamarine">
 	<table style="background-color:aquamarine">
 		<tr>
@@ -121,6 +156,9 @@ function Busy(show,msg)
 			<td id="msgBusy" style="font-size:18px;font-style:italic;color:red;font-weight:bold">Busy ... please wait</td></tr>
 	</table>
 </div>
+
+<asp:Literal runat="server" ID="lblJS"></asp:Literal>
+
 <script type="text/javascript">
 Busy(0);
 </script>

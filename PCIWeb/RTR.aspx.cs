@@ -30,12 +30,14 @@ namespace PCIWeb
 			btnProcess2.Enabled = ( systemStatus == 0 );
 			lblTest.Text        = "";
 			lblError.Text       = "";
-
-			ProviderDetails();
+			lblJS.Text          = "";
 
 			if ( ! Page.IsPostBack )
 			{
 				lblVersion.Text = "Version " + PCIBusiness.SystemDetails.AppVersion;
+
+				foreach (int bureauCode in Enum.GetValues(typeof(PCIBusiness.Constants.PaymentProvider)))
+					lstProvider.Items.Add(new ListItem(Enum.GetName(typeof(PCIBusiness.Constants.PaymentProvider),bureauCode),bureauCode.ToString().PadLeft(3,'0')));
 
 				PCIBusiness.DBConn       conn       = null;
 				ConnectionStringSettings db         = ConfigurationManager.ConnectionStrings["DBConn"];
@@ -72,7 +74,8 @@ namespace PCIWeb
 					lblSQLStatus.Text = "<span class='Red'>Cannot connect</span>";
 				PCIBusiness.Tools.CloseDB(ref conn);
 				conn = null;
-			}			
+			}		
+			ProviderDetails();
 		}
 
 		private void ProviderDetails()
@@ -154,16 +157,10 @@ namespace PCIWeb
 			{
 				PCIBusiness.Tools.LogInfo("RTR.Process/5","Started, provider '" + provider + "'",10);
 
-//				int    maxRows  = 0;
-//				string provider = lstProvider.SelectedValue;
-//
-//				if ( txtRows.Text.Length > 0 )
-//					maxRows = Tools.StringToInt(txtRows.Text);
-
 				using (PCIBusiness.Payments payments = new PCIBusiness.Payments())
 				{
 					int k         = payments.ProcessCards(provider,mode,maxRows);
-					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed";
+					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed<br />&nbsp;";
 				}
 				PCIBusiness.Tools.LogInfo("RTR.Process/10","Finished",10);
 			}
@@ -200,16 +197,32 @@ namespace PCIWeb
 		private void ShowFile(string fileName)
 		{
 			StreamReader fHandle = null;
+			DateTime     fDate   = System.DateTime.Now;
+			lblJS.Text           = "<script type='text/javascript'>ShowElt('divLogs',1)</script>";
+
 			try
 			{
+				if ( rdo1.Checked )
+					fDate = fDate.AddDays(-1);
+				else if ( rdo2.Checked )
+					fDate = fDate.AddDays(-2);
+				else if ( rdoX.Checked && txtDate.Text.Trim().Length == 10 )
+					fDate = Tools.StringToDate(txtDate.Text,1);
+				else if ( ! rdo0.Checked )
+					return;
+
+				if ( fDate <= Constants.C_NULLDATE() )
+					return;
+
 				int k    = fileName.LastIndexOf(".");
-				fileName = fileName.Substring(0,k) + "-" + PCIBusiness.Tools.DateToString(System.DateTime.Now,7) + fileName.Substring(k);
+				fileName = fileName.Substring(0,k) + "-" + PCIBusiness.Tools.DateToString(fDate,7) + fileName.Substring(k);
 				fHandle  = File.OpenText(fileName);
 				string h = fHandle.ReadToEnd().Trim().Replace("<","&lt;").Replace(">","&gt;");
 				h        = h.Replace(Environment.NewLine,"</p><p>");
 				if ( ! h.EndsWith("<p>") )
 					h = h + "<p>";
 				lblTest.Text = "<div class='Error'>Log File : " + fileName + "</div><p>" + h + "&nbsp;</p>";
+				lblJS.Text   = "";
 			}
 			catch
 			{
@@ -223,6 +236,12 @@ namespace PCIWeb
 			fHandle = null;
 		}
 
+
+		protected void btnJSON_Click(Object sender, EventArgs e)
+		{
+			string value = Tools.JSONValue(txtTest.Text,"key");
+			lblTest.Text = "JSON Tag = key<br />JSON Value = " + value;
+		}
 
 		protected void btnSQL_Click(Object sender, EventArgs e)
 		{
@@ -242,7 +261,7 @@ namespace PCIWeb
 		{
 			try
 			{
-				string folder  = "<u>System</u><br />"
+				string folder  = "<u>System Configuration</u><br />"
 				               + "- Version = " + PCIBusiness.SystemDetails.AppVersion + "<br />"
 				               + "- Date = " + PCIBusiness.SystemDetails.AppDate + "<br />"
 				               + "- Owner = " + PCIBusiness.SystemDetails.Owner + "<br />"
@@ -265,12 +284,13 @@ namespace PCIWeb
 				               + "<u>Settings</u><br />"
 				               + "- System Mode = " + PCIBusiness.Tools.ConfigValue("SystemMode") + "<br />"
 				               + "- Page timeout = " + Server.ScriptTimeout.ToString() + " seconds<br />"
+				               + "- Rows to Process per Iteration = " + PCIBusiness.Tools.ConfigValue("MaximumRows") + "<br />"
 				               + "- Error Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileErrors") + "<br />"
 				               + "- Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />"
 				               + "- Bin folder = " + PCIBusiness.Tools.ConfigValue("BinFolder") + "<br />";
 				System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["DBConn"];
-				folder         = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
-				lblTest.Text   = folder;
+				folder       = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
+				lblTest.Text = folder;
 			}
 			catch (Exception ex)
 			{
