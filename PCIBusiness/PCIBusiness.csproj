@@ -81,14 +81,25 @@
     <Compile Include="Transaction.cs" />
     <Compile Include="TransactionIkajo.cs" />
     <Compile Include="TransactionMyGate.cs" />
+    <Compile Include="TransactionPayGate.cs" />
     <Compile Include="TransactionPayU.cs" />
     <Compile Include="TransactionT24.cs" />
+    <Compile Include="Web References\IkajoService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="Web References\MyGatePayment\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\MyGateToken\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\PayGateVault\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -106,6 +117,32 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Web References\IkajoService\CancelResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\IkajoService\CaptureResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\IkajoService\DescheduleResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\IkajoService\PtCard.wsdl" />
+    <None Include="Web References\IkajoService\RebillResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\IkajoService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\IkajoService\SaleResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\IkajoService\ScheduleResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\IkajoService\StatusResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\MyGatePayment\MyGate_DebitOrder_WebService.wsdl" />
     <None Include="Web References\MyGatePayment\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -116,8 +153,38 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <None Include="Web References\PayGateVault\PayVault.wsdl" />
+    <None Include="Web References\PayGateVault\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\PayGateVault\vaultData1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <WebReferenceUrl Include="https://secure.paygate.co.za/PayVault/PayVault.wsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\PayGateVault\</RelPath>
+      <UpdateFromURL>https://secure.paygate.co.za/PayVault/PayVault.wsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>PCIBusiness_za_co_paygate_secure_PayVault</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://secure.payinspect.com/paymentgw/PayTechniqueCreditCardService.wsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\IkajoService\</RelPath>
+      <UpdateFromURL>https://secure.payinspect.com/paymentgw/PayTechniqueCreditCardService.wsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>PCIBusiness_IkajoService_PtCardService</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="https://www.mygate.co.za/Collections/1x0x0/pinManagement.cfc%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\MyGateToken\</RelPath>

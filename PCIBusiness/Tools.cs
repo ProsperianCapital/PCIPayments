@@ -27,83 +27,78 @@ namespace PCIBusiness
 //		11  HH:mm:ss                  Hard-code to 00:00:00
 //		12  HH:mm:ss                  Hard-code to 23:59:59
 
-	public static string DecimalToString(decimal theValue,byte decimalPlaces=2)
-	{
-		return System.Math.Round(theValue,decimalPlaces).ToString();
-	}
-
-
-	public static string BureauCode(Constants.PaymentProvider providerCode)
-	{
-		return ((short)providerCode).ToString().PadLeft(3,'0');
-	}
-
-	public static string IntToDecimal(int theValue,byte theFormat)
-	{
-		string tmp = theValue.ToString().Trim();
-
-		if ( theFormat == 1 )
-			return tmp + ".00";
-		else if ( theFormat == 2 && tmp.Length == 0 )
-			return "0.00";
-		else if ( theFormat == 2 && tmp.Length == 1 )
-			return "0.0" + tmp;
-		else if ( theFormat == 2 && tmp.Length == 2 )
-			return "0." + tmp;
-		else if ( theFormat == 2 )
-			return tmp.Substring(0,tmp.Length-2) + "." + tmp.Substring(tmp.Length-2);
-		
-		return tmp;
-	}
-
-	public static string ObjectToString(Object theValue)
-	{
-		if ( theValue == null ) return "";
-		return theValue.ToString().Trim().Replace("<","").Replace(">","");
-	}
-
-	public static string NullToString(string theValue)
-	{
-		if ( string.IsNullOrWhiteSpace(theValue) ) return "";
-		return theValue.Trim();
-	}
-
-	public static string CompressedString(string theValue)
-	{
-		if ( string.IsNullOrWhiteSpace(theValue) ) return "";
-        theValue = theValue.Trim();
-        while ( theValue.Contains("  ") )
-            theValue = theValue.Replace("  "," ");
-		return theValue;
-	}
-
-	public static int StringToInt(string theValue)
-	{
-		try
+		public static string DecimalToString(decimal theValue,byte decimalPlaces=2)
 		{
-			int ret = System.Convert.ToInt32(theValue);
+			return System.Math.Round(theValue,decimalPlaces).ToString();
+		}
+
+
+		public static string IntToDecimal(int theValue,byte theFormat)
+		{
+			string tmp = theValue.ToString().Trim();
+
+			if ( theFormat == 1 )
+			return tmp + ".00";
+			else if ( theFormat == 2 && tmp.Length == 0 )
+				return "0.00";
+			else if ( theFormat == 2 && tmp.Length == 1 )
+				return "0.0" + tmp;
+			else if ( theFormat == 2 && tmp.Length == 2 )
+				return "0." + tmp;
+			else if ( theFormat == 2 )
+				return tmp.Substring(0,tmp.Length-2) + "." + tmp.Substring(tmp.Length-2);
+		
+			return tmp;
+		}
+
+		public static string ObjectToString(Object theValue)
+		{
+			if ( theValue == null ) return "";
+			return theValue.ToString().Trim().Replace("<","").Replace(">","");
+		}
+
+		public static string NullToString(string theValue)
+		{
+			if ( string.IsNullOrWhiteSpace(theValue) ) return "";
+			return theValue.Trim();
+		}
+
+		public static string CompressedString(string theValue)
+		{
+			if ( string.IsNullOrWhiteSpace(theValue) ) return "";
+				theValue = theValue.Trim();
+			while ( theValue.Contains("  ") )
+				theValue = theValue.Replace("  "," ");
+			return theValue;
+		}
+
+		public static int StringToInt(string theValue)
+		{
+			try
+			{
+				int ret = System.Convert.ToInt32(theValue);
+				return ret;
+			}
+			catch
+			{ }
+			return 0;
+		}
+
+		public static DateTime StringToDate(string dd,string mm,string yy)
+		{
+			DateTime ret = Constants.C_NULLDATE();
+			try
+			{
+				ret = new DateTime(System.Convert.ToInt32(yy), System.Convert.ToInt32(mm), System.Convert.ToInt32(dd));
+			}
+			catch
+			{
+				ret = Constants.C_NULLDATE();
+			}
 			return ret;
 		}
-		catch
-		{ }
-		return 0;
-	}
 
-	public static DateTime StringToDate(string dd,string mm,string yy)
-	{
-		DateTime ret = Constants.C_NULLDATE();
-		try
-		{
-			ret = new DateTime(System.Convert.ToInt32(yy), System.Convert.ToInt32(mm), System.Convert.ToInt32(dd));
-		}
-		catch
-		{
-			ret = Constants.C_NULLDATE();
-		}
-		return ret;
-	}
-
-	public static DateTime StringToDate(string theDate,byte dateFormat)
+		public static DateTime StringToDate(string theDate,byte dateFormat)
 		{
 			DateTime ret = Constants.C_NULLDATE();
 			string   dd  = "";
@@ -261,11 +256,74 @@ namespace PCIBusiness
 			return str;
 		}
 
-		public static string XMLNode(XmlDocument xmlDoc,string xmlTag)
+		public static string JSONValue(string data,string tag)
+		{
+		//	Handle data in the format
+		//	{"key1":"value","key2":"value","key3":"value"}
+		//	Spaces on either side of {",:} are handled
+
+			try
+			{
+				int j;
+				int k = 0;
+				int h = 0;
+				tag   = "\"" + tag.ToUpper() + "\"";
+
+				while ( h == 0 )
+				{
+					k = data.ToUpper().IndexOf(tag,k);
+					if ( k < 0 )
+						return "";
+					for ( j = k+tag.Length ; j < data.Length ; j++ )
+						if ( data.Substring(j,1) == " " )
+							continue;
+						else
+						{
+							if ( data.Substring(j,1) == ":" )
+								h = j + 1;
+							else
+								k = j;
+							break;
+						}
+				}
+				k = data.IndexOf("\"",h);
+				if ( k < 0 )
+					return "";
+				j = data.IndexOf("\"",k+1);
+				if ( j <= k )
+					return "";
+				return data.Substring(k+1,j-k-1).Trim();
+
+//				j = data.IndexOf(":",k+tag.Length);
+//					
+//				if ( k < 0 )
+//					return "";
+//				k = data.IndexOf("\"",k+tag.Length);
+//				if ( k < 0 )
+//					return "";
+//				 j = data.IndexOf("\"",k+1);
+//				if ( j <= k )
+//					return "";
+//				return data.Substring(k+1,j-k-1);
+			}
+			catch
+			{ }
+			return "";
+		}
+
+		public static string XMLNode(XmlDocument xmlDoc,string xmlTag,string nsPrefix="",string nsURL="")
 		{
 			try
 			{
-				string ret = xmlDoc.SelectSingleNode("//"+xmlTag).InnerText;
+				string ret = "";
+				if ( nsPrefix.Length == 0 || nsURL.Length == 0 )
+					ret = xmlDoc.SelectSingleNode("//"+xmlTag).InnerText;
+				else
+				{
+					XmlNamespaceManager nsMgr = new XmlNamespaceManager(xmlDoc.NameTable);
+					nsMgr.AddNamespace(nsPrefix,nsURL);
+					ret = xmlDoc.SelectSingleNode("//"+nsPrefix+":"+xmlTag,nsMgr).InnerText;
+				}
 				return ret.Trim();
 			}
 			catch
@@ -677,6 +735,15 @@ namespace PCIBusiness
 
 //	Generic "Valid" stuff
 
+		public static string ReverseString(string str)
+		{
+			if ( string.IsNullOrWhiteSpace(str) )
+				return "";
+			char[] array = str.ToCharArray();
+			Array.Reverse(array);
+			return new String(array);
+		}
+
 		public static string SplitString(string str,short lineLength=100)
 		{
 			int    k;
@@ -695,6 +762,11 @@ namespace PCIBusiness
 				str = str.Substring(k+1).Trim();
 			}
 			return ret + str;
+		}
+
+		public static string BureauCode(Constants.PaymentProvider providerCode)
+		{
+			return ((short)providerCode).ToString().PadLeft(3,'0');
 		}
 
 		public static string SQLDebug(string sql)
@@ -725,7 +797,7 @@ namespace PCIBusiness
 						str = "(Col " + k.ToString()
 						    + ") Name = " + conn.ColName(k)
 						    + ", Type = " + conn.ColDataType("",k)
-						    + ", Value = " + conn.ColValue(k);
+						    + ", Value = " + ( conn.ColStatus("",k) == Constants.DBColumnStatus.ValueIsNull ? "NULL" : conn.ColValue(k) );
 						Tools.LogInfo("Tools.SQLDebug/4",str,255);
 						ret.Append(str+Constants.C_HTMLBREAK());
 					}

@@ -7,7 +7,9 @@ namespace PCIBusiness
 	{
 //		private int      paymentCode;
 //		private int      paymentAuditCode;
-		private string   merchantReference;
+		private string   merchantReference;         // This is Prosperian's reference for THIS transaction
+		private string   merchantReferenceOriginal; // This is Prosperian's reference for the original token transaction 
+		private string   transactionID;             // This is payment provider's transaction reference (may not be there)
 		private string   countryCode;
 		private string   firstName;
 		private string   lastName;
@@ -18,11 +20,12 @@ namespace PCIBusiness
 		private string   regionalId;
 		private string   email;
 		private string   phoneCell;
+		private string   ipAddress;
 		private int      paymentAmount;
 //		private byte     paymentStatus;
-		private string   ccToken;
 		private string   paymentDescription;
 		private string   currencyCode;
+
 		private string   ccNumber;
 		private string   ccType;
 		private string   ccExpiryMonth;
@@ -30,8 +33,9 @@ namespace PCIBusiness
 		private string   ccName;
 		private string   ccCVV;
 		private string   ccPIN;
-		private string   bureauCode;
+		private string   ccToken;
 
+		private string   bureauCode;
 		private string   providerAccount;
 		private string   providerKey;
 		private string   providerUserID;
@@ -43,6 +47,7 @@ namespace PCIBusiness
 
 
 //		Payment Provider stuff
+
 		public string    ProviderAccount
 		{
 			get 
@@ -50,15 +55,22 @@ namespace PCIBusiness
 				if ( Tools.NullToString(providerAccount).Length > 0 )
 					return providerAccount;
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-					return "";
+					return "2237055";
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
 					return "567654452";
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
-					return "";
+					return "6861-finaidhk";
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
 					return "MY014473";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate) )
+					return "XXXX";
 				return "";
 			}
+		}
+		public string    BureauCode
+		{
+			get { return  Tools.NullToString(bureauCode); }
+			set { bureauCode = value.Trim(); }
 		}
 		public string    ProviderKey
 		{
@@ -78,8 +90,9 @@ namespace PCIBusiness
 
 //		Testing ...
 
-//			get { return  "https://payment.ccp.boarding.transact24.com/PaymentCard";           } // T24
-//			get { return  "https://www.mygate.co.za/Collections/1x0x0/pinManagement.cfc?wsdl"; } MyGate
+//			get { return "https://payment.ccp.boarding.transact24.com/PaymentCard";           } // T24
+//			get { return "https://www.mygate.co.za/Collections/1x0x0/pinManagement.cfc?wsdl"; } MyGate
+//			get { return "https://secure.paygate.co.za/payhost/process.trans?wsdl";           } PayGate
 		}
 
 //		public string    MerchantUserId
@@ -164,9 +177,21 @@ namespace PCIBusiness
 		{
 			get { return  Tools.NullToString(merchantReference); }
 		}
+		public string    MerchantReferenceOriginal
+		{
+			get { return  Tools.NullToString(merchantReferenceOriginal); }
+		}
+		public string    TransactionID
+		{
+			get { return  Tools.NullToString(transactionID); }
+		}
 		public string    CurrencyCode
 		{
 			get { return  Tools.NullToString(currencyCode); }
+		}
+		public string    IPAddress
+		{
+			get { return  Tools.NullToString(ipAddress); }
 		}
 		public string    PaymentDescription
 		{
@@ -293,6 +318,11 @@ namespace PCIBusiness
 
 		public int GetToken()
 		{
+//	Testing
+//			Tools.LogInfo("Payment.GetToken/1","Merchant Ref=" + merchantReference,220);
+//			return 899;
+//	Testing
+
 			int ret = 64020;
 			sql     = "";
 			Tools.LogInfo("Payment.GetToken/10","Merchant Ref=" + merchantReference,10);
@@ -307,6 +337,8 @@ namespace PCIBusiness
 					transaction = new TransactionT24();
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
 					transaction = new TransactionMyGate();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate) )
+					transaction = new TransactionPayGate();
 				else
 					return ret;
 			}
@@ -340,6 +372,8 @@ namespace PCIBusiness
 					transaction = new TransactionT24();
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.MyGate) )
 					transaction = new TransactionMyGate();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate) )
+					transaction = new TransactionPayGate();
 				else
 					return ret;
 			}
@@ -357,90 +391,47 @@ namespace PCIBusiness
 			return ret;
 		}
 
-/*
-		public int GetTokenOLD()
-		{
-			int ret = 64020;
-			sql     = "";
-			Tools.LogInfo("Payment.GetToken/10","Start, Merchant Reference=" + merchantReference,10);
-
-			if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayU) )
-				ret = GetTokenPayU();
-//			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ikajo) )
-//				ret = ProcessIkajo();
-//			else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.T24) )
-//				ret = ProcessT24();
-
-			if ( sql.Length > 3 )
-			{
-				sql = "exec sp_Upd_CardTokenVault @MerchantReference = " + Tools.DBString(merchantReference) // nvarchar(20),
-					                           + ",@PaymentBureauCode = " + Tools.DBString(bureauCode)        // char(3),
-			                                 + ",@CardTokenisationStatusCode = '" + ( ret == 0 ? "007'" : "001'" )
-			                                 + sql;
-				int k = ExecuteSQLUpdate();
-				Tools.LogInfo("Payment.GetToken/20","SQL : " + sql + " (Return code " + k.ToString() + ")",10);
-			}
-
-			Tools.LogInfo("Payment.GetToken/30","End, Merchant Reference=" + merchantReference + ", Ret=" + ret.ToString(),10);
-			return ret;
-		}
-
-		private int GetTokenPayU()
-		{
-			Tools.LogInfo("Payment.GetTokenPayU","Merchant Reference = " + merchantReference,100);
-
-			using (TransactionPayU transaction = new TransactionPayU())
-			{
-				int ret = transaction.GetToken(this);
-
-			//	These are SQL parameters that will be used in stored proc "sp_Upd_CardTokenVault"
-
-				sql = ",@PaymentBureauToken = "   + Tools.DBString(transaction.PaymentToken)
-				    + ",@BureauSubmissionSoap = " + Tools.DBString(transaction.XMLSent,3)
-				    + ",@BureauResultSoap = "     + Tools.DBString(transaction.XMLResult.ToString(),3);
-
-				return ret;
-			}
-		}
-*/
 		public override void LoadData(DBConn dbConn)
 		{
 			dbConn.SourceInfo  = "Payment.LoadData";
 
 		//	Payment Provider
-			providerKey        = dbConn.ColString("Safekey");
-			providerURL        = dbConn.ColString("url");
-			providerAccount    = dbConn.ColString("MerchantAccount",0);
-			providerUserID     = dbConn.ColString("MerchantUserId");
-			providerPassword   = dbConn.ColString("MerchantUserPassword");
+			providerKey      = dbConn.ColString("Safekey");
+			providerURL      = dbConn.ColString("url");
+			providerAccount  = dbConn.ColString("MerchantAccount",0);
+			providerUserID   = dbConn.ColString("MerchantUserId");
+			providerPassword = dbConn.ColString("MerchantUserPassword");
 
 		//	Customer
-			firstName          = dbConn.ColString("firstName");
-			lastName           = dbConn.ColString("lastName");
-			email              = dbConn.ColString("email");
-			phoneCell          = dbConn.ColString("mobile");
-			regionalId         = dbConn.ColString("regionalId",0);
-			address1           = dbConn.ColString("address1",0);
-			address2           = dbConn.ColString("city",0);
-			postalCode         = dbConn.ColString("zip_code",0);
-			provinceCode       = dbConn.ColString("State",0);
-			countryCode        = dbConn.ColString("CountryCode");
+			firstName        = dbConn.ColString("firstName");
+			lastName         = dbConn.ColString("lastName");
+			email            = dbConn.ColString("email");
+			phoneCell        = dbConn.ColString("mobile");
+			regionalId       = dbConn.ColString("regionalId",0);
+			address1         = dbConn.ColString("address1",0);
+			address2         = dbConn.ColString("city",0);
+			postalCode       = dbConn.ColString("zip_code",0);
+			provinceCode     = dbConn.ColString("State",0);
+			countryCode      = dbConn.ColString("CountryCode");
+			ipAddress        = dbConn.ColString("IPAddress",0);
 
 		//	Payment
-			merchantReference  = dbConn.ColString("merchantReference");
-			paymentAmount      = dbConn.ColLong  ("amountInCents");
-			currencyCode       = dbConn.ColString("currencyCode");
-			paymentDescription = dbConn.ColString("description");
+			merchantReference         = dbConn.ColString("merchantReference");
+			merchantReferenceOriginal = dbConn.ColString("merchantReferenceOriginal",0); // Only really for Ikajo, don't log error
+			paymentAmount             = dbConn.ColLong  ("amountInCents");
+			currencyCode              = dbConn.ColString("currencyCode");
+			paymentDescription        = dbConn.ColString("description");
 
-		//	Card/token details, not always present, don't log errors
-			ccName             = dbConn.ColString("nameOnCard",0);
-			ccNumber           = dbConn.ColString("cardNumber",0);
-			ccExpiryMonth      = dbConn.ColString("cardExpiryMonth",0);
-			ccExpiryYear       = dbConn.ColString("cardExpiryYear",0);
-			ccType             = dbConn.ColString("cardType",0);
-			ccCVV              = dbConn.ColString("cvv",0);
-			ccToken            = dbConn.ColString("token",0);
-			ccPIN              = dbConn.ColString("PIN",0);
+		//	Card/token/transaction details, not always present, don't log errors
+			ccName        = dbConn.ColString("nameOnCard",0);
+			ccNumber      = dbConn.ColString("cardNumber",0);
+			ccExpiryMonth = dbConn.ColString("cardExpiryMonth",0);
+			ccExpiryYear  = dbConn.ColString("cardExpiryYear",0);
+			ccType        = dbConn.ColString("cardType",0);
+			ccCVV         = dbConn.ColString("cvv",0);
+			ccToken       = dbConn.ColString("token",0);
+			ccPIN         = dbConn.ColString("PIN",0);
+			transactionID = dbConn.ColString("TransactionID",0);
 		}
 
 		public override void CleanUp()
@@ -452,9 +443,6 @@ namespace PCIBusiness
 		public Payment(string bureau) : base()
 		{
 			bureauCode = Tools.NullToString(bureau);
-		//	Load provider info here ... it will be passed to the Transaction
-		//	if ( bureauCode.Length > 0 )
-		//		provider = (new Providers()).LoadOne(bureauCode);
 		}
 	}
 }
