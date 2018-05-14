@@ -145,8 +145,13 @@ namespace PCIBusiness
 					ret               = 370;
 					payToken          = vault.putCard(cardData);
 					ret               = 380;
-					payToken          = Tools.NullToString(payToken);
+					if ( payToken == null )
+						resultMsg  = "Token returned is NULL";
 					ret               = 390;
+					payToken          = Tools.NullToString(payToken);
+					if ( payToken.Length < 1 && resultMsg.Length == 0 )
+						resultMsg  = "Token returned is blank/empty string";
+					ret               = 400;
 					login             = null;
 					cardData          = null;
 					if ( payToken.Length > 0 )
@@ -174,7 +179,7 @@ namespace PCIBusiness
 				resultCode = ret.ToString();
 			}
 
-			Tools.LogInfo("TransactionPayGate.GetToken/30","Result=" + resultCode + " / " + resultMsg,220);
+//			Tools.LogInfo("TransactionPayGate.GetToken/30","Result=" + resultCode + " / " + resultMsg,220);
 			string x = "<Result><ResultCode>" + Tools.XMLSafe(resultCode) + "</ResultCode>" +
 			                   "<ResultMsg>"  + Tools.XMLSafe(resultMsg)  + "</ResultMsg>"  +
 			                   "<VaultId>"    + Tools.XMLSafe(payToken)   + "</VaultId></Result>";
