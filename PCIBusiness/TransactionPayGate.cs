@@ -61,7 +61,6 @@ namespace PCIBusiness
 			xmlSent   = "";
 			payToken  = "";
 			resultMsg = "";
-			xmlResult = new XmlDocument();
 
 			Tools.LogInfo("TransactionPayGate.GetToken/10","RESERVE, Merchant Ref=" + payment.MerchantReference,220);
 
@@ -146,9 +145,12 @@ namespace PCIBusiness
 					ret               = 370;
 					payToken          = vault.putCard(cardData);
 					ret               = 380;
+					payToken          = Tools.NullToString(payToken);
+					ret               = 390;
 					login             = null;
 					cardData          = null;
-					ret               = 999; // Means all OK
+					if ( payToken.Length > 0 )
+						ret            = 999; // Means all OK
 				}
 				Tools.LogInfo("TransactionPayGate.GetToken/20","Ret="+ret.ToString()+", VaultId="+payToken,220);
 			}
@@ -163,15 +165,22 @@ namespace PCIBusiness
 			{
 				ret        = 0;
 				resultCode = "990017";
-				xmlResult.LoadXml("<VaultId>" + Tools.XMLSafe(payToken) + "</VaultId>");
+				resultMsg  = "Success";
 			}
 			else
 			{
 				if ( resultMsg.Length == 0 )
 					resultMsg = "Tokenization failed";
-				xmlResult.LoadXml("<Error><Code>" + ret.ToString() + "</Code><Message>" + Tools.XMLSafe(resultMsg) + "</Message></Error>");
 				resultCode = ret.ToString();
 			}
+
+			Tools.LogInfo("TransactionPayGate.GetToken/30","Result=" + resultCode + " / " + resultMsg,220);
+			string x = "<Result><ResultCode>" + Tools.XMLSafe(resultCode) + "</ResultCode>" +
+			                   "<ResultMsg>"  + Tools.XMLSafe(resultMsg)  + "</ResultMsg>"  +
+			                   "<VaultId>"    + Tools.XMLSafe(payToken)   + "</VaultId></Result>";
+			Tools.LogInfo("TransactionPayGate.GetToken/40",x,220);
+			xmlResult = new XmlDocument();
+			xmlResult.LoadXml(x);
 			return ret;
 		}
 
@@ -262,6 +271,7 @@ namespace PCIBusiness
 					wc.Encoding   = System.Text.Encoding.UTF8;
 					string xmlOut = wc.UploadString(url,xmlSent);
 
+				//	VB sample code
 				//	Dim _byteOrderMarkUtf8 As String = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble())
 				//	If retString.StartsWith(_byteOrderMarkUtf8) Then
 				//    retString = retString.Remove(0, _byteOrderMarkUtf8.Length)
