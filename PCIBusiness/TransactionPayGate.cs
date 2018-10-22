@@ -201,7 +201,7 @@ namespace PCIBusiness
 
 			try
 			{
-				Tools.LogInfo("TransactionPayGate.GetToken/10","Merchant Ref=" + payment.MerchantReference,220);
+				Tools.LogInfo("TransactionPayGate.GetToken/10","Merchant Ref=" + payment.MerchantReference,199);
 
 				xmlSent = "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'"
 				        +                  " xmlns:pay='http://www.paygate.co.za/PayHOST'>"
@@ -224,7 +224,7 @@ namespace PCIBusiness
 				payToken = Tools.XMLNode(xmlResult,"VaultId",nsPrefix,nsURL);
 
 				if ( ! Successful || payToken.Length < 1 )
-					Tools.LogInfo("TransactionPayGate.GetToken/20","ResultCode="+ResultCode+", ResultMsg="+resultMsg,199);
+					Tools.LogInfo("TransactionPayGate.GetToken/20","XML Sent="+xmlSent+", XML Received="+XMLResult,199);
 			}
 			catch (Exception ex)
 			{
@@ -239,7 +239,7 @@ namespace PCIBusiness
 			int ret = 600;
 			payRef  = "";
 
-			Tools.LogInfo("TransactionPayGate.ProcessPayment/10","PAYMENT, Merchant Ref=" + payment.MerchantReference,199);
+			Tools.LogInfo("TransactionPayGate.ProcessPayment/10","Merchant Ref=" + payment.MerchantReference,199);
 
 			try
 			{
@@ -256,7 +256,7 @@ namespace PCIBusiness
 				payRef = Tools.XMLNode(xmlResult,"PayRequestId",nsPrefix,nsURL);
 
 				if ( ! Successful || payRef.Length < 1 )
-					Tools.LogInfo("TransactionPayGate.ProcessPayment/20","ResultCode="+ResultCode+", ResultMsg="+resultMsg,199);
+					Tools.LogInfo("TransactionPayGate.ProcessPayment/20","XML Sent="+xmlSent+", XML Received="+XMLResult,199);
 			}
 			catch (Exception ex)
 			{
@@ -303,6 +303,7 @@ namespace PCIBusiness
 			int ret = 10;
 
 			if ( Tools.NullToString(url).Length == 0 )
+//				PayGate use the same URL for live and test
 				url = "https://secure.paygate.co.za/payhost/process.trans";
 
 			try
@@ -312,7 +313,7 @@ namespace PCIBusiness
 				//	XmlDocument retXMLDoc = new XmlDocument();
 				//	wc.Headers.Add("Content-Type", "application/soap+xml; charset=utf-8")
 
-					Tools.LogInfo("TransactionPayGate.CallWebService/10","XML In="+xmlSent,199);
+					Tools.LogInfo("TransactionPayGate.CallWebService/10","XML Sent="+xmlSent,10);
 
 					ret           = 20;
 					wc.Encoding   = System.Text.Encoding.UTF8;
@@ -333,7 +334,7 @@ namespace PCIBusiness
 //					payRef     = Tools.XMLNode(xmlResult,"PayRequestId"     ,nsPrefix,nsURL);
 					ret        = 50;
 
-					Tools.LogInfo("TransactionPayGate.CallWebService/50","XML Out="+xmlOut,220);
+					Tools.LogInfo("TransactionPayGate.CallWebService/50","XML Received="+xmlOut,10);
 
 					if ( Successful )
 						ret = 0;
@@ -359,7 +360,7 @@ namespace PCIBusiness
 			}
 			catch (Exception ex)
 			{
-				Tools.LogInfo("TransactionPayGate.CallWebService/98","ret="+ret.ToString(),200);
+				Tools.LogInfo("TransactionPayGate.CallWebService/98","ret="+ret.ToString(),220);
 				Tools.LogException("TransactionPayGate.CallWebService/99","ret="+ret.ToString(),ex);
 			}
 			return ret;

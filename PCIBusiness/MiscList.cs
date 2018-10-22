@@ -6,20 +6,19 @@ namespace PCIBusiness
 {
 	public class MiscList : BaseList
 	{
+		private int colNo;
+
 		public override BaseData NewItem()
 		{
 			return new MiscData();
 		}
 
-		public int ExecQuery(string sqlQuery,string dataClass="",byte loadRows=1)
+		public int ExecQuery(string sqlQuery,byte loadRows,string dataClass="")
 		{
 			sql = sqlQuery;
 
 			if ( loadRows == 0 )
-			{
-				base.ExecuteSQL(null);
-				return 0;
-			}
+				return base.ExecuteSQL(null);
 
 			if ( string.IsNullOrWhiteSpace(dataClass) )
 				return base.LoadDataFromSQL();
@@ -47,6 +46,61 @@ namespace PCIBusiness
 			if ( objList == null )
 				objList = new List<BaseData>();
 			objList.Add(dataX);
+		}
+
+		public string GetColumn(int colNumber)
+		{
+			try
+			{
+				if ( dbConn != null )
+					return dbConn.ColValue(colNumber);
+			}
+			catch
+			{ }
+			return "";
+		}
+		public string GetColumn(string colName)
+		{
+			try
+			{
+				if ( dbConn != null )
+				{
+					int x = dbConn.ColNumber(colName);
+					if ( x >= 0 )
+						return GetColumn(x);	
+				}
+			}
+			catch
+			{ }
+			return "";
+		}
+		public string NextColumn
+		{
+			get
+			{
+				if ( colNo < 0 )
+					colNo = 0;
+				else
+					colNo++;
+				return GetColumn(colNo);
+			}
+		}
+
+		public bool EOF
+		{
+			get
+			{
+				if ( dbConn == null )
+					return false;
+				return dbConn.EOF;
+			}
+		}
+
+		public bool NextRow()
+		{
+			if ( dbConn == null )
+				return false;
+			return dbConn.NextRow();
 		}
 	}
 }
