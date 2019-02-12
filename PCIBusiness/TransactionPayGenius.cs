@@ -28,7 +28,7 @@ namespace PCIBusiness
 				                                 + Tools.JSONPair("expiryYear" ,payment.CardExpiryYYYY,11)
 				                                 + Tools.JSONPair("expiryMonth",payment.CardExpiryMM,11)
 				                                 + Tools.JSONPair("type"       ,payment.CardType,1)
-				                                 + Tools.JSONPair("cvv"        ,payment.CardCVV,11,"","}")
+				                                 + Tools.JSONPair("cvv"        ,payment.CardCVV,1,"","}") // Changed to STRING from NUMERIC
 				         + "}";
 				ret      = 20;
 //				ret      = TestService(0); // Dev
