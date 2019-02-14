@@ -6,7 +6,7 @@ using System.Text;
 using System.Web.UI.WebControls;
 using PCIBusiness;
 
-namespace PCIWeb
+namespace PCIWebRTR
 {
 	public partial class RTR : System.Web.UI.Page
 	{
@@ -19,6 +19,7 @@ namespace PCIWeb
 		{
 			try
 			{
+//				string x = System.Web.HttpRuntime.AppDomainAppPath;
 				systemStatus = System.Convert.ToByte(Tools.ConfigValue("SystemStatus"));
 			}
 			catch
@@ -74,7 +75,7 @@ namespace PCIWeb
 					lblSQLStatus.Text = "<span class='Red'>Cannot connect</span>";
 				PCIBusiness.Tools.CloseDB(ref conn);
 				conn = null;
-			}		
+			}
 			ProviderDetails();
 		}
 
@@ -90,8 +91,8 @@ namespace PCIWeb
 					lblBureauStatus.Text = provider.BureauStatusName;
 					lblMerchantKey.Text  = provider.MerchantKey;
 					lblMerchantUser.Text = provider.MerchantUserID;
-					lblCards.Text        = provider.CardsToBeTokenized.ToString();
-					lblPayments.Text     = provider.PaymentsToBeProcessed.ToString();
+					lblCards.Text        = provider.CardsToBeTokenized.ToString()    + ( provider.CardsToBeTokenized    >= Constants.C_MAXPAYMENTROWS() ? "+" : "" );
+					lblPayments.Text     = provider.PaymentsToBeProcessed.ToString() + ( provider.PaymentsToBeProcessed >= Constants.C_MAXPAYMENTROWS() ? "+" : "" );
 				}
 		}
 
@@ -115,18 +116,18 @@ namespace PCIWeb
 
 		private void ProcessAsynch(byte mode)
 		{
-			ProcessStartInfo app = new ProcessStartInfo();
-			app.Arguments        =  "Mode=" + mode.ToString()
-			                     + " Rows=" + maxRows.ToString()
-			                     + " Provider=" + provider;
-			app.FileName         = "bin\\PCIUnattended.exe";
-			app.WindowStyle      = ProcessWindowStyle.Hidden;
-		//	app.WindowStyle      = ProcessWindowStyle.Normal;
-			app.CreateNoWindow   = false;
-		//	int exitCode         = 0;
+		//	string           path = Tools.ConfigValue("SystemPath");
+			ProcessStartInfo app  = new ProcessStartInfo();
 
-			if ( PCIBusiness.Tools.ConfigValue("BinFolder").Length > 0 )
-				app.FileName      = PCIBusiness.Tools.ConfigValue("BinFolder") + "PCIUnattended.exe";
+			app.Arguments      =  "Mode=" + mode.ToString()
+			                   + " Rows=" + maxRows.ToString()
+			                   + " Provider=" + provider;
+			app.WindowStyle    = ProcessWindowStyle.Hidden;
+		//	app.WindowStyle    = ProcessWindowStyle.Normal;
+		//	app.FileName       = "PCIUnattended.exe";
+			app.CreateNoWindow = false;
+			app.FileName       = Tools.SystemFolder("Bin") + "PCIUnattended.exe";
+		//	app.FileName       = path + ( path.EndsWith("\\") ? "" : "\\" ) + "bin\\PCIUnattended.exe";
 
 			try
 			{
@@ -155,18 +156,18 @@ namespace PCIWeb
 		{
 			try
 			{
-				PCIBusiness.Tools.LogInfo("RTR.Process/5","Started, provider '" + provider + "'",10);
+				PCIBusiness.Tools.LogInfo("RTR.ProcessWeb/1","Started, provider '" + provider + "'",10);
 
 				using (PCIBusiness.Payments payments = new PCIBusiness.Payments())
 				{
 					int k         = payments.ProcessCards(provider,mode,maxRows);
 					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed<br />&nbsp;";
 				}
-				PCIBusiness.Tools.LogInfo("RTR.Process/10","Finished",10);
+				PCIBusiness.Tools.LogInfo("RTR.ProcessWeb/2","Finished",10);
 			}
 			catch (Exception ex)
 			{
-				PCIBusiness.Tools.LogException("RTR.Process/15","",ex);
+				PCIBusiness.Tools.LogException("RTR.ProcessWeb/9","",ex);
 			}
 		}
 
@@ -174,24 +175,22 @@ namespace PCIWeb
 		{
 			try
 			{
-				maxRows  = -7;
-				provider = lstProvider.SelectedValue;
-
-				if ( txtRows.Text.Length > 0 && txtRows.Text.Trim().ToUpper() != "ALL" )
-					maxRows = Tools.StringToInt(txtRows.Text);
-
-				if ( provider.Length < 1 || maxRows == 0 )
-					return 78; // Error
-
-				if ( maxRows < 1 )
+				provider  = lstProvider.SelectedValue.Trim();
+				string rw = txtRows.Text.Trim().ToUpper();
+				if ( rw == "ALL" || rw.Length == 0 )
 					maxRows = 0;
-				return 0;
+				else
+					maxRows = Tools.StringToInt(rw);
 			}
-			catch (Exception ex)
+			catch
 			{
-				PCIBusiness.Tools.LogException("RTR.Validate/15","",ex);
+				maxRows = -8;
 			}
-			return 83;
+			if ( string.IsNullOrWhiteSpace(provider) )
+				return 78; // Error
+			if ( maxRows < 0 )
+				return 79; // Error
+			return 0;
 		}
 
 		private void ShowFile(string fileName)
@@ -262,10 +261,10 @@ namespace PCIWeb
 			try
 			{
 				string folder  = "<u>System Configuration</u><br />"
-				               + "- Version = " + PCIBusiness.SystemDetails.AppVersion + "<br />"
-				               + "- Date = " + PCIBusiness.SystemDetails.AppDate + "<br />"
-				               + "- Owner = " + PCIBusiness.SystemDetails.Owner + "<br />"
-				               + "- Developer = " + PCIBusiness.SystemDetails.Developer + "<hr />"
+				               + "- Version = " + SystemDetails.AppVersion + "<br />"
+				               + "- Date = " + SystemDetails.AppDate + "<br />"
+				               + "- Owner = " + SystemDetails.Owner + "<br />"
+				               + "- Developer = " + SystemDetails.Developer + "<hr />"
 				               + "<u>Environment</u><br />"
 				               + "- Machine Name = " + Environment.MachineName + "<br />"
 				               + "- Processors = " + Environment.ProcessorCount.ToString() + "<br />"
@@ -282,19 +281,23 @@ namespace PCIWeb
 				               + "- Request.RawUrl = " + Request.RawUrl + "<br />"
 				               + "- Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<hr />"
 				               + "<u>Settings</u><br />"
-				               + "- System Mode = " + PCIBusiness.Tools.ConfigValue("SystemMode") + "<br />"
+				               + "- System Mode = " + Tools.ConfigValue("SystemMode") + "<br />"
+				               + "- Process Mode = " + Tools.ConfigValue("ProcessMode") + "<br />"
 				               + "- Page timeout = " + Server.ScriptTimeout.ToString() + " seconds<br />"
 				               + "- Rows to Process per Iteration = " + PCIBusiness.Tools.ConfigValue("MaximumRows") + "<br />"
-				               + "- Error Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileErrors") + "<br />"
-				               + "- Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />"
-				               + "- Bin folder = " + PCIBusiness.Tools.ConfigValue("BinFolder") + "<br />";
-				System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["DBConn"];
-				folder       = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
-				lblTest.Text = folder;
+				               + "- Error Logs folder/file = " + Tools.ConfigValue("LogFileErrors") + "<br />"
+				               + "- Info Logs folder/file = " + Tools.ConfigValue("LogFileInfo") + "<br />"
+				               + "- System path = " + Tools.ConfigValue("SystemPath") + "<hr />"
+				               + "<u>ECentric</u><br />"
+				               + "- Certificate File = " + Tools.SystemFolder("Certificates") + Tools.ConfigValue("ECentric/CertName") + "<br />"
+				               + "- Certificate Password = " + Tools.ConfigValue("ECentric/CertPassword") + "<br />";
+				ConnectionStringSettings db = ConfigurationManager.ConnectionStrings["DBConn"];
+				folder         = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
+				lblTest.Text   = folder;
 			}
 			catch (Exception ex)
 			{
-				PCIBusiness.Tools.LogException("RTR.btnProcess_Click","",ex);
+				PCIBusiness.Tools.LogException("RTR.btnConfig_Click","",ex);
 			}
 		}
 
