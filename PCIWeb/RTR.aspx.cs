@@ -280,6 +280,9 @@ namespace PCIWebRTR
 				               + "- Request.Url.PathAndQuery = " + Request.Url.PathAndQuery + "<br />"
 				               + "- Request.RawUrl = " + Request.RawUrl + "<br />"
 				               + "- Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<hr />"
+				               + "<u>ECentric</u><br />"
+				               + "- Certificate File = " + Tools.SystemFolder("Certificates") + Tools.ConfigValue("ECentric/CertName") + "<br />"
+				               + "- Certificate Password = " + Tools.ConfigValue("ECentric/CertPassword") + "<hr />"
 				               + "<u>Settings</u><br />"
 				               + "- System Mode = " + Tools.ConfigValue("SystemMode") + "<br />"
 				               + "- Process Mode = " + Tools.ConfigValue("ProcessMode") + "<br />"
@@ -287,10 +290,7 @@ namespace PCIWebRTR
 				               + "- Rows to Process per Iteration = " + PCIBusiness.Tools.ConfigValue("MaximumRows") + "<br />"
 				               + "- Error Logs folder/file = " + Tools.ConfigValue("LogFileErrors") + "<br />"
 				               + "- Info Logs folder/file = " + Tools.ConfigValue("LogFileInfo") + "<br />"
-				               + "- System path = " + Tools.ConfigValue("SystemPath") + "<hr />"
-				               + "<u>ECentric</u><br />"
-				               + "- Certificate File = " + Tools.SystemFolder("Certificates") + Tools.ConfigValue("ECentric/CertName") + "<br />"
-				               + "- Certificate Password = " + Tools.ConfigValue("ECentric/CertPassword") + "<br />";
+				               + "- System path = " + Tools.ConfigValue("SystemPath") + "<br />";
 				ConnectionStringSettings db = ConfigurationManager.ConnectionStrings["DBConn"];
 				folder         = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
 				lblTest.Text   = folder;
