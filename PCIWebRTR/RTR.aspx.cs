@@ -19,8 +19,7 @@ namespace PCIWebRTR
 		{
 			try
 			{
-
-string x = System.Web.HttpRuntime.AppDomainAppPath;
+//				string x = System.Web.HttpRuntime.AppDomainAppPath;
 				systemStatus = System.Convert.ToByte(Tools.ConfigValue("SystemStatus"));
 			}
 			catch
@@ -262,10 +261,10 @@ string x = System.Web.HttpRuntime.AppDomainAppPath;
 			try
 			{
 				string folder  = "<u>System Configuration</u><br />"
-				               + "- Version = " + PCIBusiness.SystemDetails.AppVersion + "<br />"
-				               + "- Date = " + PCIBusiness.SystemDetails.AppDate + "<br />"
-				               + "- Owner = " + PCIBusiness.SystemDetails.Owner + "<br />"
-				               + "- Developer = " + PCIBusiness.SystemDetails.Developer + "<hr />"
+				               + "- Version = " + SystemDetails.AppVersion + "<br />"
+				               + "- Date = " + SystemDetails.AppDate + "<br />"
+				               + "- Owner = " + SystemDetails.Owner + "<br />"
+				               + "- Developer = " + SystemDetails.Developer + "<hr />"
 				               + "<u>Environment</u><br />"
 				               + "- Machine Name = " + Environment.MachineName + "<br />"
 				               + "- Processors = " + Environment.ProcessorCount.ToString() + "<br />"
@@ -281,17 +280,20 @@ string x = System.Web.HttpRuntime.AppDomainAppPath;
 				               + "- Request.Url.PathAndQuery = " + Request.Url.PathAndQuery + "<br />"
 				               + "- Request.RawUrl = " + Request.RawUrl + "<br />"
 				               + "- Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<hr />"
+				               + "<u>ECentric</u><br />"
+				               + "- Certificate File = " + Tools.SystemFolder("Certificates") + Tools.ConfigValue("ECentric/CertName") + "<br />"
+				               + "- Certificate Password = " + Tools.ConfigValue("ECentric/CertPassword") + "<hr />"
 				               + "<u>Settings</u><br />"
-				               + "- System Mode = " + PCIBusiness.Tools.ConfigValue("SystemMode") + "<br />"
-				               + "- Process Mode = " + PCIBusiness.Tools.ConfigValue("ProcessMode") + "<br />"
+				               + "- System Mode = " + Tools.ConfigValue("SystemMode") + "<br />"
+				               + "- Process Mode = " + Tools.ConfigValue("ProcessMode") + "<br />"
 				               + "- Page timeout = " + Server.ScriptTimeout.ToString() + " seconds<br />"
 				               + "- Rows to Process per Iteration = " + PCIBusiness.Tools.ConfigValue("MaximumRows") + "<br />"
-				               + "- Error Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileErrors") + "<br />"
-				               + "- Info Logs folder/file = " + PCIBusiness.Tools.ConfigValue("LogFileInfo") + "<br />"
-				               + "- System path = " + PCIBusiness.Tools.ConfigValue("SystemPath") + "<br />";
-				System.Configuration.ConnectionStringSettings db  = System.Configuration.ConfigurationManager.ConnectionStrings["DBConn"];
-				folder       = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
-				lblTest.Text = folder;
+				               + "- Error Logs folder/file = " + Tools.ConfigValue("LogFileErrors") + "<br />"
+				               + "- Info Logs folder/file = " + Tools.ConfigValue("LogFileInfo") + "<br />"
+				               + "- System path = " + Tools.ConfigValue("SystemPath") + "<br />";
+				ConnectionStringSettings db = ConfigurationManager.ConnectionStrings["DBConn"];
+				folder         = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
+				lblTest.Text   = folder;
 			}
 			catch (Exception ex)
 			{
