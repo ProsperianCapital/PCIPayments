@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-
-namespace PCIBusiness
+﻿namespace PCIBusiness
 {
 	public class Provider : BaseData
 	{
@@ -41,8 +38,8 @@ namespace PCIBusiness
 				     bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate)   ||
 				     bureauCode == Tools.BureauCode(Constants.PaymentProvider.Ecentric) )
 					bureauStatus = 3; // Live
-				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
-					bureauStatus = 2; // Disabled
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
+//					bureauStatus = 2; // Disabled
 				return bureauStatus;
 			}
 		}
@@ -72,6 +69,7 @@ namespace PCIBusiness
 
 		public byte PaymentType
 		{
+		//	Change as required for each payment provider
 			get
 			{
 				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
@@ -92,37 +90,13 @@ namespace PCIBusiness
 			get { return paymentCount; }
 		}
 
-//		public string ConnectionDetails(byte mode,string separator="")
-//		{
-//			if ( mode == 1 ) // HTML
-//				return "<table>"
-//					  + "<tr><td>Payment Provider</td><td class='Red'> : " + BureauName + "</td></tr>"
-//					  + "<tr><td>Bureau Code</td><td class='Red'> : " + BureauCode + "</td></tr>"
-//					  + "<tr><td>Status</td><td class='Red'> : " + StatusName + "</td></tr>"
-//					  + "<tr><td colspan='2'><hr /></td></tr>"
-//					  + "<tr><td>Go To URL</td><td> : " + "" + "</td></tr>"
-//					  + "<tr><td>Return To URL</td><td> : " + "" + "</td></tr>"
-//					  + "<tr><td>User ID</td><td> : " + "" + "</td></tr>"
-//					  + "<tr><td>Password</td><td> : " + "" + "</td></tr>"
-//					  + "</table>";
-//
-//			if ( Tools.NullToString(separator).Length < 1 )
-//				separator = Environment.NewLine;
-//
-//			return "Payment Provider : " + BureauName + separator
-//			     + "Bureau Code : " + BureauCode + separator
-//			     + "URL : " + separator
-//			     + "User ID : " + separator
-//			     + "Password : ";
-//		}
-
 		public override void LoadData(DBConn dbConn)
 		{
 			dbConn.SourceInfo = "Provider.LoadData";
 			merchantKey       = dbConn.ColString("Safekey");
 			providerURL       = dbConn.ColString("url");
-			userID            = dbConn.ColString("MerchantUserId");
-			userPassword      = dbConn.ColString("MerchantUserPassword");
+			userID            = dbConn.ColString("MerchantUserId",0);
+			userPassword      = dbConn.ColString("MerchantUserPassword",0);
 			bureauName        = "";
 			bureauStatus      = 0;
 		}
