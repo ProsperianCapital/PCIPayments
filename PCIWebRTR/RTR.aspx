@@ -8,49 +8,7 @@
 	<link rel="stylesheet" href="Payment.css" type="text/css" />
 </head>
 <body>
-<script type="text/javascript">
-function GetElt(eltID)
-{
-	try
-	{
-		var p = document.getElementById(eltID);
-		return p;
-	}
-	catch (x)
-	{ }
-	return null;
-}
-function ShowElt(eltID,show)
-{
-	try
-	{
-		var p = GetElt(eltID);
-		if ( show > 0 )
-		{
-			p.style.visibility = "visible";
-			p.style.display    = "";
-		}
-		else
-		{
-			p.style.visibility = "hidden";
-			p.style.display    = "none";
-		}
-	}
-	catch (x)
-	{ }
-}
-function Busy(show,msg)
-{
-	try
-	{
-		ShowElt('divBusy',show);
-		if ( show > 0 && msg != null )
-			GetElt('msgBusy').innerHTML = msg;
-	}
-	catch (x)
-	{ }
-}
-</script>
+<script type="text/javascript" src="JS/Utils.js"></script>
 <a href="http://prosperian.mu" target="P"><img src="Images/LogoProsperian.png" title="Prosperian Capital" /></a>
 <form runat="server" id="frmRTR">
 	<div class="Header">
@@ -85,7 +43,8 @@ function Busy(show,msg)
 		<td>Process via</td>
 		<td>
 			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoWeb" />Synchronous (this web page)<br />
-			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoAsynch" />Asynchronous (a separate EXE)</td></tr>
+			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoAsynch" />Asynchronous (a separate EXE)<br />
+			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoCard" onclick="JavaScript:ShowElt('divCard',1)" Enabled="false" />Single card payment (in development)</td></tr>
 	<tr>
 		<td colspan="2"><hr /></td></tr>
 	<tr>
@@ -145,6 +104,46 @@ function Busy(show,msg)
 		<asp:Button runat="server" CssClass="Button" ID="btnError" OnClientClick="JavaScript:Busy(1)" onclick="btnError_Click" Text="Errors" />
 		<asp:Button runat="server" CssClass="Button" ID="btnInfo"  OnClientClick="JavaScript:Busy(1)" onclick="btnInfo_Click" Text="Info" />
 		<input type="button" class="Button" onclick="JavaScript:ShowElt('divLogs',0)" value="Close" />
+	</div>
+
+	<div id="divCard" class="PopupBox" style="visibility:hidden;display:none"> <!-- ;border:1px solid #000000;top:100px;left:200px;position:absolute" -->
+	<!-- Use same style as the "logs" popup box -->
+	<div style="background-color:pink;font-size:20px;padding-left:10px;padding-right:10px">Single Card Payment</div>
+	<table class="Detail">
+	<tr>
+		<td>Name on Card</td>
+		<td>
+			<asp:TextBox runat="server" id="txtCCName"></asp:TextBox></td></tr>
+	<tr>
+		<td>Card Number</td>
+		<td>
+			<asp:TextBox runat="server" id="txtCCNumber"></asp:TextBox></td></tr>
+	<tr>
+		<td>Expiry Date</td>
+		<td>
+			<asp:DropDownList runat="server" id="lstCCMonth"></asp:DropDownList>
+			<asp:DropDownList runat="server" id="lstCCYear"></asp:DropDownList></td></tr>
+	<tr>
+		<td>CVV/CVC</td>
+		<td>
+			<asp:TextBox runat="server" id="txtCCCVV"></asp:TextBox></td></tr>
+	<tr>
+		<td>Currency</td>
+		<td>
+			<asp:DropDownList runat="server" id="lstCCCurrency"></asp:DropDownList></td></tr>
+	<tr>
+		<td>Amount</td>
+		<td>
+			<asp:TextBox runat="server" id="txtCCAmount"></asp:TextBox></td></tr>
+	<tr>
+		<td>Prosperian Reference</td>
+		<td>
+			<asp:TextBox runat="server" id="txtCCReference"></asp:TextBox></td></tr>
+	</table>
+	<div class="ButtonRow">
+		<asp:Button  runat="server" ID="btnPay" CssClass="Button" Text="Pay" />
+		<input type="button" class="Button" value="Cancel" onclick="JavaScript:ShowElt('divCard',0)" />
+	</div>
 	</div>
 
 </form>

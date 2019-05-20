@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Configuration;
 using System.Diagnostics;
-using System.Text;
 using System.Web.UI.WebControls;
 using PCIBusiness;
 
@@ -327,7 +326,10 @@ namespace PCIWebRTR
 				               + "- Rows to Process per Iteration = " + PCIBusiness.Tools.ConfigValue("MaximumRows") + "<br />"
 				               + "- Error Logs folder/file = " + Tools.ConfigValue("LogFileErrors") + "<br />"
 				               + "- Info Logs folder/file = " + Tools.ConfigValue("LogFileInfo") + "<br />"
-				               + "- System path = " + Tools.ConfigValue("SystemPath") + "<br />";
+				               + "- System path = " + Tools.ConfigValue("SystemPath") + "<br />"
+				               + "- System URL = " + Tools.ConfigValue("SystemURL") + "<br />"
+				               + "- Success page = " + Tools.ConfigValue("SystemURL") + "/Succeed.aspx<br />"
+				               + "- Fail page = " + Tools.ConfigValue("SystemURL") + "/Fail.aspx<br />";
 				ConnectionStringSettings db = ConfigurationManager.ConnectionStrings["DBConn"];
 				folder         = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
 				lblTest.Text   = folder;
