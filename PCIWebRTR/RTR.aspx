@@ -58,7 +58,7 @@ function PaySingle(mode)
 		<td>
 			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoWeb" />Synchronous (this web page)<br />
 			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoAsynch" />Asynchronous (a separate EXE)<br />
-			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoCard" onclick="JavaScript:PaySingle(33)" />Single card payment (in development)</td></tr>
+			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoCard" onclick="JavaScript:PaySingle(33)" />Single card payment (not all providers)</td></tr>
 	<tr>
 		<td colspan="2"><hr /></td></tr>
 	<tr>
