@@ -16,6 +16,13 @@ namespace PCIBusiness
 		protected string      strResult;
 		protected XmlDocument xmlResult;
 
+//	3d Stuff
+		protected string      eci;
+		protected string      paReq;
+		protected string      termUrl;
+		protected string      md;
+		protected string      acsUrl;
+
 		public  string      PaymentReference
 		{
 			get { return     Tools.NullToString(payRef); }
@@ -81,6 +88,32 @@ namespace PCIBusiness
 //			}
 //		}
 
+		public  bool      ThreeDRequired
+		{
+			get { return ( Tools.NullToString(acsUrl).Length > 0 ); }
+		}
+		public  string    ThreeDeci
+		{
+			get { return   Tools.NullToString(eci); }
+		}
+		public  string    ThreeDtermUrl
+		{
+			get { return   Tools.NullToString(termUrl); }
+		}
+		public  string    ThreeDpaReq
+		{
+			get { return   Tools.NullToString(paReq); }
+		}
+		public  string    ThreeDacsUrl
+		{
+			get { return   Tools.NullToString(acsUrl); }
+		}
+		public  string    ThreeDmd
+		{
+			get { return   Tools.NullToString(md); }
+		}
+
+
 		public virtual int GetToken(Payment payment)
 		{
 			return 0;
@@ -89,6 +122,16 @@ namespace PCIBusiness
 		public virtual int ProcessPayment(Payment payment)
 		{
 			return 0;
+		}
+
+      public virtual bool EnabledFor3d(byte paymentMode)
+		{
+			if ( paymentMode != (byte)Constants.TransactionType.ManualPayment )
+				return true;
+
+			resultCode = "99999";
+			resultMsg  = "3D Secure payments are not supported for this provider";
+			return false;
 		}
 
       public override void Close()
@@ -106,6 +149,11 @@ namespace PCIBusiness
 			xmlSent     = "";
 			bureauCode  = "";
 			strResult   = "";
+			eci         = "";
+			paReq       = "";
+			termUrl     = "";
+			md          = "";
+			acsUrl      = "";
 			xmlResult   = null;
 		}
 	}
