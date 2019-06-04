@@ -29,6 +29,7 @@ namespace PCIWebRTR
 			btnProcess2.Enabled = ( systemStatus == 0 );
 			lblTest.Text        = "";
 			lblError.Text       = "";
+			lblError2.Text      = "";
 			lblJS.Text          = "";
 
 			if ( ! Page.IsPostBack )
@@ -73,6 +74,11 @@ namespace PCIWebRTR
 					lblSQLStatus.Text = "<span class='Red'>Cannot connect</span>";
 				Tools.CloseDB(ref conn);
 				conn = null;
+
+				lstCCYear.Items.Clear();
+				lstCCYear.Items.Add(new ListItem("(Select one)","0"));
+				for ( int y = System.DateTime.Now.Year ; y < System.DateTime.Now.Year+15 ; y++ )
+					lstCCYear.Items.Add(new ListItem(y.ToString(),y.ToString()));
 			}
 			ProviderDetails();
 		}
@@ -130,6 +136,11 @@ namespace PCIWebRTR
 				}
 		}
 
+		protected void btnPay_Click(Object sender, EventArgs e)
+		{
+			ProcessCards((byte)PCIBusiness.Constants.TransactionType.ManualPayment);
+		}
+
 		protected void btnProcess1_Click(Object sender, EventArgs e)
 		{
 			byte transactionType = (byte)Tools.StringToInt(btnProcess1.CommandArgument);
@@ -149,6 +160,8 @@ namespace PCIWebRTR
 					ProcessWeb(transactionType);
 				else if ( rdoAsynch.Checked )
 					ProcessAsynch(transactionType);
+				else if ( rdoCard.Checked )
+					ProcessPayment();
 		}
 
 		private void ProcessAsynch(byte transactionType)
@@ -186,6 +199,51 @@ namespace PCIWebRTR
 				Tools.LogException("RTR.ProcessAsynch/9",app.FileName + " " + app.Arguments,ex);
 			}
 			app = null;
+		}
+
+		private void ProcessPayment()
+		{
+			try
+			{
+				Tools.LogInfo("RTR.ProcessPayment/1","Started, provider '" + provider + "'",10);
+
+				using (Payment payment = new Payment(provider))
+				{
+					payment.CardNumber        = txtCCNumber.Text;
+					payment.CardName          = txtCCName.Text;
+					payment.CardCVV           = txtCCCVV.Text;
+					payment.CurrencyCode      = txtCurrency.Text;
+					payment.MerchantReference = txtReference.Text;
+					payment.CardExpiryMM      = lstCCMonth.SelectedValue;
+					payment.CardExpiryYYYY    = lstCCYear.SelectedValue;
+					payment.PaymentAmount     = Tools.StringToInt(txtAmount.Text);
+					payment.PaymentMode       = (byte)Constants.TransactionType.ManualPayment;
+					int  k = payment.ProcessPayment();
+					if ( k == 0 && payment.ThreeDForm.Length > 0 )
+						try
+						{
+						//	Busy();
+							System.Web.HttpContext.Current.Response.Clear();
+							System.Web.HttpContext.Current.Response.Write(payment.ThreeDForm);
+							System.Web.HttpContext.Current.Response.End();
+						}
+						catch
+						{ }
+					else
+					{
+						lblJS.Text = "<script type='text/javascript'>PaySingle(8);</script>";
+						if ( payment.Message.Length > 0 )
+							lblError2.Text = "<br />" + payment.Message;
+						else
+							lblError2.Text = "<br />Transaction failed";
+					}
+				}
+				Tools.LogInfo("RTR.ProcessPayment/2","Finished",10);
+			}
+			catch (Exception ex)
+			{
+				Tools.LogException("RTR.ProcessPayment/9","",ex);
+			}
 		}
 
 		private void ProcessWeb(byte transactionType)

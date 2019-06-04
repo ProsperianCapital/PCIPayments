@@ -9,6 +9,20 @@
 </head>
 <body>
 <script type="text/javascript" src="JS/Utils.js"></script>
+<script type="text/javascript">
+function PaySingle(mode)
+{
+	if ( mode > 0 )
+	{
+		ShowElt('divCard',1);
+		GetElt('txtCCName').focus();
+		if ( mode == 33 )
+			SetEltValue('lblError2','');
+	}
+	else
+		ShowElt('divCard',0);
+}
+</script>
 <a href="http://prosperian.mu" target="P"><img src="Images/LogoProsperian.png" title="Prosperian Capital" /></a>
 <form runat="server" id="frmRTR">
 	<div class="Header">
@@ -44,7 +58,7 @@
 		<td>
 			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoWeb" />Synchronous (this web page)<br />
 			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoAsynch" />Asynchronous (a separate EXE)<br />
-			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoCard" onclick="JavaScript:ShowElt('divCard',1)" Enabled="false" />Single card payment (in development)</td></tr>
+			<asp:RadioButton runat="server" GroupName="rdoP" ID="rdoCard" onclick="JavaScript:PaySingle(33)" />Single card payment (in development)</td></tr>
 	<tr>
 		<td colspan="2"><hr /></td></tr>
 	<tr>
@@ -70,20 +84,13 @@
 		<td> : <asp:Literal runat="server" ID="lblBureauStatus"></asp:Literal></td></tr>
 	</table>
 	<div class="ButtonRow">
-	<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Getting tokens ... please be patient')" onclick="btnProcess1_Click" Text="Get Tokens" />
-	<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Processing payments ... please be patient')" onclick="btnProcess2_Click" Text="Process Payments" />
-	<asp:Button  runat="server" ID="btnConfig"   CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnConfig_Click" Text="Config" />
-	<input type="button" class="Button" onclick="JavaScript:ShowElt('divLogs',1)" value="Logs" />
-	<asp:Button  runat="server" ID="btnSQL"      CssClass="Button" OnClientClick="JavaScript:Busy(1,'Executing SQL ...')" onclick="btnSQL_Click" Text="Test SQL ..." />
-	<asp:Button  runat="server" ID="btnJSON"     CssClass="Button" OnClientClick="JavaScript:Busy(1,'Parsing JSON string ...')" onclick="btnJSON_Click" Text="Test JSON ..." visible="false" />
-	<asp:TextBox runat="server" ID="txtTest" Width="560px"></asp:TextBox>
-	<!--
-	<hr />
-	<asp Button  run@t="server" ID="btnInfo"     CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnInfo_Click"   Text="Today's Info Log" />
-	<asp Button  run@t="server" ID="btnError"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnError_Click"  Text="Today's Error Log" />
-	<asp Button  run@t="server" ID="btnInfoX"    CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnInfoX_Click"   Text="Info Log dd ..." />
-	<asp Button  run@t="server" ID="btnErrorX"   CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnErrorX_Click"  Text="Error Log dd ..." />
-	-->
+		<asp:Button  runat="server" ID="btnProcess1" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Getting tokens ... please be patient')" onclick="btnProcess1_Click" Text="Get Tokens" />
+		<asp:Button  runat="server" ID="btnProcess2" CssClass="Button" OnClientClick="JavaScript:Busy(1,'Processing payments ... please be patient')" onclick="btnProcess2_Click" Text="Process Payments" />
+		<asp:Button  runat="server" ID="btnConfig"   CssClass="Button" OnClientClick="JavaScript:Busy(1)" onclick="btnConfig_Click" Text="Config" />
+		<input type="button" class="Button" onclick="JavaScript:ShowElt('divLogs',1)" value="Logs" />
+		<asp:Button  runat="server" ID="btnSQL"      CssClass="Button" OnClientClick="JavaScript:Busy(1,'Executing SQL ...')" onclick="btnSQL_Click" Text="Test SQL ..." />
+		<asp:Button  runat="server" ID="btnJSON"     CssClass="Button" OnClientClick="JavaScript:Busy(1,'Parsing JSON string ...')" onclick="btnJSON_Click" Text="Test JSON ..." visible="false" />
+		<asp:TextBox runat="server" ID="txtTest" Width="560px"></asp:TextBox>
 	</div>
 	<hr />
 	<asp:Label runat="server" ID="lblTest"></asp:Label>
@@ -106,44 +113,64 @@
 		<input type="button" class="Button" onclick="JavaScript:ShowElt('divLogs',0)" value="Close" />
 	</div>
 
-	<div id="divCard" class="PopupBox" style="visibility:hidden;display:none"> <!-- ;border:1px solid #000000;top:100px;left:200px;position:absolute" -->
-	<!-- Use same style as the "logs" popup box -->
-	<div style="background-color:pink;font-size:20px;padding-left:10px;padding-right:10px">Single Card Payment</div>
+	<div id="divCard" class="PopupBox" style="visibility:hidden;display:none">
+	<div style="background-color:hotpink;padding:5px;font-size:18px;font-weight:bold">Single Card Payment</div>
 	<table class="Detail">
 	<tr>
 		<td>Name on Card</td>
-		<td>
-			<asp:TextBox runat="server" id="txtCCName"></asp:TextBox></td></tr>
+		<td colspan="2">
+			<asp:TextBox runat="server" id="txtCCName" Width="300px"></asp:TextBox></td></tr>
 	<tr>
 		<td>Card Number</td>
-		<td>
-			<asp:TextBox runat="server" id="txtCCNumber"></asp:TextBox></td></tr>
+		<td colspan="2">
+			<asp:TextBox runat="server" id="txtCCNumber" Width="160px" MaxLength="20"></asp:TextBox></td></tr>
 	<tr>
 		<td>Expiry Date</td>
-		<td>
-			<asp:DropDownList runat="server" id="lstCCMonth"></asp:DropDownList>
+		<td colspan="2">
+			<asp:DropDownList runat="server" id="lstCCMonth">
+				<asp:ListItem Value="00" Text="(Select one)"></asp:ListItem>
+				<asp:ListItem Value="01" Text="01 (January)"></asp:ListItem>
+				<asp:ListItem Value="02" Text="02 (February)"></asp:ListItem>
+				<asp:ListItem Value="03" Text="03 (March)"></asp:ListItem>
+				<asp:ListItem Value="04" Text="04 (April)"></asp:ListItem>
+				<asp:ListItem Value="05" Text="05 (May)"></asp:ListItem>
+				<asp:ListItem Value="06" Text="06 (June)"></asp:ListItem>
+				<asp:ListItem Value="07" Text="07 (July)"></asp:ListItem>
+				<asp:ListItem Value="08" Text="08 (August)"></asp:ListItem>
+				<asp:ListItem Value="09" Text="09 (September)"></asp:ListItem>
+				<asp:ListItem Value="10" Text="10 (September)"></asp:ListItem>
+				<asp:ListItem Value="11" Text="11 (November)"></asp:ListItem>
+				<asp:ListItem Value="12" Text="12 (December)"></asp:ListItem>
+			</asp:DropDownList>
 			<asp:DropDownList runat="server" id="lstCCYear"></asp:DropDownList></td></tr>
 	<tr>
 		<td>CVV/CVC</td>
 		<td>
-			<asp:TextBox runat="server" id="txtCCCVV"></asp:TextBox></td></tr>
+			<asp:TextBox runat="server" id="txtCCCVV" Width="50px" MaxLength="4"></asp:TextBox></td>
+		<td>
+			3/4 digit number on back of card</td></tr>
 	<tr>
 		<td>Currency</td>
 		<td>
-			<asp:DropDownList runat="server" id="lstCCCurrency"></asp:DropDownList></td></tr>
+			<asp:TextBox runat="server" id="txtCurrency" Width="50px" MaxLength="3"></asp:TextBox></td>
+		<td>
+			Currency code as per the provider's<br />
+			requirements (eg. ZAR, USD, GBP)</td></tr>
 	<tr>
 		<td>Amount</td>
 		<td>
-			<asp:TextBox runat="server" id="txtCCAmount"></asp:TextBox></td></tr>
+			<asp:TextBox runat="server" id="txtAmount" Width="75px"></asp:TextBox></td>
+		<td>
+			Cents, so ZAR 987 means R9.87</td></tr>
 	<tr>
 		<td>Prosperian Reference</td>
-		<td>
-			<asp:TextBox runat="server" id="txtCCReference"></asp:TextBox></td></tr>
+		<td colspan="2">
+			<asp:TextBox runat="server" id="txtReference" Width="300px"></asp:TextBox></td></tr>
 	</table>
-	<div class="ButtonRow">
-		<asp:Button  runat="server" ID="btnPay" CssClass="Button" Text="Pay" />
-		<input type="button" class="Button" value="Cancel" onclick="JavaScript:ShowElt('divCard',0)" />
-	</div>
+	<hr />
+	<asp:Button runat="server" ID="btnPay" CssClass="Button" Text="Pay" OnClick="btnPay_Click" />
+	<input type="button" class="Button" value="Cancel" onclick="JavaScript:PaySingle(0)" />
+	<asp:Label runat="server" ID="lblError2" CssClass="Error"></asp:Label>
 	</div>
 
 </form>

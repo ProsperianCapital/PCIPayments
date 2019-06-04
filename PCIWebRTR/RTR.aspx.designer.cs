@@ -373,31 +373,31 @@ namespace PCIWebRTR {
         protected global::System.Web.UI.WebControls.TextBox txtCCCVV;
         
         /// <summary>
-        /// lstCCCurrency control.
+        /// txtCurrency control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList lstCCCurrency;
+        protected global::System.Web.UI.WebControls.TextBox txtCurrency;
         
         /// <summary>
-        /// txtCCAmount control.
+        /// txtAmount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCCAmount;
+        protected global::System.Web.UI.WebControls.TextBox txtAmount;
         
         /// <summary>
-        /// txtCCReference control.
+        /// txtReference control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCCReference;
+        protected global::System.Web.UI.WebControls.TextBox txtReference;
         
         /// <summary>
         /// btnPay control.
@@ -407,6 +407,15 @@ namespace PCIWebRTR {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnPay;
+        
+        /// <summary>
+        /// lblError2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblError2;
         
         /// <summary>
         /// lblJS control.
