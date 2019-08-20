@@ -27,6 +27,7 @@ namespace PCIWebRTR
 			lblSStatus.Text     = ( systemStatus == 0 ? "Active" : "Disabled" );
 			btnProcess1.Enabled = ( systemStatus == 0 );
 			btnProcess2.Enabled = ( systemStatus == 0 );
+			btnProcess3.Enabled = ( systemStatus == 0 );
 			lblTest.Text        = "";
 			lblError.Text       = "";
 			lblError2.Text      = "";
@@ -94,10 +95,12 @@ namespace PCIWebRTR
 			if ( provider.BureauStatusCode == 2 ) // Disabled
 			{
 				provider             = null;
-				btnProcess1.Text     = "Tokens (Disabled)";
-				btnProcess2.Text     = "Payments (Disabled)";
+				btnProcess1.Text     = "Get Tokens (Disabled)";
+				btnProcess2.Text     = "Do Payments (Disabled)";
+				btnProcess3.Text     = "Delete Tokens (Disabled)";
 				btnProcess1.Enabled  = false;
 				btnProcess2.Enabled  = false;
+				btnProcess3.Enabled  = false;
 				lblBureauURL.Text    = "";
 				lblMerchantKey.Text  = "";
 				lblMerchantUser.Text = "";
@@ -107,8 +110,13 @@ namespace PCIWebRTR
 			}
 			btnProcess1.Text    = "Get Tokens";
 			btnProcess2.Text    = "Process Payments";
+			btnProcess3.Text    = "Delete Tokens";
 			btnProcess1.Enabled = true;
 			btnProcess2.Enabled = true;
+			btnProcess3.Enabled = true;
+//			btnProcess1.CommandArgument = ((byte)Constants.TransactionType.GetToken).ToString();
+//			btnProcess2.CommandArgument = ((byte)Constants.TransactionType.TokenPayment).ToString();
+//			btnProcess3.CommandArgument = ((byte)Constants.TransactionType.DeleteToken).ToString();
 
 			if ( bureau.Length > 0 )
 				using (Payments payments = new Payments())
@@ -121,17 +129,17 @@ namespace PCIWebRTR
 					lblPayments.Text     = provider.PaymentsToBeProcessed.ToString() + ( provider.PaymentsToBeProcessed >= Constants.C_MAXPAYMENTROWS() ? "+" : "" );
 					if ( provider.PaymentType == (byte)Constants.TransactionType.TokenPayment )
 					{
-						btnProcess1.Text            = "Get Tokens";
-						btnProcess1.Enabled         = true;
-						btnProcess1.CommandArgument = ((byte)Constants.TransactionType.GetToken).ToString();
-						btnProcess2.CommandArgument = ((byte)Constants.TransactionType.TokenPayment).ToString();
+						btnProcess1.Text    = "Get Tokens";
+						btnProcess1.Enabled = true;
+						btnProcess3.Text    = "Delete Tokens";
+						btnProcess3.Enabled = true;
 					}
 					else if ( provider.PaymentType == (byte)Constants.TransactionType.CardPayment ) // Means no tokens, card payments only
 					{
-						btnProcess1.Text            = "N/A";
-						btnProcess1.Enabled         = false;
-						btnProcess1.CommandArgument = "0";
-						btnProcess2.CommandArgument = ((byte)Constants.TransactionType.CardPayment).ToString();
+						btnProcess1.Text    = "N/A";
+						btnProcess1.Enabled = false;
+						btnProcess3.Text    = "N/A";
+						btnProcess3.Enabled = false;
 					}
 				}
 		}
@@ -143,14 +151,17 @@ namespace PCIWebRTR
 
 		protected void btnProcess1_Click(Object sender, EventArgs e)
 		{
-			byte transactionType = (byte)Tools.StringToInt(btnProcess1.CommandArgument);
-			ProcessCards(transactionType);
+			ProcessCards((byte)Constants.TransactionType.GetToken);
 		}
 
 		protected void btnProcess2_Click(Object sender, EventArgs e)
 		{
-			byte transactionType = (byte)Tools.StringToInt(btnProcess2.CommandArgument);
-			ProcessCards(transactionType);
+			ProcessCards((byte)Constants.TransactionType.TokenPayment);
+		}
+
+		protected void btnProcess3_Click(Object sender, EventArgs e)
+		{
+			ProcessCards((byte)Constants.TransactionType.DeleteToken);
 		}
 
 		private void ProcessCards(byte transactionType)
@@ -166,9 +177,9 @@ namespace PCIWebRTR
 
 		private void ProcessAsynch(byte transactionType)
 		{
-			ProcessStartInfo app  = new ProcessStartInfo();
+			ProcessStartInfo app = new ProcessStartInfo();
 
-			app.Arguments      =  "Mode=" + transactionType.ToString()
+			app.Arguments      =  "TransactionType=" + transactionType.ToString()
 			                   + " Rows=" + maxRows.ToString()
 			                   + " Provider=" + provider;
 			app.WindowStyle    = ProcessWindowStyle.Hidden;
@@ -255,7 +266,7 @@ namespace PCIWebRTR
 				using (Payments payments = new Payments())
 				{
 					int k         = payments.ProcessCards(provider,transactionType,maxRows);
-					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " payment(s) completed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed<br />&nbsp;";
+					lblError.Text = (payments.CountSucceeded+payments.CountFailed).ToString() + " token(s)/payment(s) processed : " + payments.CountSucceeded.ToString() + " succeeded, " + payments.CountFailed.ToString() + " failed<br />&nbsp;";
 				}
 				Tools.LogInfo("RTR.ProcessWeb/2","Finished",10);
 			}
@@ -365,15 +376,19 @@ namespace PCIWebRTR
 				               + "- Available Memory = " + Environment.WorkingSet.ToString() + " bytes<br />"
 				               + "- Operating System = " + Environment.OSVersion.ToString() + "<br />"
 				               + "- Microsoft .NET Runtime = " + Environment.Version.ToString() + "<br />"
+				               + "- User Domain = " + Environment.UserDomainName + "<br />"
 				               + "- User Name = " + Environment.UserName + "<hr />"
 				               + "<u>Internal</u><br />"
+				               + "- Server.MachineName = " + Server.MachineName + "<br />"
 				               + "- Server.MapPath = " + Server.MapPath("") + "<br />"
 				               + "- Request.Url.AbsoluteUri = " + Request.Url.AbsoluteUri + "<br />"
 				               + "- Request.Url.AbsolutePath = " + Request.Url.AbsolutePath + "<br />"
 				               + "- Request.Url.LocalPath = " + Request.Url.LocalPath + "<br />"
 				               + "- Request.Url.PathAndQuery = " + Request.Url.PathAndQuery + "<br />"
 				               + "- Request.RawUrl = " + Request.RawUrl + "<br />"
-				               + "- Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<hr />"
+				               + "- Request.PhysicalApplicationPath = " + Request.PhysicalApplicationPath + "<br />"
+				               + "- Environment.SystemDirectory = " + Environment.SystemDirectory + "<br />"
+				               + "- Environment.CurrentDirectory = " + Environment.CurrentDirectory + "<hr />"
 				               + "<u>ECentric</u><br />"
 				               + "- Certificate File = " + Tools.SystemFolder("Certificates") + Tools.ConfigValue("ECentric/CertName") + "<br />"
 				               + "- Certificate Password = " + Tools.ConfigValue("ECentric/CertPassword") + "<hr />"
@@ -381,16 +396,43 @@ namespace PCIWebRTR
 				               + "- System Mode = " + Tools.ConfigValue("SystemMode") + "<br />"
 				               + "- Process Mode = " + Tools.ConfigValue("ProcessMode") + "<br />"
 				               + "- Page timeout = " + Server.ScriptTimeout.ToString() + " seconds<br />"
-				               + "- Rows to Process per Iteration = " + PCIBusiness.Tools.ConfigValue("MaximumRows") + "<br />"
+				               + "- Rows to Process per Iteration = " + Tools.ConfigValue("MaximumRows") + "<br />"
 				               + "- Error Logs folder/file = " + Tools.ConfigValue("LogFileErrors") + "<br />"
 				               + "- Info Logs folder/file = " + Tools.ConfigValue("LogFileInfo") + "<br />"
 				               + "- System path = " + Tools.ConfigValue("SystemPath") + "<br />"
 				               + "- System URL = " + Tools.ConfigValue("SystemURL") + "<br />"
 				               + "- Success page = " + Tools.ConfigValue("SystemURL") + "/Succeed.aspx<br />"
-				               + "- Fail page = " + Tools.ConfigValue("SystemURL") + "/Fail.aspx<br />";
-				ConnectionStringSettings db = ConfigurationManager.ConnectionStrings["DBConn"];
-				folder         = folder + "- DB Connection [DBConn] = " + ( db == null ? "" : db.ConnectionString ) + "<p>&nbsp;</p>";
-				lblTest.Text   = folder;
+				               + "- Fail page = " + Tools.ConfigValue("SystemURL") + "/Fail.aspx<hr />"
+				               + "<u>Database</u><br />"
+				               + "- DB Connection [DBConn] = ";
+
+				ConnectionStringSettings db   = ConfigurationManager.ConnectionStrings["DBConn"];
+				DBConn                   conn = null;
+
+				if ( db != null )
+				{
+					string connStr = db.ConnectionString.Trim();
+					int    k       = connStr.ToUpper().IndexOf("PWD=");
+					int    j       = connStr.ToUpper().IndexOf(";",k+1);
+					if ( k >= 0 )
+						connStr     = connStr.Substring(0,k+4) + "******" + ( j > k ? connStr.Substring(j) : "" );
+					folder         = folder + connStr;
+				}
+				try
+				{
+					Tools.OpenDB(ref conn);
+					if ( conn.Execute("select @@VERSION as SysVer,@@SERVERNAME as SrvName,getdate() as SrvDate") )
+						folder = folder + "<br />- Server Name = " + conn.ColString("SrvName")
+						                + "<br />- Server Date = " + conn.ColDate("SrvDate").ToString()
+						                + "<br />- SQL Version = " + conn.ColString("SysVer");
+				}
+				finally
+				{
+					Tools.CloseDB(ref conn);
+				}
+				db           = null;
+				conn         = null;
+				lblTest.Text = folder + "<p>&nbsp;</p>";
 			}
 			catch (Exception ex)
 			{
