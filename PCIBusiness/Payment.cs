@@ -409,6 +409,37 @@ namespace PCIBusiness
 //			get { return  provider; }
 //		}
 
+		public int DeleteToken()
+		{
+			int processMode = Tools.StringToInt(Tools.ConfigValue("ProcessMode"));
+			int ret         = 59020;
+			sql             = "";
+			Tools.LogInfo("Payment.DeleteToken/10","Merchant Ref=" + merchantReference,10);
+
+			if ( transaction == null || transaction.BureauCode != bureauCode )
+			{
+				if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate) )
+					transaction = new TransactionPayGate();
+				else
+					return ret;
+			}
+
+			ret = transaction.DeleteToken(this);
+
+			if ( processMode == (int)Constants.ProcessMode.FullUpdate ||
+			     processMode == (int)Constants.ProcessMode.DeleteToken )
+			{
+				sql = "exec sp_Upd_TokenToDelete @PaymentBureauCode = " + Tools.DBString(BureauCode)
+			                                + ",@Token = "             + Tools.DBString(CardToken)
+			                                + ",@StatusName = "        + Tools.DBString(transaction.ResultStatus)
+			                                + ",@StatusDesc = "        + Tools.DBString(transaction.ResultMessage);
+				Tools.LogInfo("Payment.DeleteToken/20","SQL=" + sql,10);
+				int k = ExecuteSQLUpdate();
+			}
+			Tools.LogInfo("Payment.DeleteToken/90","Ret=" + ret.ToString(),20);
+			return ret;
+		}
+
 		public int GetToken()
 		{
 			int processMode = Tools.StringToInt(Tools.ConfigValue("ProcessMode"));
@@ -561,10 +592,10 @@ namespace PCIBusiness
 			}
 
 		//	Payment
-			merchantReference         = dbConn.ColString("merchantReference");
+			merchantReference         = dbConn.ColString("merchantReference",0);
 			merchantReferenceOriginal = dbConn.ColString("merchantReferenceOriginal",0); // Only really for Ikajo, don't log error
-			paymentAmount             = dbConn.ColLong  ("amountInCents");
-			currencyCode              = dbConn.ColString("currencyCode");
+			paymentAmount             = dbConn.ColLong  ("amountInCents",0);
+			currencyCode              = dbConn.ColString("currencyCode",0);
 			paymentDescription        = dbConn.ColString("description",0);
 
 		//	Card/token/transaction details, not always present, don't log errors
