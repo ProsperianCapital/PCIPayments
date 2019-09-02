@@ -24,7 +24,7 @@ namespace PCIBusiness
 //		{
 //			return 0;
 //		}
-      public override bool EnabledFor3d(byte paymentMode)
+      public override bool EnabledFor3d(byte transactionType)
 		{
 			return true;
 		}
@@ -32,7 +32,7 @@ namespace PCIBusiness
 
 		public override int ProcessPayment(Payment payment)
 		{
-			if ( ! EnabledFor3d(payment.PaymentMode) )
+			if ( ! EnabledFor3d(payment.TransactionType) )
 				return 590;
 
 			int ret = 10;
@@ -167,7 +167,7 @@ namespace PCIBusiness
 						if ( ! Successful || resultMsg.Length > 0 )
 							resultMsg = resultMsg + " (netsTxnStatus=" + txnStatus + ")";
 
-						if ( payment.PaymentMode == (byte)Constants.TransactionType.ManualPayment )
+						if ( payment.TransactionType == (byte)Constants.TransactionType.ManualPayment )
 							if ( txnStatus == "5" ) // 3d Secure
 							{
 								eci     = Tools.JSONValue(strResult,"eci");
