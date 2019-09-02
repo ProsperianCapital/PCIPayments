@@ -45,8 +45,8 @@ namespace PCIBusiness
 				xmlSent = "{ \"ss\"  : \"1\","
 				        +  " \"msg\" : { " + Tools.JSONPair("txnAmount"      ,payment.PaymentAmount.ToString(),1)
 				        +                    Tools.JSONPair("merchantTxnRef" ,payment.MerchantReference,1)
-				        +                    Tools.JSONPair("b2sTxnEndURL"   ,Tools.ConfigValue("SystemURL")+"/Succeed.aspx",1)
-				        +                    Tools.JSONPair("s2sTxnEndURL"   ,Tools.ConfigValue("SystemURL")+"/Succeed.aspx",1)
+				        +                    Tools.JSONPair("b2sTxnEndURL"   ,Tools.ConfigValue("SystemURL")+"/Succeed.aspx?TransRef="+Tools.XMLSafe(payment.MerchantReference),1)
+				        +                    Tools.JSONPair("s2sTxnEndURL"   ,Tools.ConfigValue("SystemURL")+"/Succeed.aspx?TransRef="+Tools.XMLSafe(payment.MerchantReference),1)
 				        +                    Tools.JSONPair("netsMid"        ,payment.ProviderAccount,1)
 				        +                    Tools.JSONPair("merchantTxnDtm" ,Tools.DateToString(DateTime.Now,5,5),1)
 				        +                    Tools.JSONPair("cardHolderName" ,payment.CardName,1)
@@ -199,7 +199,7 @@ namespace PCIBusiness
 
 		public TransactionENets() : base()
 		{
-			bureauCode = Tools.BureauCode(Constants.PaymentProvider.PayGenius);
+			bureauCode = Tools.BureauCode(Constants.PaymentProvider.eNETS);
 
 		//	Force TLS 1.2
 			ServicePointManager.Expect100Continue = true;

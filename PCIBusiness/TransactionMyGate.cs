@@ -186,12 +186,18 @@ namespace PCIBusiness
 			return ret;
 		}
 
+		public TransactionMyGate() : base()
+		{
+			bureauCode = Tools.BureauCode(Constants.PaymentProvider.MyGate);
+		}
+
 		public override void Close()
 		{
 			myGateToken = null;
 			myGatePay   = null;
 			results     = null;
 			resultLine  = null;
+			base.Close();
 		}
 	}
 }
