@@ -121,7 +121,7 @@ namespace PCIBusiness
 					}
 				}
 
-				Tools.LogInfo("TransactionPayU.SendXML/50","XML Rec=" + xmlReceived,10);
+				Tools.LogInfo("TransactionPayU.SendXML/50","XML Rec=" + xmlReceived,255);
 
 			// Create an empty soap result object
 				ret       = 70;

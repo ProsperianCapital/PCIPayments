@@ -243,6 +243,8 @@ namespace PCIBusiness
 					}
 				}
 
+				Tools.LogInfo("TransactionEcentric.CallWebService/50","XML Rec="+strResult,255);
+
 				ret        = 150;
 				xmlResult  = new XmlDocument();
 				xmlResult.LoadXml(strResult);

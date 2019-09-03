@@ -192,7 +192,7 @@ namespace PCIBusiness
 						{
 							ret        = 170;
 							resultCode = "00";
-							Tools.LogInfo("TransactionPayGenius.CallWebService/40","Successful, JSON Rec=" + strResult,10);
+							Tools.LogInfo("TransactionPayGenius.CallWebService/40","Successful, JSON Rec=" + strResult,255);
 						}
 						else
 						{

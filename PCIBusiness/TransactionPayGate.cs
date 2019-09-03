@@ -261,7 +261,7 @@ namespace PCIBusiness
 					resultStatus = Tools.XMLNode(xmlResult,"StatusName"       ,nsPrefix,nsURL);
 					ret          = 50;
 
-					Tools.LogInfo("TransactionPayGate.CallWebService/50",payment.TransactionTypeName+", XML Rec="+xmlOut,205);
+					Tools.LogInfo("TransactionPayGate.CallWebService/50",payment.TransactionTypeName+", XML Rec="+xmlOut,255);
 
 					if ( payment.TransactionType == (byte)Constants.TransactionType.ManualPayment &&
 					     resultStatus.ToUpper() == ("ThreeDSecureRedirectRequired").ToUpper() )
