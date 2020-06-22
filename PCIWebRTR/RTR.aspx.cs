@@ -72,10 +72,8 @@ namespace PCIWebRTR
 					{
 						string[] referAllow = Tools.ConfigValue("Access/ReferURL").ToUpper().Split(',');
 						bool     ok         = false;
-//						Tools.LogInfo("RTR.Page_Load/33","referAllow.Length="+referAllow.Length.ToString()+" / ref1="+ref1+" / ref2="+ref2,222);
 
 						foreach (string refer in referAllow)
-//							Tools.LogInfo("RTR.Page_Load/34","refer="+refer,222);
 							if ( string.IsNullOrWhiteSpace(refer) )
 								continue;
 							else if ( ( ref1.Length > 0 && ref1.ToUpper().Contains(refer.Trim()) ) ||
@@ -512,6 +510,9 @@ namespace PCIWebRTR
 				               + "<u>ECentric</u><br />"
 				               + "- Certificate File = " + Tools.SystemFolder("Certificates") + Tools.ConfigValue("ECentric/CertName") + "<br />"
 				               + "- Certificate Password = " + Tools.ConfigValue("ECentric/CertPassword") + "<hr />"
+				               + "<u>Authorized Access</u><br />"
+				               + "- By user code(s) = " + Tools.ConfigValue("Access/UserCode") + "<br />"
+				               + "- Via referring URL(s) = " + Tools.ConfigValue("Access/ReferURL") + "<hr />"
 				               + "<u>Settings</u><br />"
 				               + "- System Mode = " + Tools.ConfigValue("SystemMode") + "<br />"
 				               + "- Process Mode = " + Tools.ConfigValue("ProcessMode") + "<br />"
@@ -521,8 +522,7 @@ namespace PCIWebRTR
 				               + "- Info Logs folder/file = " + Tools.ConfigValue("LogFileInfo") + "<br />"
 				               + "- System path = " + Tools.ConfigValue("SystemPath") + "<br />"
 				               + "- System URL = " + Tools.ConfigValue("SystemURL") + "<br />"
-				               + "- Success page = " + Tools.ConfigValue("SystemURL") + "/Succeed.aspx<br />"
-				               + "- Fail page = " + Tools.ConfigValue("SystemURL") + "/Fail.aspx<hr />"
+				               + "- Success page = " + Tools.ConfigValue("SystemURL") + "/Succeed.aspx<hr />"
 				               + "<u>Database</u><br />"
 				               + "- DB Connection [DBConn] = ";
 
