@@ -72,8 +72,10 @@ namespace PCIWebRTR
 					{
 						string[] referAllow = Tools.ConfigValue("AllowReferURL").ToUpper().Split(',');
 						bool     ok         = false;
+						Tools.LogInfo("RTR.Page_Load/33","referAllow.Length="+referAllow.Length.ToString()+" / ref1="+ref1+" / ref1="+ref2,222);
 						foreach (string refer in referAllow)
 						{
+							Tools.LogInfo("RTR.Page_Load/34","refer="+refer,222);
 							if ( refer.Length < 1 )
 								continue;
 							else if ( ref1.Length > 0 && ref1.ToUpper().Contains(refer.Trim()) )
