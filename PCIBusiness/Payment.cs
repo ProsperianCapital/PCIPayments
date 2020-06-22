@@ -96,10 +96,12 @@ namespace PCIBusiness
 					return "";
 
 //	Testing
-				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
-					return "27ededae-4ba3-486a-a243-8da1e4c1a067";
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate) )
 					return "27ededae-4ba3-486a-a243-8da1e4c1a067";
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
+//					return "27ededae-4ba3-486a-a243-8da1e4c1a067";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Peach) )
+					return "OGFjN2E0Yzc3MmI3N2RkZjAxNzJiN2VkMDFmODA2YTF8akE0aEVaOG5ZQQ==";
 
 				return "";
 			}
@@ -117,6 +119,8 @@ namespace PCIBusiness
 //	Testing
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate) )
 					return "10011072130";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate) )
+					return "8ac7a4ca72b781310172b7ed08860114";
 
 				return "";
 			}
@@ -164,10 +168,12 @@ namespace PCIBusiness
 					return "https://payment.ccp.boarding.transact24.com/PaymentCard";
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGenius) )
 					return "https://developer.paygenius.co.za";
-				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
-					return "https://uat-api.nets.com.sg:9065/GW2/TxnReqListener";
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayGate) )
 					return "https://secure.paygate.co.za/payhost/process.trans";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
+					return "https://uat-api.nets.com.sg:9065/GW2/TxnReqListener";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Peach) )
+					return "https://test.oppwa.com/v1/registrations";
 
 				return "";
 			}
@@ -209,6 +215,23 @@ namespace PCIBusiness
 			get { return  Tools.NullToString(lastName); }
 			set { lastName = value.Trim(); }
 		}
+//		public string    Name
+//		{
+//			get
+//			{
+//				if ( FirstName.Length < 1 )
+//					return LastName;
+//				if ( LastName.Length < 1 )
+//					return FirstName;
+//				return FirstName + " " + LastName;
+
+//	//			if ( FirstName.Length > 0 && LastName.Length > 0 )
+//	//				return FirstName + " " + LastName;
+//	//			if ( FirstName.Length > 0 )
+//	//				return FirstName;
+//	//			return LastName;
+//			}
+//		}
 		public string    EMail
 		{
 			get { return  Tools.NullToString(email); }
@@ -487,6 +510,8 @@ namespace PCIBusiness
 					transaction = new TransactionEcentric();
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
 					return retProc; // eNETS does not have tokenization ... yet
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Peach) )
+					transaction = new TransactionPeach();
 				else
 					return retProc;
 			}
@@ -511,10 +536,9 @@ namespace PCIBusiness
 
 		public int ProcessPayment()
 		{
-//			int processMode = Tools.StringToInt(Tools.ConfigValue("ProcessMode"));
-			int retProc     = 37020;
-			int retSQL      = 37020;
-			returnMessage   = "Invalid payment provider";
+			int retProc   = 37020;
+			int retSQL    = 37020;
+			returnMessage = "Invalid payment provider";
 			Tools.LogInfo("Payment.ProcessPayment/10","Merchant Ref=" + merchantReference,10);
 
 			if ( transaction == null || transaction.BureauCode != bureauCode )
@@ -535,6 +559,8 @@ namespace PCIBusiness
 					transaction = new TransactionEcentric();
 				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.eNETS) )
 					transaction = new TransactionENets();
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Peach) )
+					transaction = new TransactionPeach();
 //				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PayFast) )
 //					transaction = new TransactionPayFast();
 				else
@@ -557,7 +583,10 @@ namespace PCIBusiness
 			else
 				Tools.LogInfo("Payment.ProcessPayment/50","SQL 1 skipped",20);
 
-			retProc       = transaction.ProcessPayment(this);
+			if ( transactionType == (byte)Constants.TransactionType.TokenPayment )
+				retProc    = transaction.TokenPayment(this);
+			else
+				retProc    = transaction.CardPayment(this);
 			threeDForm    = "";
 			returnMessage = transaction.ResultMessage;
 
