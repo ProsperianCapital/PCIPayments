@@ -73,11 +73,16 @@ namespace PCIWebRTR
 						string[] referAllow = Tools.ConfigValue("AllowReferURL").ToUpper().Split(',');
 						bool     ok         = false;
 						foreach (string refer in referAllow)
-							if ( ref1.ToUpper().Contains(refer.Trim()) || ref2.ToUpper().Contains(refer.Trim()) )
-							{
+						{
+							if ( refer.Length < 1 )
+								continue;
+							else if ( ref1.Length > 0 && ref1.ToUpper().Contains(refer.Trim()) )
 								ok = true;
+							else if ( ref2.Length > 0 && ref2.ToUpper().Contains(refer.Trim()) )
+								ok = true;
+							if (ok)
 								break;
-							}
+						}
 						if ( ! ok )
 						{
 							SetAccess(false,"Unauthorized access (invalid referring URL)");
