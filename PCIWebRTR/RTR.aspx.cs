@@ -47,15 +47,14 @@ namespace PCIWebRTR
 
 			else
 			{
-				lblVersion.Text   = "Version " + SystemDetails.AppVersion;
-				userCode          = Tools.ObjectToString(Request["UserCode"]);
-				string ref1       = Tools.ObjectToString(Request.UrlReferrer);
-				string ref2       = Tools.ObjectToString(Request.Headers["Referer"]); // Yes, this is spelt CORRECTLY! Do not change
-				lblSURL.Text      = ( ref1.Length > 4 ? ref1 : ref2 );
-				lblSUserCode.Text = userCode;
+				lblVersion.Text = "Version " + SystemDetails.AppVersion;
+				userCode        = Tools.ObjectToString(Request["UserCode"]);
+				string ref1     = Tools.ObjectToString(Request.UrlReferrer);
+				string ref2     = Tools.ObjectToString(Request.Headers["Referer"]); // Yes, this is spelt CORRECTLY! Do not change
 
 //	Dev mode
-				if ( Tools.ConfigValue("Access/BackDoor") == "901317" )
+				if ( Tools.ConfigValue("Access/BackDoor")  == ((int)Constants.SystemPassword.BackDoor).ToString() ||
+				   Tools.NullToString(Request["BackDoor"]) == ((int)Constants.SystemPassword.BackDoor).ToString() )
 					userCode = ( userCode.Length == 0 ? "013" : userCode );
 				else
 				{
@@ -89,6 +88,9 @@ namespace PCIWebRTR
 						}
 					}
 				}
+
+				lblSURL.Text      = ( ref1.Length > 4 ? ref1 : ref2 );
+				lblSUserCode.Text = userCode;
 
 				foreach (int bureauCode in Enum.GetValues(typeof(Constants.PaymentProvider)))
 					lstProvider.Items.Add(new ListItem(Enum.GetName(typeof(Constants.PaymentProvider),bureauCode),bureauCode.ToString().PadLeft(3,'0')));
@@ -215,8 +217,8 @@ namespace PCIWebRTR
 					lblBureauURL.Text    = provider.BureauURL;
 					lblMerchantKey.Text  = provider.MerchantKey;
 					lblMerchantUser.Text = provider.MerchantUserID;
-					lblCards.Text        = provider.CardsToBeTokenized.ToString()    + ( provider.CardsToBeTokenized    >= Constants.C_MAXPAYMENTROWS() ? "+" : "" );
-					lblPayments.Text     = provider.PaymentsToBeProcessed.ToString() + ( provider.PaymentsToBeProcessed >= Constants.C_MAXPAYMENTROWS() ? "+" : "" );
+					lblCards.Text        = provider.CardsToBeTokenized.ToString()    + ( provider.CardsToBeTokenized    >= Constants.MaxRowsPayment ? "+" : "" );
+					lblPayments.Text     = provider.PaymentsToBeProcessed.ToString() + ( provider.PaymentsToBeProcessed >= Constants.MaxRowsPayment ? "+" : "" );
 					if ( provider.PaymentType == (byte)Constants.TransactionType.TokenPayment )
 					{
 //						btnProcess1.Text    = "Get Tokens";
@@ -433,7 +435,7 @@ namespace PCIWebRTR
 				else if ( ! rdo0.Checked )
 					return;
 
-				if ( fDate <= Constants.C_NULLDATE() )
+				if ( fDate <= Constants.DateNull )
 					return;
 
 				int k    = fileName.LastIndexOf(".");
