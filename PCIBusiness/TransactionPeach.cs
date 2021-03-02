@@ -74,7 +74,7 @@ namespace PCIBusiness
 			strResult  = "";
 			payRef     = "";
 			resultCode = "999.999.888";
-			resultMsg  = "Internal error";
+			resultMsg  = "(999.999.888) Internal error";
 
 			try
 			{
@@ -230,7 +230,7 @@ namespace PCIBusiness
 			strResult   = "";
 			payRef      = "";
 			resultCode  = "999.999.777";
-			resultMsg   = "Internal error";
+			resultMsg   = "(999.999.777) Internal error";
 
 			try
 			{
@@ -253,18 +253,8 @@ namespace PCIBusiness
 					Tools.LogInfo("CardPayment3rdParty/20","Unknown Third Party Tokenizer (" + bureauCodeTokenizer + "), data=" + xmlSent,221,this);
 					return ret;
 				}
-				if ( ! payment.TokenizerURL.ToUpper().EndsWith("DETOKENIZE") )
-					tURL = payment.TokenizerURL + "/TransparentGatewayAPI/Detokenize";
-
-//				if ( payment.TokenizerURL.Length > 0 ) // The TOKENIZER/THIRD PARTY (TokenEx)
-//					tURL = payment.TokenizerURL + "/TransparentGatewayAPI/Detokenize";
-//	//			else if ( bureauCodeTokenizer == Tools.BureauCode(Constants.PaymentProvider.TokenEx) )
-//	//				tURL = "https://test-api.tokenex.com/TransparentGatewayAPI/Detokenize";
-//				else
-//				{
-//					Tools.LogInfo("CardPaymentThirdParty/20","Unknown Third Party Tokenizer (" + bureauCodeTokenizer + "), data=" + xmlSent,221,this);
-//					return ret;
-//			}
+				if ( ! tURL.ToUpper().EndsWith("DETOKENIZE") )
+					tURL = tURL + "/TransparentGatewayAPI/Detokenize";
 
 				ret = 30;
 				SetUpPaymentXML(payment,(byte)Constants.TransactionType.CardPaymentThirdParty);
@@ -427,7 +417,7 @@ namespace PCIBusiness
 			return ret;
 		}
 
-		public int ThreeDSecureCheck(string transID)
+		public override int ThreeDSecureCheck(string transID)
 		{
 			int    ret      = 10;
 			string key      = Tools.ProviderCredentials("Peach","Key");
@@ -530,7 +520,9 @@ namespace PCIBusiness
 				        + "&card.cvv="              + Tools.URLString(payment.CardCVV)
 				        + "&merchantTransactionId=" + Tools.URLString(payment.MerchantReference)
 				        + "&descriptor="            + Tools.URLString(payment.PaymentDescription)
-				        + "&shopperResultUrl="      + Tools.URLString(url+"RegisterThreeD.aspx?TransRef="+Tools.XMLSafe(payment.MerchantReference));
+				        + "&shopperResultUrl="      + Tools.URLString(url+"RegisterThreeD.aspx"
+				                                    +                    "?ProviderCode="+Tools.BureauCode(Constants.PaymentProvider.Peach)
+				                                    +                    "&TransRef="+Tools.XMLSafe(payment.MerchantReference));
 //				        + "&paymentType=DB"
 //				        + "&shopperResultUrl="      + Tools.URLString(Tools.ConfigValue("SystemURL")+"/RegisterThreeD.aspx?TransRef="+Tools.XMLSafe(payment.MerchantReference));
 

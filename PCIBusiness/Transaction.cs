@@ -8,6 +8,7 @@ namespace PCIBusiness
 	{
 		protected string      payRef;
 		protected string      payToken;
+		protected string      cardNumber;
 //		protected string      authCode;
 		protected string      resultCode;
 		protected string      resultStatus;
@@ -43,6 +44,10 @@ namespace PCIBusiness
 		public  virtual     string BureauURL
 		{
 			get { return     Tools.NullToString(bureauURL); }
+		}
+		public  string      CardNumber
+		{
+			get { return     Tools.NullToString(cardNumber); }
 		}
 		public  string      PaymentToken
 		{
@@ -130,9 +135,9 @@ namespace PCIBusiness
 		{
 			get { return   Tools.NullToString(keyValuePairs); }
 		}
-		public string   ThreeDSecureHTML
+		public string     ThreeDSecureHTML
 		{
-			get { return Tools.NullToString(d3Form); }
+			get { return   Tools.NullToString(d3Form); }
 		}
 
 
@@ -146,9 +151,19 @@ namespace PCIBusiness
 			return 14010;
 		}
 
-		public virtual int DeleteToken(Payment payment)
+		public virtual int GetToken3rdParty(Payment payment)
+		{
+			return 14015;
+		}
+
+		public virtual int Detokenize(Payment payment)
 		{
 			return 14020;
+		}
+
+		public virtual int DeleteToken(Payment payment)
+		{
+			return 14025;
 		}
 
 		public virtual int TokenPayment(Payment payment)
@@ -174,6 +189,10 @@ namespace PCIBusiness
 		public virtual int ThreeDSecurePayment(Payment payment,Uri postBackURL,string languageCode="",string languageDialectCode="")
 		{
 			return 14510;
+		}
+		public virtual int ThreeDSecureCheck(string transID)
+		{
+			return 14610;
 		}
 
       public virtual bool EnabledFor3d(byte transactionType)
@@ -226,7 +245,7 @@ namespace PCIBusiness
 				else if ( bureau == Constants.PaymentProvider.FNB )
 					bureauURL = "https://sandbox.ms.fnb.co.za/eCommerce/v2";
 				else if ( bureau == Constants.PaymentProvider.CyberSource )
-					bureauURL = "https://apitest.cybersource.com/tms/v2";
+					bureauURL = "https://apitest.cybersource.com";
 			}
 		}
 
