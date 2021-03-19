@@ -105,7 +105,7 @@ namespace PCIBusiness
 				if ( url.Length < 1 && payment.ProviderURL.Length > 0 )
 					url = payment.ProviderURL;
 
-				Tools.LogInfo("PostJSON/10","Post="+xmlSent+", Key="+payment.ProviderKey,10,this);
+				Tools.LogInfo("PostJSON/10","Post="+xmlSent+", Key="+payment.ProviderKey+", URL="+url,222,this);
 
 				ret                     = 20;
 				byte[]         buffer   = Encoding.UTF8.GetBytes(xmlSent);
@@ -142,7 +142,8 @@ namespace PCIBusiness
 						return 0;
 
 					ret = 170;
-					Tools.LogInfo("PostJSON/110","resultCode="+resultCode+", resultMsg="+resultMsg,221,this);
+					Tools.LogInfo("PostJSON/110",strResult,221,this);
+//					Tools.LogInfo("PostJSON/110","resultCode="+resultCode+", resultMsg="+resultMsg,221,this);
 				}
 			}
 			catch (WebException ex1)
