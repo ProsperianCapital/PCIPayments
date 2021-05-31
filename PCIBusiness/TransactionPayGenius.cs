@@ -40,7 +40,7 @@ namespace PCIBusiness
 				if ( Successful && payToken.Length > 0 )
 					ret   = 0;
 //				else
-//					Tools.LogInfo("TransactionPayGenius.GetToken/50","JSON Sent="+xmlSent+", JSON Rec="+XMLResult,199);
+//					Tools.LogInfo("GetToken/50","JSON Sent="+xmlSent+", JSON Rec="+XMLResult,199,this);
 			}
 			catch (Exception ex)
 			{
@@ -78,7 +78,7 @@ namespace PCIBusiness
 				if ( Successful && payRef.Length > 0 )
 					ret  = 0;
 //				else
-//					Tools.LogInfo("TransactionPayGenius.TokenPayment/50","JSON Sent="+xmlSent+", JSON Rec="+XMLResult,199);
+//					Tools.LogInfo("TokenPayment/50","JSON Sent="+xmlSent+", JSON Rec="+XMLResult,199,this);
 			}
 			catch (Exception ex)
 			{
@@ -177,7 +177,7 @@ namespace PCIBusiness
 					{
 						ret        = 150;
 						resultMsg  = "No data returned from " + url;
-						Tools.LogInfo("TransactionPayGenius.CallWebService/30","Failed, JSON Rec=(empty)",199);
+						Tools.LogInfo("CallWebService/30","Failed, JSON Rec=(empty)",199,this);
 					}
 					else
 					{
@@ -189,12 +189,12 @@ namespace PCIBusiness
 						{
 							ret        = 170;
 							resultCode = "00";
-							Tools.LogInfo("TransactionPayGenius.CallWebService/40","Successful, JSON Rec=" + strResult,255);
+							Tools.LogInfo("CallWebService/40","Successful, JSON Rec=" + strResult,255,this);
 						}
 						else
 						{
 							ret = 180;
-							Tools.LogInfo("TransactionPayGenius.CallWebService/50","Failed, JSON Rec=" + strResult,199);
+							Tools.LogInfo("CallWebService/50","Failed, JSON Rec=" + strResult,199,this);
 							if ( Tools.StringToInt(resultCode) == 0 )
 								resultCode = "99";
 						}
@@ -208,8 +208,8 @@ namespace PCIBusiness
 			}
 			catch (Exception ex2)
 			{
-				Tools.LogInfo     ("TransactionPayGenius.CallWebService/298","ret="+ret.ToString(),220);
-				Tools.LogException("TransactionPayGenius.CallWebService/299","ret="+ret.ToString(),ex2);
+				Tools.LogInfo     ("CallWebService/298","ret="+ret.ToString(),220,this);
+				Tools.LogException("CallWebService/299","ret="+ret.ToString(),ex2,this);
 			}
 			return ret;
 		}
@@ -247,7 +247,7 @@ namespace PCIBusiness
 			}
 			catch (Exception ex)
 			{
-				Tools.LogException("TransactionPayGenius.TestService/99","",ex);
+				Tools.LogException("TestService/99","",ex,this);
 			}
 			return 0;
 		}

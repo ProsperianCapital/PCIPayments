@@ -18,7 +18,7 @@ namespace PCIBusiness
 		private string   lastName;
 		private string   address1;
 		private string   address2;
-		private string   address3;
+//		private string   address3;
 		private string   postalCode;
 		private string   provinceCode;
 		private string   regionalId;
@@ -43,10 +43,11 @@ namespace PCIBusiness
 		private string   bureauCode;
 		private string   providerAccount;
 		private string   providerKey;
+//		private string   providerKeyPublic;
 		private string   providerUserID;
 		private string   providerPassword;
 		private string   providerURL;
-//		private string   providerHost;
+		private string   providerProfileID;
 
 //	Token Provider (eg. TokenEx)
 		private string   tokenizerCode;
@@ -57,6 +58,10 @@ namespace PCIBusiness
 		private int      processMode;
 		private byte     transactionType;
 		private string   webForm;
+
+//	Stripe-specific fields
+		private string   customerID;
+		private string   paymentMethodID;
 
 		private Transaction transaction;
 
@@ -82,6 +87,16 @@ namespace PCIBusiness
 //			get { return  Tools.NullToString(tokenizerURL); }
 //			set { tokenizerURL = Tools.NullToString(value); }
 //		}
+
+//		Stripe stuff
+		public string    CustomerID
+		{
+			get { return  Tools.NullToString(customerID); }
+		}
+		public string    PaymentMethodID
+		{
+			get { return  Tools.NullToString(paymentMethodID); }
+		}
 
 //		Payment Provider stuff
 		public string    BureauCode
@@ -117,6 +132,10 @@ namespace PCIBusiness
 //					return "absa_test_merchant";
 //					return "thutomoloi4";
 					return "000000002744639";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.CyberSource_Moto) )
+					return "000000002744639";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PaymentsOS) )
+					return "mu.prosperian.rtr";
 				return "";
 			}
 			set { providerAccount = value.Trim(); }
@@ -142,10 +161,45 @@ namespace PCIBusiness
 //					return "6o/jJqk5K+abVz057+G2X4H5XnkEKqEK0gz53MB0fjQ=";
 //					return "Zh24hLoQTpDj1n2g5ahwfDGiLaQryCQHi+DGEl0dcP8=";
 //					return "0123k20MBbIB2t012345678993gHCIZsQKFpf7dR0hY=";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.CyberSource_Moto) )
+					return "IcJSjbVloKPQsS5PJrCdGOz8W/pLOBjzO4QVqKG4Ai8=";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PaymentsOS) )
+					return "daea1771-d849-4fa4-a648-230a54186964"; // Public key
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Stripe) )
+					return "pk_test_51It78gGmZVKtO2iKc4eB6JveDn9HZAWR7F9cbiISEcYHGquyNoqb1YNnSQuzlJlR8maNlTUmaH0pBHHw4tZAOUBc00KZH2PeKW"; // Public key
 
 				return "";
 			}
 		}
+//		public string    ProviderKeyPublic
+//		{
+//			set { providerKeyPublic = value.Trim(); }
+//			get
+//			{
+//				if ( Tools.NullToString(providerKeyPublic).Length > 0 )
+//					return providerKeyPublic;
+//
+//				else if ( Tools.SystemIsLive() )
+//					return "";
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PaymentsOS) )
+//					return "daea1771-d849-4fa4-a648-230a54186964";
+//
+//				return "";
+//			}
+//		}
+		public string    ProviderProfileID
+		{
+			set { providerProfileID = value.Trim(); }
+			get
+			{
+				if ( Tools.NullToString(providerProfileID).Length > 0 )
+					return providerProfileID;
+//				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.CyberSource) )
+//					return "601591F8-04DA-4E9D-94E1-A5D7649C0EB7";
+				return "";
+			}
+		}
+
 		public string    ProviderUserID
 		{
 			set { providerUserID = value.Trim(); }
@@ -172,6 +226,10 @@ namespace PCIBusiness
 //					return "baa4366b-6a39-4a7f-99a2-442a91200a46";
 //					return "410c3964-6c30-4e71-a60e-057cff71a547";
 //					return "01234567-0123-0123-0123-012345678912";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.CyberSource_Moto) )
+					return "31c799cd-18da-47c3-be95-f93bd90748e0";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PaymentsOS) )
+					return "800060";
 
 				return "";
 			}
@@ -183,6 +241,12 @@ namespace PCIBusiness
 			{
 				if ( Tools.NullToString(providerPassword).Length > 0 )
 					return providerPassword;
+				else if ( Tools.SystemIsLive() )
+					return "";
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PaymentsOS) )
+					return "3790d1d5-4847-43e6-a29a-f22180cc9fda"; // Private/secret key
+				else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Stripe) )
+					return "sk_test_51It78gGmZVKtO2iKwt179k2NOmHVUNab70RO7EcbRm7AZmvunvtgD4S0srMXQWIpvj3EAWq7QLJ4kcRIMRHPzPxq00n0dLN01U"; // Secret key
 
 				return "";
 			}
@@ -205,6 +269,12 @@ namespace PCIBusiness
 						return "https://secure.paygate.co.za/payhost/process.trans";
 					else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.CyberSource) )
 						return "https://secureacceptance.cybersource.com/silent";
+					else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.CyberSource_Moto) )
+						return "https://secureacceptance.cybersource.com/silent";
+					else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.PaymentsOS) )
+						return "https://api.paymentsos.com";
+//					else if ( bureauCode == Tools.BureauCode(Constants.PaymentProvider.Stripe) )
+//						return "https://test.stripe.com";
 					return "";
 				}
 
@@ -336,9 +406,13 @@ namespace PCIBusiness
 		}
 		public string    Address3(byte mode=0)
 		{
-			if ( mode == 65 && string.IsNullOrWhiteSpace(address3) )
+//			if ( mode == 65 && string.IsNullOrWhiteSpace(address3) )
+//				return "Western Cape";
+//			return Tools.NullToString(address3);
+
+			if ( mode == 65 )
 				return "Western Cape";
-			return Tools.NullToString(address3);
+			return "";
 		}
 		public string    PostalCode(byte mode=0)
 		{
@@ -475,12 +549,37 @@ namespace PCIBusiness
 				}
 				catch
 				{ }
-				return 0;
+				return 12;
+//				return 0;
+			}
+		}
+		public  int      CardExpiryYear
+		{
+			get
+			{
+				try
+				{
+					int x = Convert.ToInt32(ccExpiryYear);
+					if ( x > 1900 && x < 9999 )
+						return x;
+				}
+				catch
+				{ }
+				return System.DateTime.Now.Year+1;
 			}
 		}
 		public  string   CardExpiryMM // Pad with zeroes, eg. 07
 		{
-			get { return  Tools.NullToString(ccExpiryMonth).PadLeft(2,'0'); }
+			get
+			{
+				ccExpiryMonth = Tools.NullToString(ccExpiryMonth);
+				if ( ccExpiryMonth.Length == 2 )
+					return ccExpiryMonth;
+				if ( ccExpiryMonth.Length == 1 )
+					return "0" + ccExpiryMonth;
+				return "12";
+			//	return Tools.NullToString(ccExpiryMonth).PadLeft(2,'0');
+			}
 			set 
 			{
 				ccExpiryMonth = value.Trim();
@@ -497,7 +596,7 @@ namespace PCIBusiness
 					return ccExpiryYear.Substring(2,2);
 				if ( ccExpiryYear.Length == 2 )
 					return ccExpiryYear;
-				return "";
+				return (System.DateTime.Now.Year+1).ToString().Substring(2,2);
 			}
 		}
 		public  string   CardExpiryYYYY
@@ -509,7 +608,7 @@ namespace PCIBusiness
 					return ccExpiryYear;
 				if ( ccExpiryYear.Length == 2 )
 					return "20" + ccExpiryYear;
-				return "";
+				return (System.DateTime.Now.Year+1).ToString();
 			}
 			set 
 			{
@@ -551,7 +650,7 @@ namespace PCIBusiness
 			}
 		}
 
-		public int Detokenize() // ToDo
+		public int Detokenize()
 		{
 //			int processMode = Tools.StringToInt(Tools.ConfigValue("ProcessMode"));
 			int retProc     = 87020;
@@ -738,11 +837,12 @@ namespace PCIBusiness
 			}
 
 		//	Payment Provider
-			providerKey      = dbConn.ColString("Safekey");
-			providerURL      = dbConn.ColString("url");
-			providerAccount  = dbConn.ColString("MerchantAccount",0,0);
-			providerUserID   = dbConn.ColString("MerchantUserId",0,0);
-			providerPassword = dbConn.ColString("MerchantUserPassword",0,0);
+			providerKey       = dbConn.ColString("SafeKey");
+			providerURL       = dbConn.ColString("url");
+			providerAccount   = dbConn.ColString("MerchantAccount",0,0);
+			providerProfileID = dbConn.ColString("MerchantProfileId",0,0);
+			providerUserID    = dbConn.ColString("MerchantUserId",0,0);
+			providerPassword  = dbConn.ColString("MerchantUserPassword",0,0);
 
 		//	Customer
 			if ( dbConn.ColStatus("lastName") == Constants.DBColumnStatus.ColumnOK )
@@ -768,15 +868,17 @@ namespace PCIBusiness
 			paymentDescription        = dbConn.ColString("description",0,0);
 
 		//	Card/token/transaction details, not always present, don't log errors
-			ccName        = dbConn.ColString("nameOnCard",0,0);
-			ccNumber      = dbConn.ColString("cardNumber",0,0);
-			ccExpiryMonth = dbConn.ColString("cardExpiryMonth",0,0);
-			ccExpiryYear  = dbConn.ColString("cardExpiryYear",0,0);
-			ccType        = dbConn.ColString("cardType",0,0);
-			ccCVV         = dbConn.ColString("cvv",0,0);
-			ccToken       = dbConn.ColString("token",0,0);
-			ccPIN         = dbConn.ColString("PIN",0,0);
-			transactionID = dbConn.ColString("transactionId",0,0);
+			ccName          = dbConn.ColString("nameOnCard",0,0);
+			ccNumber        = dbConn.ColString("cardNumber",0,0);
+			ccExpiryMonth   = dbConn.ColString("cardExpiryMonth",0,0);
+			ccExpiryYear    = dbConn.ColString("cardExpiryYear",0,0);
+			ccType          = dbConn.ColString("cardType",0,0);
+			ccCVV           = dbConn.ColString("cvv",0,0);
+			ccToken         = dbConn.ColString("token",0,0);
+			ccPIN           = dbConn.ColString("PIN",0,0);
+			transactionID   = dbConn.ColString("transactionId",0,0);
+			customerID      = dbConn.ColString("customerId",0,0);
+			paymentMethodID = dbConn.ColString("paymentMethodId",0,0);
 
 		//	Token Provider (if empty, then it is the same as the payment provider)
 			if ( dbConn.ColStatus("TxKey") == Constants.DBColumnStatus.ColumnOK )

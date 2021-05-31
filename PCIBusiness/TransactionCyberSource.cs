@@ -71,7 +71,7 @@ namespace PCIBusiness
 						+ "  },"
 						+ "  \"orderInformation\": {"
 						+ "    \"amountDetails\": {"
-						+ "      \"totalAmount\": \"102.21\","
+						+ "      \"totalAmount\": \"93.21\","
 						+ "      \"currency\": \"ZAR\""
 						+ "    },"
 						+ "    \"billTo\": {"
@@ -100,10 +100,10 @@ namespace PCIBusiness
 						+ "  },"
 						+ "  \"paymentInformation\": {"
 						+ "    \"card\": {"
-						+ "      \"number\": \""          + payment.CardNumber + "\","
-						+ "      \"expirationMonth\": \"" + payment.CardExpiryMM + "\","
+						+ "      \"number\": \""          + payment.CardNumber     + "\","
+						+ "      \"expirationMonth\": \"" + payment.CardExpiryMM   + "\","
 						+ "      \"expirationYear\": \""  + payment.CardExpiryYYYY + "\","
-						+ "      \"securityCode\": \""    + payment.CardCVV + "\""
+						+ "      \"securityCode\": \""    + payment.CardCVV        + "\""
 						+ "    }"
 						+ "  },"
 						+ "  \"orderInformation\": {"
@@ -394,7 +394,8 @@ namespace PCIBusiness
 			if ( payment == null )
 			{
 				payment              = new Payment();
-				payment.BureauCode   = Tools.BureauCode(Constants.PaymentProvider.CyberSource);
+				payment.BureauCode   = bureauCode;
+			//	payment.BureauCode   = Tools.BureauCode(Constants.PaymentProvider.CyberSource);
 				payment.ProviderURL  = "https://apitest.cybersource.com";
 			}
 
@@ -495,6 +496,9 @@ namespace PCIBusiness
 //				webReq.Headers["Date"]            = theDate.ToString();        // "Fri, 11 Dec 2020 07:18:03 GMT";
 //				webReq.Headers["Host"]            = "apitest.cybersource.com"; // NO! Cannot set this here
 				webReq.Headers["Digest"]          = digest;
+//	Not needed for REST, but include it if supplied
+				if ( payment.ProviderProfileID.Length > 0 )
+					webReq.Headers["profile-id"]   = payment.ProviderProfileID;
 
 //				ret                               = 175;
 //				sigSource                         = "host: "            + webRequest.Host            + "\n"
@@ -520,23 +524,26 @@ namespace PCIBusiness
 				                                  + ", signature=" + sep + sigCoded + sep;
 				ret                               = 200;
 
-				Tools.LogInfo("CallWebService/200", "Tran="             + tranDesc                + Environment.NewLine
-				                                  + "pURL="             + pURL                    + Environment.NewLine
-				                                  + "tURL="             + tURL                    + Environment.NewLine
-				                                  + "Merchant Id="      + payment.ProviderAccount + Environment.NewLine
-				                                  + "Key Detail/Id="    + payment.ProviderUserID  + Environment.NewLine
-				                                  + "Secret Key="       + payment.ProviderKey     + Environment.NewLine
-				                                  + "JSON Sent="        + xmlSent                 + Environment.NewLine
-				                                  + "Signature Input="  + sigSource               + Environment.NewLine
-				                                  + "Signature Output=" + sigCoded                + Environment.NewLine
-				                                  + "Request Header[v-c-merchant-id]=" + webReq.Headers["v-c-merchant-id"] + Environment.NewLine
-				                                  + "Request Header[Date]="            + webReq.Headers["Date"]            + Environment.NewLine
-				                                  + "Request Header[Host]="            + webReq.Host                       + Environment.NewLine
-				                                  + "Request Header[Digest]="          + webReq.Headers["Digest"]          + Environment.NewLine
-				                                  + "Request Header[Signature]="       + webReq.Headers["Signature"]
-				                                  , 10, this);
-
-				Tools.LogInfo("CallWebService/203", "(In) Tran=" + tranDesc + Environment.NewLine + xmlSent, 220, this);
+				if ( Tools.SystemIsLive() )
+					Tools.LogInfo("CallWebService/201", "(In) Tran=" + tranDesc + Environment.NewLine + xmlSent, 220, this);
+				else
+					Tools.LogInfo("CallWebService/202", "Tran="             + tranDesc                  + Environment.NewLine
+					                                  + "pURL="             + pURL                      + Environment.NewLine
+					                                  + "tURL="             + tURL                      + Environment.NewLine
+					                                  + "Merchant Id="      + payment.ProviderAccount   + Environment.NewLine
+					                                  + "Profile Id="       + payment.ProviderProfileID + Environment.NewLine
+					                                  + "Key Detail/Id="    + payment.ProviderUserID    + Environment.NewLine
+					                                  + "Secret Key="       + payment.ProviderKey       + Environment.NewLine
+					                                  + "JSON Sent="        + xmlSent                   + Environment.NewLine
+					                                  + "Signature Input="  + sigSource                 + Environment.NewLine
+					                                  + "Signature Output=" + sigCoded                  + Environment.NewLine
+					                                  + "Request Header[v-c-merchant-id]=" + webReq.Headers["v-c-merchant-id"] + Environment.NewLine
+					                                  + "Request Header[Date]="            + webReq.Headers["Date"]            + Environment.NewLine
+					                                  + "Request Header[Host]="            + webReq.Host                       + Environment.NewLine
+					                                  + "Request Header[Digest]="          + webReq.Headers["Digest"]          + Environment.NewLine
+					                                  + "Request Header[Signature]="       + webReq.Headers["Signature"]       + Environment.NewLine
+					                                  + "Request Header[profile-id]="      + payment.ProviderProfileID
+					                                  , 231, this);
 
 				using (Stream stream = webReq.GetRequestStream())
 				{
@@ -795,7 +802,7 @@ namespace PCIBusiness
 		{
 			CyberSource.RequestMessage request = new CyberSource.RequestMessage();
 
-			request.merchantID = "2744639";
+			request.merchantID            = "2744639";
 			request.merchantReferenceCode = "A1-TEST-82348687";
 
 		//	Help with trouble-shooting
@@ -803,42 +810,42 @@ namespace PCIBusiness
 			request.clientLibraryVersion = Environment.Version.ToString();
 			request.clientEnvironment    = Environment.OSVersion.Platform + Environment.OSVersion.Version.ToString();
 
-			request.ccAuthService = new CyberSource.CCAuthService();
+			request.ccAuthService     = new CyberSource.CCAuthService();
 			request.ccAuthService.run = "true";
 
 			CyberSource.BillTo billTo = new CyberSource.BillTo();
-			billTo.firstName = "John";
-			billTo.lastName = "Doe";
-			billTo.street1 = "1295 Charleston Road";
-			billTo.city = "Mountain View";
-			billTo.state = "CA";
-			billTo.postalCode = "94043";
-			billTo.country = "US";
-			billTo.email = "null@cybersource.com";
-			billTo.ipAddress = "10.7.111.111";
-			request.billTo = billTo;
+			billTo.firstName          = "John";
+			billTo.lastName           = "Doe";
+			billTo.street1            = "1295 Charleston Road";
+			billTo.city               = "Mountain View";
+			billTo.state              = "CA";
+			billTo.postalCode         = "94043";
+			billTo.country            = "US";
+			billTo.email              = "null@cybersource.com";
+			billTo.ipAddress          = "10.7.111.111";
+			request.billTo            = billTo;
 
-			CyberSource.Card card = new CyberSource.Card();
-			card.accountNumber = "4111111111111111";
-			card.expirationMonth = "12";
-			card.expirationYear = "2020";
-			request.card = card;
+			CyberSource.Card card     = new CyberSource.Card();
+			card.accountNumber        = "4111111111111111";
+			card.expirationMonth      = "12";
+			card.expirationYear       = "2022";
+			request.card              = card;
 
 			CyberSource.PurchaseTotals purchaseTotals = new CyberSource.PurchaseTotals();
-			purchaseTotals.currency = "USD";
-			request.purchaseTotals = purchaseTotals;
+			purchaseTotals.currency   = "USD";
+			request.purchaseTotals    = purchaseTotals;
 
-			request.item = new CyberSource.Item[2];
+			request.item              = new CyberSource.Item[2];
 
-			CyberSource.Item item = new CyberSource.Item();
-			item.id = "0";
-			item.unitPrice = "12.34";
-			request.item[0] = item;
+			CyberSource.Item item     = new CyberSource.Item();
+			item.id                   = "0";
+			item.unitPrice            = "12.34";
+			request.item[0]           = item;
 
-			item = new CyberSource.Item();
-			item.id = "1";
-			item.unitPrice = "56.78";
-			request.item[1] = item;
+			item                      = new CyberSource.Item();
+			item.id                   = "1";
+			item.unitPrice            = "56.78";
+			request.item[1]           = item;
 
 			try
 			{
@@ -914,8 +921,10 @@ namespace PCIBusiness
 				if ( ! urlReturn.EndsWith("/") )
 					urlReturn = urlReturn + "/";
 				ret       = 20;
-				urlReturn = urlReturn + "RegisterThreeD.aspx?ProviderCode="+Tools.BureauCode(Constants.PaymentProvider.CyberSource)
-                                  +                    "&TransRef="+Tools.XMLSafe(payment.MerchantReference);
+				urlReturn = urlReturn + "RegisterThreeD.aspx?ProviderCode="+bureauCode
+				                      +                    "&TransRef="+Tools.XMLSafe(payment.MerchantReference);
+//				urlReturn = urlReturn + "RegisterThreeD.aspx?ProviderCode="+Tools.BureauCode(Constants.PaymentProvider.CyberSource)
+//				                      +                    "&TransRef="+Tools.XMLSafe(payment.MerchantReference);
 
 				if ( payment.TokenizerCode == Tools.BureauCode(Constants.PaymentProvider.TokenEx) )
 					ccNo = "{{{" + payment.CardToken + "}}}";
@@ -1056,6 +1065,13 @@ namespace PCIBusiness
 			ServicePointManager.Expect100Continue = true;
 			ServicePointManager.SecurityProtocol  = SecurityProtocolType.Tls12;
 			base.LoadBureauDetails(Constants.PaymentProvider.CyberSource);
+		}
+
+		public TransactionCyberSource(Constants.PaymentProvider provider) : base()
+		{
+			ServicePointManager.Expect100Continue = true;
+			ServicePointManager.SecurityProtocol  = SecurityProtocolType.Tls12;
+			base.LoadBureauDetails(provider);
 		}
 	}
 }

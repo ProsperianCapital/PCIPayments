@@ -94,7 +94,7 @@ namespace PCIBusiness
 
 		public virtual byte LoadProvider()
 		{
-			if ( providerID.Length > 0 && userID.Length > 0 )
+			if ( providerID.Length > 0 ) // && userID.Length > 0 )
 				if ( provider == null || provider.BureauCode != providerID || provider.UserCode != userID )
 					provider = (new Providers()).LoadOne(1,providerID,userID);
 
@@ -119,7 +119,6 @@ namespace PCIBusiness
 				string sql = "exec sp_Messaging_Upd_MessageSend"
 				           +     " @MessageID="              + messageID.ToString()
 				           +     ",@MessageBureauReference=" + Tools.DBString(resultCode);
-
 
 				Tools.LogInfo("UpdateStatus/1",sql,Constants.LogSeverity,this);
 
