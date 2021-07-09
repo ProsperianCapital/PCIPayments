@@ -292,15 +292,17 @@ namespace PCIBusiness
 				ret                            = 200;
 
 //	Testing
-//				string h = "";
-//				k        = 0;
-//				foreach (string key in webRequest.Headers.AllKeys )
-//					h = h + Environment.NewLine + "[" + (k++).ToString() + "] " + key + " : " + webRequest.Headers[key];
-//
-//				Tools.LogInfo("CallWebService/20","Transaction Type=" + tranDesc +
-//				                                ", URL="              + url +
-//				                                ", Request Body="     + xmlSent +
-//				                                ", Request Headers="  + h, 199, this);
+				string h = "";
+				k        = 0;
+				foreach (string key in webRequest.Headers.AllKeys )
+					h = h + Environment.NewLine + "[" + (k++).ToString() + "] " + key + " : " + webRequest.Headers[key];
+
+				Tools.LogInfo("CallWebService/20","Transaction Type=" + Tools.TransactionTypeName(transactionType) +
+				                                ", URL="              + url +
+				                                ", API Key="          + Tools.MaskedValue(payment.ProviderKey) +
+				                                ", Instance Key="     + Tools.MaskedValue(payment.ProviderPassword) +
+				                                ", Request Body="     + xmlSent +
+				                                ", Request Headers="  + h, 199, this);
 //	Testing
 
 				if ( xmlSent.Length > 0 && page.Length > 0 )
@@ -364,7 +366,7 @@ namespace PCIBusiness
 			}
 			catch (WebException ex1)
 			{
-				strResult    = Tools.DecodeWebException(ex1,ClassName+".CallWebService/297","ret="+ret.ToString());
+				strResult    = Tools.DecodeWebException(ex1,ClassName+".CallWebService/291","ret="+ret.ToString());
 				if ( strResult.Length == 0 )
 					strResult = Tools.JSONPair("status" ,ex1.Status.ToString(),1,"{")
 					          + Tools.JSONPair("error"  ,ex1.Message,1)
@@ -377,8 +379,8 @@ namespace PCIBusiness
 			}
 			catch (Exception ex2)
 			{
-				Tools.LogInfo     ("CallWebService/298","ret="+ret.ToString(),220,this);
-				Tools.LogException("CallWebService/299","ret="+ret.ToString(),ex2,this);
+				Tools.LogInfo     ("CallWebService/293","ret="+ret.ToString(),220,this);
+				Tools.LogException("CallWebService/294","ret="+ret.ToString(),ex2,this);
 				if ( strResult.Length == 0 )
 					strResult = Tools.JSONPair("status" ,ex2.Source.ToString(),1,"{")
 					          + Tools.JSONPair("error"  ,ex2.Message,1)
@@ -389,6 +391,11 @@ namespace PCIBusiness
 					resultMsg  = Tools.JSONValue(strResult,"message");
 				}
 			}
+			if ( ret > 0 )
+				Tools.LogInfo("CallWebService/299","ret="       +ret.ToString()
+				                               + ", resultCode="+resultCode
+				                               + ", resultMsg=" +resultMsg
+				                               + ", strResult=" +strResult,220,this);
 			return ret;
 		}
 
