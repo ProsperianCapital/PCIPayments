@@ -292,17 +292,23 @@ namespace PCIBusiness
 				ret                            = 200;
 
 //	Testing
-				string h = "";
-				k        = 0;
-				foreach (string key in webRequest.Headers.AllKeys )
-					h = h + Environment.NewLine + "[" + (k++).ToString() + "] " + key + " : " + webRequest.Headers[key];
-
-				Tools.LogInfo("CallWebService/20","Transaction Type=" + Tools.TransactionTypeName(transactionType) +
-				                                ", URL="              + url +
-				                                ", API Key="          + Tools.MaskedValue(payment.ProviderKey) +
-				                                ", Instance Key="     + Tools.MaskedValue(payment.ProviderPassword) +
-				                                ", Request Body="     + xmlSent +
-				                                ", Request Headers="  + h, 199, this);
+//				string h = "";
+//				k        = 0;
+//				foreach (string key in webRequest.Headers.AllKeys )
+//				{
+//					h = h + Environment.NewLine + "[" + (k++).ToString() + "] " + key + " : ";
+//					if ( webRequest.Headers[key].ToUpper() == payment.ProviderKey.ToUpper() ||
+//					     webRequest.Headers[key].ToUpper() == payment.ProviderPassword.ToUpper() )
+//						h = h + Tools.MaskedValue(webRequest.Headers[key]);
+//					else
+//						h = h + webRequest.Headers[key];
+//				}
+//				Tools.LogInfo("CallWebService/20","Transaction Type=" + Tools.TransactionTypeName(transactionType) +
+//				                                ", URL="              + url +
+//				                                ", API Key="          + Tools.MaskedValue(payment.ProviderKey) +
+//				                                ", Instance Key="     + Tools.MaskedValue(payment.ProviderPassword) +
+//				                                ", Request Body="     + xmlSent +
+//				                                ", Request Headers="  + h, 199, this);
 //	Testing
 
 				if ( xmlSent.Length > 0 && page.Length > 0 )
