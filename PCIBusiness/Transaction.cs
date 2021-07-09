@@ -6,6 +6,7 @@ namespace PCIBusiness
 {
 	public abstract class Transaction : StdDisposable
 	{
+		protected string      otherRef;
 		protected string      payRef;
 		protected string      payToken;
 		protected string      customerId;
@@ -31,6 +32,10 @@ namespace PCIBusiness
 		protected string      keyValuePairs;
 		protected string      d3Form;
 
+		public  string      OtherReference // For reversals, refunds, etc
+		{
+			get { return     Tools.NullToString(otherRef); }
+		}
 		public  string      PaymentReference
 		{
 			get { return     Tools.NullToString(payRef); }
@@ -179,14 +184,24 @@ namespace PCIBusiness
 			return 14040;
 		}
 
-		public virtual int CardTest(Payment payment)
+		public virtual int Refund(Payment payment)
 		{
 			return 14050;
 		}
 
-		public virtual int CardPayment3rdParty(Payment payment)
+		public virtual int Reversal(Payment payment)
 		{
 			return 14060;
+		}
+
+		public virtual int CardTest(Payment payment)
+		{
+			return 14070;
+		}
+
+		public virtual int CardPayment3rdParty(Payment payment)
+		{
+			return 14080;
 		}
 
 		public virtual int ThreeDSecurePayment(Payment payment,Uri postBackURL,string languageCode="",string languageDialectCode="")
@@ -235,7 +250,7 @@ namespace PCIBusiness
 				else if ( bureau == Constants.PaymentProvider.TokenEx )
 					bureauURL = "https://api.tokenex.com";
 				else if ( bureau == Constants.PaymentProvider.FNB )
-					bureauURL = "https://pay.ms.fnb.co.za/eCommerce/v2";
+					bureauURL = "https://pay.ms.fnb.co.za";
 				else if ( bureau == Constants.PaymentProvider.PaymentsOS )
 					bureauURL = "https://api.paymentsos.com";
 			}
@@ -256,7 +271,8 @@ namespace PCIBusiness
 				else if ( bureau == Constants.PaymentProvider.TokenEx )
 					bureauURL = "https://test-api.tokenex.com";
 				else if ( bureau == Constants.PaymentProvider.FNB )
-					bureauURL = "https://sandbox.ms.fnb.co.za/eCommerce/v2";
+				//	bureauURL = "https://sandbox.ms.fnb.co.za/eCommerce/v2";
+					bureauURL = "https://sandbox.ms.fnb.co.za";
 				else if ( bureau == Constants.PaymentProvider.CyberSource )
 					bureauURL = "https://apitest.cybersource.com";
 				else if ( bureau == Constants.PaymentProvider.CyberSource_Moto )
@@ -280,6 +296,7 @@ namespace PCIBusiness
 			bureauCode          = "";
 			bureauURL           = "";
 			payRef              = "";
+			otherRef            = "";
 			payToken            = "";
 			customerId          = "";
 			paymentMethodId     = "";
@@ -306,11 +323,5 @@ namespace PCIBusiness
 			Clear();
 			LoadBureauDetails(provider);
 		}
-
-//		public Transaction(string provider)
-//		{
-//			Clear();
-//			LoadBureauDetails((Constants.PaymentProvider)Tools.StringToInt(provider));
-//		}
 	}
 }
