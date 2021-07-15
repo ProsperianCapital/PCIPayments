@@ -543,8 +543,20 @@ namespace PCIBusiness
 		}
 		public string    PaymentDescription
 		{
-			get { return  Tools.NullToString(paymentDescription); }
 			set { paymentDescription = value.Trim(); }
+			get
+			{
+				paymentDescription = Tools.NullToString(paymentDescription);
+				if ( paymentDescription.Length > 0 )
+					return paymentDescription;
+				paymentDescription = Tools.ConfigValue("AppDescription");
+				if ( paymentDescription.Length > 0 )
+					return paymentDescription;
+				paymentDescription = SystemDetails.Owner;
+				if ( paymentDescription.Length > 0 )
+					return paymentDescription;
+				return "Prosperian Capital International";
+			}	
 		}
 		public string    PaymentDescriptionLeft(short maxLength)
 		{
@@ -701,6 +713,42 @@ namespace PCIBusiness
 					ccExpiryYear = "";
 			}
 		}
+
+		public long CardExpiryMilliSeconds
+		{
+			get
+			{
+				try
+				{
+//	Version 3, no need to bother with the hours, minutes or seconds
+					DateTimeOffset expDate = new DateTime ( System.Convert.ToInt32(CardExpiryYYYY),
+					                                        System.Convert.ToInt32(CardExpiryMM),
+					                                        System.Convert.ToInt32(CardExpiryDD) );
+					return expDate.ToUnixTimeMilliseconds();
+
+//	Version 2
+//					DateTime jan1970 = new DateTime ( 1970, 01, 01, 00, 00, 00 , System.DateTimeKind.Utc );
+//					DateTime expDate = new DateTime ( System.Convert.ToInt32(CardExpiryYYYY),
+//					                                  System.Convert.ToInt32(CardExpiryMM),
+//					                                  System.Convert.ToInt32(CardExpiryDD), 23, 59, 59, 59 );
+//					TimeSpan diff    = expDate - jan1970;
+//					return System.Convert.ToInt64(diff.TotalMilliseconds);
+
+//	Version 1
+//					DateTime jan1970 = new DateTime ( 1970, 01, 01, 00, 00, 00 );
+//					DateTime expDate = new DateTime ( System.Convert.ToInt32(CardExpiryYYYY),
+//					                                  System.Convert.ToInt32(CardExpiryMM),
+//					                                  System.Convert.ToInt32(CardExpiryDD), 23, 59, 59, 59 );
+//					TimeSpan diff    = expDate - jan1970;
+//					return System.Convert.ToInt64(diff.TotalMilliseconds);
+				}
+				catch
+				{ }
+				DateTimeOffset h = System.DateTime.Now.AddYears(1);
+				return h.ToUnixTimeMilliseconds();
+			}
+		}
+
 		public  string   CardName
 		{
 			get { return  Tools.NullToString(ccName); }
@@ -814,6 +862,27 @@ namespace PCIBusiness
 //		                               + ",@ReversalStatusCode = '" + ( retProc == 0 ? "007'" : "001'" );
 //			retSQL = ExecuteSQLUpdate();
 //			Tools.LogInfo("Reversal/90","retProc=" + retProc.ToString()+", retSQL=" + retSQL.ToString()+", SQL=" + sql,240,this);
+
+			return retProc;
+		}
+
+		public int Lookup()
+		{
+			int retProc = 64120;
+			int retSQL  = 64120;
+			sql         = "";
+
+			if ( transaction == null || transaction.BureauCode != bureauCode )
+				transaction = Tools.CreateTransaction(bureauCode);
+			if ( transaction == null )
+				return retProc;
+
+			retProc = transaction.Lookup(this);
+			sql     = "exec sp_Upd_CardPayment_Ref @TransactionID = "           + Tools.DBString(TransactionID)
+			                                   + ",@TransactionStatusCode = "   + Tools.DBString(transaction.ResultCode);
+//			                                   + ",@TransactionStatusReason = " + Tools.DBString(transaction.ResultMessage);
+			Tools.LogInfo("Lookup/20","SQL=" + sql,20,this);
+			retSQL = ExecuteSQLUpdate();
 
 			return retProc;
 		}
@@ -981,6 +1050,15 @@ namespace PCIBusiness
 			providerProfileID = dbConn.ColString("MerchantProfileId"   ,0,0);
 			providerUserID    = dbConn.ColString("MerchantUserId"      ,0,0);
 			providerPassword  = dbConn.ColString("MerchantUserPassword",0,0);
+
+		//	Lookup
+			if ( dbConn.ColStatus("TransactionId") == Constants.DBColumnStatus.ColumnOK &&
+			     dbConn.ColStatus("CardNumber")    != Constants.DBColumnStatus.ColumnOK &&
+			     dbConn.ColStatus("Token")         != Constants.DBColumnStatus.ColumnOK )
+			{
+				transactionID = dbConn.ColString("TransactionId");
+				return;
+			}
 
 		//	Customer
 			if ( dbConn.ColStatus("lastName") == Constants.DBColumnStatus.ColumnOK )
