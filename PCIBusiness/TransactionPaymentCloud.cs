@@ -12,11 +12,13 @@ namespace PCIBusiness
 //		It is actually the code for provider Authorize.Net, but Prosperian requested the name change
 //		So the URLS are all "Authorize.net"
 
-		byte logPriority;
+		byte   logPriority;
+		string errorCode;
+		string errorText;
 
 		public  bool Successful
 		{
-			get { return resultStatus.ToUpper() == "OK"; }
+			get { return (resultStatus.ToUpper() == "OK" && errorCode.Length == 0); }
 		}
 
 		public override int CardTest(Payment payment)
@@ -219,8 +221,10 @@ namespace PCIBusiness
 			xmlSent      = xmlSent.Replace("[AUTHENTICATION]",authXML);
 			strResult    = "";
 			resultStatus = "Error";
-			resultCode   = "98";
-			resultMsg    = "(98) Internal error connecting to " + url;
+			resultCode   = "X98";
+			resultMsg    = "(X98) Internal error connecting to " + url;
+			errorCode    = resultCode;
+			errorText    = resultMsg;
 			ret          = 70;
 
 			try
@@ -256,35 +260,64 @@ namespace PCIBusiness
 						ret       = 140;
 						strResult = rd.ReadToEnd();
 					}
-					if ( strResult.Length == 0 )
+				}
+
+				if ( strResult.Length == 0 )
+				{
+					ret       = 150;
+					resultMsg = "No data returned from " + url;
+					Tools.LogInfo("CallWebService/30","Failed, XML Rec=(empty)",199,this);
+				}
+				else
+				{
+					xmlResult = new XmlDocument();
+					xmlResult.LoadXml(strResult.ToString());
+
+					ret          = 160;
+					resultStatus = Tools.XMLNode(xmlResult,"resultCode","","","messages");
+					resultCode   = Tools.XMLNode(xmlResult,"code"      ,"","","message"); // NOT "messages"
+					resultMsg    = Tools.XMLNode(xmlResult,"text"      ,"","","message"); // NOT "messages"
+					errorCode    = Tools.XMLNode(xmlResult,"errorCode" ,"","","error");
+					errorText    = Tools.XMLNode(xmlResult,"errorText" ,"","","error");
+					ret          = 165;
+
+					if ( strResult.ToUpper().Contains("<ERRORCODE>") && errorCode.Length < 1 )
 					{
-						ret       = 150;
-						resultMsg = "No data returned from " + url;
-						Tools.LogInfo("CallWebService/30","Failed, XML Rec=(empty)",199,this);
+						ret   = 170;
+						int k = strResult.ToUpper().IndexOf("<ERRORCODE>");
+						int j = strResult.ToUpper().IndexOf("</ERRORCODE>");
+						int h = ("<ERRORCODE>").Length;
+						ret   = 175;
+						if ( j > k + h )
+							errorCode = strResult.Substring(k+h,j-(k+h));
 					}
+
+//					ret = 180;
+//					if ( errorCode.Length < 1 )
+//						errorCode = Tools.XMLNode(xmlResult,"code" ,"","","message");
+//					ret = 185;
+//					if ( errorText.Length < 1 )
+//						errorText = Tools.XMLNode(xmlResult,"description" ,"","","message");
+							
+					ret = 0;
+
+					Tools.LogInfo("CallWebService/60","Successful="   + Successful.ToString() +
+			                                      ", resultStatus=" + resultStatus +
+			                                      ", resultCode="   + resultCode +
+			                                      ", resultMsg="    + resultMsg +
+			                                      ", errorCode="    + errorCode +
+			                                      ", errorText="    + errorText +
+			                                      ", XML Rec="      + strResult,
+					                                 ( Successful ? logPriority : (byte)244 ), this);
+					if (Successful)
+						resultCode = "1";
+
 					else
 					{
-						xmlResult = new XmlDocument();
-						xmlResult.LoadXml(strResult.ToString());
-
-						ret            = 160;
-						resultStatus   = Tools.XMLNode(xmlResult,"resultCode","","","messages");
-						resultCode     = Tools.XMLNode(xmlResult,"code"      ,"","","message"); // NOT "messages"
-						resultMsg      = Tools.XMLNode(xmlResult,"text"      ,"","","message"); // NOT "messages"
-						ret            = 180;
-
-						if (Successful)
-							ret         = 0;
-						else
-							logPriority = 222; // Force logging
-
-						Tools.LogInfo("CallWebService/60","ret="          + ret.ToString() +
-				                                      ", resultStatus=" + resultStatus +
-				                                      ", resultCode="   + resultCode +
-				                                      ", resultMsg="    + resultMsg +
-				                                      ", XML Rec="      + strResult, logPriority, this);
-
-						resultCode = resultStatus + ( resultCode.Length == 0 ? "" : "/" + resultCode );
+						ret        = 190;
+						resultCode = resultStatus
+						           + ( resultCode.Length == 0 ? "" : "/" + resultCode )
+						           + ( errorCode.Length  == 0 ? "" : "/" + errorCode  );
 					}
 				}
 			}
