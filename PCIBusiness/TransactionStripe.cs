@@ -87,7 +87,7 @@ namespace PCIBusiness
 				};
 
 				ret         = 75;
-				string addr = "[Empty]";
+//				string addr = "[Empty]";
 				if ( payment.Address1(0).Length > 0 || payment.Address2(0).Length > 0 || payment.ProvinceCode.Length > 0 || payment.CountryCode(0).Length > 0 )
 				{
 //					Tools.LogInfo("GetToken/80","About to create Stripe.AddressOptions",logPriority,this);
@@ -100,16 +100,16 @@ namespace PCIBusiness
 						State      = payment.ProvinceCode,
 						PostalCode = payment.PostalCode(0)
 					};
-					addr = payment.Address1(0)+"/"+payment.Address2(0)+"/"+payment.ProvinceCode+"/"+payment.PostalCode(0);
+//					addr = payment.Address1(0)+"/"+payment.Address2(0)+"/"+payment.ProvinceCode+"/"+payment.PostalCode(0);
 					ret  = 85;
 					if ( payment.CountryCode(0).Length == 2 )
 					{
 						customerOptions.Address.Country = payment.CountryCode(0).ToUpper();
-						addr = addr + "/" + payment.CountryCode(0).ToUpper();
+//						addr = addr + "/" + payment.CountryCode(0).ToUpper();
 					}
 				}
+//				Tools.LogInfo("GetToken/89","Address="+addr,logPriority,this);
 
-				Tools.LogInfo("GetToken/89","Address="+addr,logPriority,this);
 				ret                 = 90;
 				var customerService = new CustomerService();
 				var customer        = customerService.Create(customerOptions);
@@ -160,13 +160,32 @@ namespace PCIBusiness
 					Tools.LogInfo ("GetToken/189","Ret=0"                 + err,logPriority,this);
 				}
 				else
-					Tools.LogInfo ("GetToken/197","Ret=" + ret.ToString() + err,231,this);
+					Tools.LogInfo ("GetToken/190","Ret=" + ret.ToString() + err,231,this);
 			}
-			catch (Exception ex)
+			catch (WebException ex1)
+			{
+				string exData = Tools.DecodeWebException(ex1,ClassName+".GetToken/191","ret="+ret.ToString()+err);
+				Tools.LogInfo     ("GetToken/192",exData,231,this);
+				Tools.LogException("GetToken/193",err,ex1,this);
+			}
+			catch (Exception ex2)
 			{
 				err = "Ret=" + ret.ToString() + err;
-				Tools.LogInfo     ("GetToken/198",err,231,this);
-				Tools.LogException("GetToken/199",err,ex ,this);
+				Tools.LogInfo     ("GetToken/194",err,231,this);
+				Tools.LogException("GetToken/195",err,ex2,this);
+
+				err   = "";
+				int k = 0;
+				foreach (System.Collections.DictionaryEntry exPair in ex2.Data)
+				{
+					k++;
+					err = err + "[" + k.ToString() + "] " + exPair.Key.ToString() + " = " + exPair.Value.ToString() + Environment.NewLine;
+				}
+//				for ( int k = 0 ; k < ex2.Data.Count ; k++ )
+//					exData = exData + ex2.Data.
+
+				Tools.LogInfo     ("GetToken/196",err,231,this);
+				Tools.LogException("GetToken/197",err,ex2,this);
 			}
 			return ret;
 		}
