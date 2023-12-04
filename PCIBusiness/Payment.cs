@@ -989,7 +989,8 @@ namespace PCIBusiness
 			                                 + ",@TransactionStatusCode = "       + Tools.DBString(transaction.ResultCode)
 //			                                 + ",@PaymentMethodId = "             + Tools.DBString(transaction.PaymentReference)
 			                                 + ",@PaymentMethodId = "             + Tools.DBString(transaction.PaymentMethodId)
-		                                    + ",@CardTokenisationStatusCode = '" + ( retProc == 0 ? "007'" : "001'" );
+		                                    + ",@CardTokenisationStatusCode = '" + ( retProc == 0 ? "007'" : "002'" );
+//		                                    + ",@CardTokenisationStatusCode = '" + ( retProc == 0 ? "007'" : "001'" );
 				Tools.LogInfo("GetToken/20","SQL=" + sql,20,this);
 				retSQL = ExecuteSQLUpdate();
 			}
