@@ -86,7 +86,8 @@ namespace PCIBusiness
 					PaymentMethod = paymentMethod.Id
 				};
 
-				ret = 75;
+				ret         = 75;
+				string addr = "[Empty]";
 				if ( payment.Address1(0).Length > 0 || payment.Address2(0).Length > 0 || payment.ProvinceCode.Length > 0 || payment.CountryCode(0).Length > 0 )
 				{
 //					Tools.LogInfo("GetToken/80","About to create Stripe.AddressOptions",logPriority,this);
@@ -99,12 +100,16 @@ namespace PCIBusiness
 						State      = payment.ProvinceCode,
 						PostalCode = payment.PostalCode(0)
 					};
-					ret = 85;
+					addr = payment.Address1(0)+"/"+payment.Address2(0)+"/"+payment.ProvinceCode+"/"+payment.PostalCode(0);
+					ret  = 85;
 					if ( payment.CountryCode(0).Length == 2 )
+					{
 						customerOptions.Address.Country = payment.CountryCode(0).ToUpper();
+						addr = addr + "/" + payment.CountryCode(0).ToUpper();
+					}
 				}
 
-//				Tools.LogInfo("GetToken/90","About to create Stripe.CustomerService",logPriority,this);
+				Tools.LogInfo("GetToken/89","Address="+addr,logPriority,this);
 				ret                 = 90;
 				var customerService = new CustomerService();
 				var customer        = customerService.Create(customerOptions);
