@@ -181,11 +181,11 @@ namespace PCIBusiness
 					k++;
 					err = err + "[" + k.ToString() + "] " + exPair.Key.ToString() + " = " + exPair.Value.ToString() + Environment.NewLine;
 				}
-//				for ( int k = 0 ; k < ex2.Data.Count ; k++ )
-//					exData = exData + ex2.Data.
-
-				Tools.LogInfo     ("GetToken/196",err,231,this);
-				Tools.LogException("GetToken/197",err,ex2,this);
+				if ( err.Length > 0 )
+				{
+					Tools.LogInfo     ("GetToken/196",err,231,this);
+					Tools.LogException("GetToken/197",err,ex2,this);
+				}
 			}
 			return ret;
 		}
