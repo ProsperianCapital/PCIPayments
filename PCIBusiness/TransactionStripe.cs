@@ -202,14 +202,14 @@ namespace PCIBusiness
 			resultMsg  = "Fail";
 			resultCode = "981";
 
-			Tools.LogInfo("TokenPayment/10","Merchant Ref=" + payment.MerchantReference,10,this);
+//			Tools.LogInfo("TokenPayment/10","Merchant Ref=" + payment.MerchantReference,10,this);
 
 			try
 			{
 				ret                        = 620;
 				StripeConfiguration.ApiKey = payment.ProviderPassword; // Secret key
 
-				Tools.LogInfo("TokenPayment/624","About to create Stripe.PaymentIntentCreateOptions",logPriority,this);
+//				Tools.LogInfo("TokenPayment/624","About to create Stripe.PaymentIntentCreateOptions",logPriority,this);
 				ret                        = 624;
 				err                        = err + ", customerId="      + Tools.NullToString(payment.CustomerID)
 				                                 + ", paymentMethodId=" + Tools.NullToString(payment.PaymentMethodID)
@@ -255,13 +255,14 @@ namespace PCIBusiness
 //				else
 //					err       = err + ", No mandate";
 
-				Tools.LogInfo("TokenPayment/690","About to create Stripe.PaymentIntentService",logPriority,this);
+//				Tools.LogInfo("TokenPayment/690","About to create Stripe.PaymentIntentService",logPriority,this);
 				ret                      = 690;
 				var paymentIntentService = new PaymentIntentService();
 				var paymentIntent        = paymentIntentService.Create(paymentIntentOptions);	
 				err                      = err + ", paymentIntentId="+Tools.NullToString(paymentIntent.Id);
+				Tools.LogInfo("TokenPayment/690","Stripe.PaymentIntentService.Create(): "+err,logPriority,this);
 
-				Tools.LogInfo("TokenPayment/700","About to create Stripe.PaymentIntentConfirmOptions",logPriority,this);
+//				Tools.LogInfo("TokenPayment/700","About to create Stripe.PaymentIntentConfirmOptions",logPriority,this);
 				ret                = 700;
 				var confirmOptions = new PaymentIntentConfirmOptions
 				{
@@ -304,6 +305,7 @@ namespace PCIBusiness
 				var paymentConfirm = paymentIntentService.Confirm(paymentIntent.Id,confirmOptions);
 				payRef             = paymentConfirm.Id;
 				err                = err + ", paymentConfirmId="+Tools.NullToString(payRef);
+				Tools.LogInfo("TokenPayment/720","Stripe.PaymentIntentService.Confirm(): "+err,logPriority,this);
 
 				ret                = 730;
 				strResult          = paymentConfirm.StripeResponse.Content;
@@ -347,7 +349,10 @@ namespace PCIBusiness
 					Tools.LogInfo ("TokenPayment/189","Ret=0" + err,logPriority,this);
 				}
 				else
+				{
 					resultCode = resultMsg;
+					Tools.LogInfo ("TokenPayment/190","Ret=" + ret.ToString() + err,231,this);
+				}
 			}
 			catch (Exception ex)
 			{
